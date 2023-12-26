@@ -10,6 +10,7 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  // Tarvitaanko, kun v-model?
   value: {
     type: String,
     default: "",

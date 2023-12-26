@@ -4,6 +4,7 @@
     <div class="test">
       <AButton text="Testi" />
       <AField label="Kenttä" />
+      <AProgressCircular />
     </div>
   </div>
 </template>
