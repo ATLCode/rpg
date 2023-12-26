@@ -6,9 +6,6 @@
       xmlns="http://www.w3.org/2000/svg"
     >
       <circle class="circle" cx="20" cy="20" r="18"></circle>
-      <text x="20" y="20" text-anchor="middle" alignment-baseline="middle">
-        test
-      </text>
     </svg>
     <div class="progress-content">50</div>
   </div>
@@ -34,6 +31,7 @@ const props = defineProps({
 <style lang="scss" scoped>
 $spinnerSize: 40;
 .container {
+  position: relative;
   height: $spinnerSize + px;
   width: $spinnerSize + px;
 }
@@ -52,11 +50,20 @@ $spinnerSize: 40;
     transform-origin: (0.5px * $spinnerSize) (0.5px * $spinnerSize) 0;
     animation: progress 2s linear infinite;
   }
-  .progress-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+}
+
+.progress-content {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 @keyframes progress {
   0% {
