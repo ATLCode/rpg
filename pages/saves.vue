@@ -1,7 +1,16 @@
 <template>
-  <div>saves page</div>
+  <div>
+    <div>saves page</div>
+    <div class="test">
+      <AButton text="Testi" />
+      <AField label="Kenttä" />
+    </div>
+  </div>
 </template>
 <script lang="ts" setup>
 definePageMeta({ middleware: ["auth"] });
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.test {
+}
+</style>

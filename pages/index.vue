@@ -6,7 +6,7 @@
     <button @click="signIn">Login</button>
     {{ msg }}
     ____________
-    <AppButton text="test" />
+    <AButton text="test" />
   </div>
 </template>
 <script lang="ts" setup>
