@@ -1,14 +1,12 @@
 <template>
-  <button type="button">{{ props.text }}</button>
+  <button class="button" type="button" :disabled="props.disabled">
+    <slot></slot>
+  </button>
 </template>
 <script lang="ts" setup>
 // Pure type annotations or not?
 
 const props = defineProps({
-  text: {
-    type: String,
-    default: "",
-  },
   color: {
     type: String,
     default: "",
@@ -17,7 +15,6 @@ const props = defineProps({
     type: String,
     default: "",
   },
-  // Readonly separately?
   disabled: {
     type: Boolean,
     default: false,
@@ -28,4 +25,13 @@ const props = defineProps({
   },
 });
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.button {
+  padding: 1rem;
+  background-color: red;
+  color: white;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+</style>

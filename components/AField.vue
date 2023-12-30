@@ -1,17 +1,17 @@
 <template>
-  <div class="field">
-    <label class="label">{{ props.label }}</label>
-    <input type="text" class="input" />
+  <div class="afield">
+    <input
+      v-model="value"
+      class="input"
+      type="text"
+      :placeholder="props.label"
+      :disabled="props.disabled"
+    />
   </div>
 </template>
 <script lang="ts" setup>
 const props = defineProps({
   label: {
-    type: String,
-    default: "",
-  },
-  // Tarvitaanko, kun v-model?
-  value: {
     type: String,
     default: "",
   },
@@ -23,7 +23,6 @@ const props = defineProps({
     type: String,
     default: "",
   },
-  // Readonly separately?
   disabled: {
     type: Boolean,
     default: false,
@@ -33,18 +32,15 @@ const props = defineProps({
     default: null,
   },
 });
+
+const value = defineModel();
 </script>
 <style lang="scss" scoped>
-.field {
+.afield {
   display: flex;
   align-items: center;
 }
-.label {
-  //transform: translateY(-50%);
-  z-index: 1;
-  position: absolute;
-  margin: 15px;
-}
+
 .input {
   padding: 15px;
   border: 1px solid black !important;
