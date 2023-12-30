@@ -15,4 +15,16 @@ export default defineNuxtConfig({
       exclude: [],
     },
   },
+  vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: '@use "~/assets/colors.scss" as *;',
+        },
+      },
+    },
+  },
+  eslint: {
+    lintOnStart: false,
+  },
 });

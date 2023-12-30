@@ -19,6 +19,7 @@
     <AButton @click="notification = true">New Notification</AButton>
     <ANotification v-model="notification">Test</ANotification>
     <ACard class="testCard" title="Test Title"></ACard>
+    <div class="colorsTest"></div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -51,5 +52,10 @@ const notification = ref(false);
 .testCard {
   height: 200px;
   width: 200px;
+}
+.colorsTest {
+  height: 200px;
+  width: 200px;
+  background-color: $primary;
 }
 </style>

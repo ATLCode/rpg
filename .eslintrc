@@ -13,5 +13,13 @@
     "plugin:prettier/recommended"
   ],
   "plugins": [],
-  "rules": {}
+  //Not sure if this actually solved or just hided, check with Vennufius
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ]
+  }
 }
