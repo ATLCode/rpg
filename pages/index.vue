@@ -5,6 +5,8 @@
     <button @click="signUp">Register</button>
     <button @click="signIn">Login</button>
     {{ msg }}
+    ____________
+    <AButton text="test" />
   </div>
 </template>
 <script lang="ts" setup>

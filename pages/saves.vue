@@ -1,5 +1,7 @@
 <template>
-  <div>saves page</div>
+  <div>
+    <div>saves page</div>
+  </div>
 </template>
 <script lang="ts" setup>
 definePageMeta({ middleware: ["auth"] });
