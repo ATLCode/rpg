@@ -1,5 +1,5 @@
 <template>
-  <div class="anotification" v-show="value">
+  <div v-show="value" class="anotification">
     <slot></slot>
     <AButton v-if="props.close">Close</AButton>
   </div>
