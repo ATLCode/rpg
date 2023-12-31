@@ -2,9 +2,10 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
+    "@nuxtjs/google-fonts",
     "@nuxtjs/eslint-module",
-    "@pinia/nuxt",
     "@nuxtjs/supabase",
+    "@pinia/nuxt",
     "@vueuse/nuxt",
   ],
   supabase: {
@@ -26,5 +27,10 @@ export default defineNuxtConfig({
   },
   eslint: {
     lintOnStart: false,
+  },
+  googleFonts: {
+    families: {
+      "Rubik Doodle Triangles": true,
+    },
   },
 });
