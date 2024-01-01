@@ -1,7 +1,14 @@
 <template>
   <div>
-    <NuxtPage />
+    <NuxtLayout class="layout">
+      <NuxtPage />
+    </NuxtLayout>
   </div>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.layout {
+  min-height: 100vh;
+  min-width: 100vw;
+}
+</style>
