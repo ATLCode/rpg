@@ -14,6 +14,6 @@ export default eventHandler(async (event) => {
     .select();
 
   if (error) {
-    throw new Error("Unable to load saves");
+    throw new Error("Unable to delete save");
   }
 });

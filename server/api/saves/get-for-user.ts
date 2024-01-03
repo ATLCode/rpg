@@ -11,7 +11,7 @@ export default eventHandler(async (event) => {
     .select("*")
     .eq("user_id", user.id);
   if (error) {
-    throw new Error("unable to load saves");
+    throw new Error("Unable to load user saves");
   }
   return saves;
 });

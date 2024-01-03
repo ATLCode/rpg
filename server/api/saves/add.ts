@@ -11,7 +11,7 @@ export default eventHandler(async (event) => {
     .from("saves")
     .insert([{ user_id: user.id, save: body.save }]);
   if (error) {
-    throw new Error("Unable to load saves");
+    throw new Error("Unable to add save");
   }
   return saves;
 });

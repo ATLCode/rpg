@@ -13,7 +13,7 @@ export default eventHandler(async (event) => {
     .eq("id", body.saveId)
     .select();
   if (error) {
-    throw new Error("Unable to load saves");
+    throw new Error("Unable to update save");
   }
   return saves;
 });
