@@ -2,9 +2,10 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
+    "@nuxtjs/google-fonts",
     "@nuxtjs/eslint-module",
-    "@pinia/nuxt",
     "@nuxtjs/supabase",
+    "@pinia/nuxt",
     "@vueuse/nuxt",
   ],
   supabase: {
@@ -13,6 +14,23 @@ export default defineNuxtConfig({
       login: "/",
       callback: "/confirm",
       exclude: [],
+    },
+  },
+  vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: '@use "~/assets/scss/global.scss" as *;',
+        },
+      },
+    },
+  },
+  eslint: {
+    lintOnStart: false,
+  },
+  googleFonts: {
+    families: {
+      "Rubik Doodle Triangles": true,
     },
   },
 });

@@ -67,4 +67,8 @@ async function deleteSave(saveId: number) {
 
 getUserSaves();
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.test {
+  font-family: "Rubik Doodle Triangles";
+}
+</style>

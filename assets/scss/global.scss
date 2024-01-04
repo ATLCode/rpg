@@ -1,0 +1,18 @@
+body {
+  margin: 0px;
+}
+
+//Colors
+//https://m2.material.io/design/color/dark-theme.html
+
+$primary: #ffcc00;
+$secondary: #4b4b4b;
+$background: #121212;
+$background2: hsla(0, 0%, 7%, 0);
+$action: #4b4b4b;
+
+//What's difference between variables above and these colors. Which to use etc.
+:root {
+  --data-color-primary: #{$primary};
+  --data-color-secondary: #{$secondary};
+}
