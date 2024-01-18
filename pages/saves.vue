@@ -1,13 +1,15 @@
 <template>
   <div>
     <h1>Saves</h1>
-    <div v-for="saveSlot of saves" key="saveSlot.id">
+    <div v-for="saveSlot of saves" :key="saveSlot.id">
       {{ saveSlot.save }}
       <button @click="deleteSave(saveSlot.id)">Delete</button>
       <button hidden @click="updateSave(saveSlot.id)">Update Save</button>
     </div>
     <input v-model="newSave" type="text" />
     <button @click="createSave">New Save</button>
+
+    <AButton>Log Out</AButton>
   </div>
 </template>
 <script lang="ts" setup>
