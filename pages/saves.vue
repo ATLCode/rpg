@@ -8,7 +8,6 @@
     </div>
     <input v-model="newSave" type="text" />
     <button @click="createSave">New Save</button>
-
     <AButton>Log Out</AButton>
   </div>
 </template>
