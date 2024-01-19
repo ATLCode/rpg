@@ -6,6 +6,6 @@
 
 <style lang="scss" scoped>
 .default-container {
-  background-color: $background;
+  background-color: var(--background);
 }
 </style>

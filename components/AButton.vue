@@ -1,5 +1,10 @@
 <template>
-  <button class="button" type="button" :disabled="props.disabled">
+  <button
+    class="button"
+    type="button"
+    :disabled="props.disabled"
+    :style="`color: var(--${color})`"
+  >
     <slot></slot>
   </button>
 </template>
@@ -9,7 +14,7 @@
 const props = defineProps({
   color: {
     type: String,
-    default: "",
+    default: "text",
   },
   variant: {
     type: String,
@@ -24,12 +29,12 @@ const props = defineProps({
     default: null,
   },
 });
+// Do style object here
 </script>
 <style lang="scss" scoped>
 .button {
   padding: 1rem;
   background-color: red;
-  color: white;
   border-radius: 10px;
   border: none;
   cursor: pointer;
