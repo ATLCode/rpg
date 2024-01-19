@@ -22,18 +22,12 @@ export default defineNuxtConfig({
       exclude: [],
     },
   },
-  vite: {
-    css: {
-      preprocessorOptions: {
-        scss: {
-          additionalData: '@use "~/assets/scss/global.scss" as *;',
-        },
-      },
-    },
-  },
+  vite: {},
   eslint: {
     lintOnStart: false,
   },
+  css: ["~/assets/scss/global.scss", "~/assets/scss/colors.scss"],
+
   googleFonts: {
     families: {
       "Rubik Doodle Triangles": true,
