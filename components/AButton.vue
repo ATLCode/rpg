@@ -30,6 +30,7 @@ const props = defineProps({
   },
 });
 // Do style object here
+// Put things like disabled effects on style there, should it be computed?
 </script>
 <style lang="scss" scoped>
 .button {

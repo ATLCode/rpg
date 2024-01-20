@@ -6,6 +6,7 @@
       type="text"
       :placeholder="props.label"
       :disabled="props.disabled"
+      :style="`color: var(--${color})`"
     />
   </div>
 </template>
@@ -17,7 +18,7 @@ const props = defineProps({
   },
   color: {
     type: String,
-    default: "",
+    default: "text",
   },
   variant: {
     type: String,
@@ -43,7 +44,7 @@ const value = defineModel();
 
 .input {
   padding: 15px;
-  border: 1px solid black !important;
+  border: 1px solid grey !important;
   border-radius: 5px;
   box-sizing: border-box;
   display: flex;
@@ -52,7 +53,7 @@ const value = defineModel();
   height: 100%;
   background-color: transparent;
   &:focus {
-    border: 5px solid red !important;
+    border: 1px solid white !important;
     outline: none !important;
   }
 }
