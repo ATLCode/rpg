@@ -1,6 +1,6 @@
 <template>
-  <div class="acard">
-    <ATitle>{{ props.title }}</ATitle>
+  <div class="acard" :style="style">
+    <ATitle v-if="props.title">{{ props.title }}</ATitle>
     <slot></slot>
   </div>
 </template>
@@ -12,12 +12,21 @@ const props = defineProps({
   },
   color: {
     type: String,
-    default: "",
+    default: "text",
+  },
+  backgroundColor: {
+    type: String,
+    default: "elevation1",
   },
   variant: {
     type: String,
     default: "",
   },
+});
+
+const style = reactive({
+  color: `var(--${props.color})`,
+  "background-color": `var(--${props.backgroundColor})`,
 });
 </script>
 <style lang="scss" scoped>
@@ -26,9 +35,8 @@ const props = defineProps({
   overflow: hidden;
   overflow-wrap: break-word;
   position: relative;
-  padding: 0;
+  padding: 1.25rem;
   text-decoration: none;
   border-radius: 4px;
-  background-color: red;
 }
 </style>

@@ -6,7 +6,7 @@
       type="text"
       :placeholder="props.label"
       :disabled="props.disabled"
-      :style="`color: var(--${color})`"
+      :style="style"
     />
   </div>
 </template>
@@ -35,6 +35,10 @@ const props = defineProps({
 });
 
 const value = defineModel();
+
+const style = reactive({
+  color: `var(--${props.color})`,
+});
 </script>
 <style lang="scss" scoped>
 .afield {

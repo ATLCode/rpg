@@ -19,5 +19,6 @@
   white-space: nowrap;
   word-break: normal;
   word-wrap: break-word;
+  color: var(--text);
 }
 </style>
