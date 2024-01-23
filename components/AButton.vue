@@ -3,18 +3,25 @@
     class="button"
     type="button"
     :disabled="props.disabled"
-    :style="`color: var(--${color})`"
+    :style="style"
   >
+    <slot name="prepend" />
     <slot></slot>
+    <slot name="append" />
   </button>
 </template>
 <script lang="ts" setup>
-// Pure type annotations or not?
+// TODO: Disabled
+// TDOO: Variants
 
 const props = defineProps({
   color: {
     type: String,
     default: "text",
+  },
+  backgroundColor: {
+    type: String,
+    default: "success",
   },
   variant: {
     type: String,
@@ -29,13 +36,15 @@ const props = defineProps({
     default: null,
   },
 });
-// Do style object here
-// Put things like disabled effects on style there, should it be computed?
+
+const style = reactive({
+  color: `var(--${props.color})`,
+  "background-color": `var(--${props.backgroundColor})`,
+});
 </script>
 <style lang="scss" scoped>
 .button {
   padding: 1rem;
-  background-color: red;
   border-radius: 10px;
   border: none;
   cursor: pointer;

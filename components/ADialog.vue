@@ -1,5 +1,5 @@
 <template>
-  <dialog class="dialog" :open="value">
+  <dialog v-if="value" class="dialog" :open="value">
     <slot>test</slot>
   </dialog>
 </template>
@@ -23,5 +23,10 @@ const value = defineModel<boolean>();
 .dialog {
   height: 80vh;
   width: 80vw;
+  z-index: 99999;
+  display: flex;
+  background-color: var(--background);
+  position: absolute;
+  border: 1px solid red;
 }
 </style>
