@@ -11,6 +11,8 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { reactive } from "vue";
+
 const props = defineProps({
   label: {
     type: String,

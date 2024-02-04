@@ -1,11 +1,7 @@
 <template>
-  <div class="default-container">
+  <div class="basic">
     <slot />
   </div>
 </template>
 
-<style lang="scss" scoped>
-.default-container {
-  background-color: var(--background);
-}
-</style>
+<style lang="scss" scoped></style>

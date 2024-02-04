@@ -26,11 +26,12 @@ export default defineNuxtConfig({
   eslint: {
     lintOnStart: false,
   },
-  css: ["~/assets/scss/global.scss", "~/assets/scss/colors.scss"],
+  css: ["~/assets/scss/main.scss", "~/assets/scss/colors.scss"],
 
   googleFonts: {
     families: {
       "Rubik Doodle Triangles": true,
     },
   },
+  components: [{ path: "~/components/base" }, "~/components"],
 });

@@ -17,6 +17,7 @@ const characterName = ref("");
 
 function startGame(characterName: string) {
   playerStore.name = characterName;
+  navigateTo("/game");
 }
 </script>
 

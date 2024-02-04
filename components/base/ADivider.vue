@@ -3,13 +3,13 @@
 </template>
 <script lang="ts" setup>
 /*
-  const props = defineProps({
-    color: {
-      type: String,
-      default: "",
-    },
-  });
-  */
+    const props = defineProps({
+      color: {
+        type: String,
+        default: "",
+      },
+    });
+    */
 
 // Change thickness by border-top-width
 // Also do vertical variant
@@ -23,6 +23,6 @@
   opacity: 0.25;
   border-style: solid;
   border-width: 1px 0 0 0;
-  color: var(--text);
+  color: white;
 }
 </style>
