@@ -1,4 +1,4 @@
-type Path = {
+export type Path = {
   id: number;
   name: string;
   locations: [number, number];

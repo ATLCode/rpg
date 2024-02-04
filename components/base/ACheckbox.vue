@@ -9,13 +9,13 @@
 const value = defineModel<boolean>();
 
 /*
-const props = defineProps({
-  color: {
-    type: String,
-    default: "",
-  },
-});
-*/
+  const props = defineProps({
+    color: {
+      type: String,
+      default: "",
+    },
+  });
+  */
 </script>
 <style lang="scss" scoped>
 .checkbox {

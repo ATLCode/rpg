@@ -1,10 +1,12 @@
 <template>
   <div class="acard" :style="style">
-    <ATitle v-if="props.title">{{ props.title }}</ATitle>
+    <div>{{ props.title }}</div>
     <slot></slot>
   </div>
 </template>
 <script lang="ts" setup>
+import { reactive } from "vue";
+
 const props = defineProps({
   title: {
     type: String,
