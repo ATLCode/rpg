@@ -39,6 +39,7 @@
 import { usePlayerStore } from "@/stores/player";
 const playerStore = usePlayerStore();
 
+// Test
 const area = playerStore.showArea();
 const locations = playerStore.showLocations();
 const paths = playerStore.showPaths();
