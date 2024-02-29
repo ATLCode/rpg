@@ -55,15 +55,15 @@ export const locations: Location[] = [
   {
     id: 6,
     name: "Forest Pond",
-    parent: 1,
-    type: "exit",
+    parent: 2,
+    type: "interface",
     img: "",
   },
   {
     id: 7,
     name: "Dungeon",
-    parent: 1,
-    type: "exit",
+    parent: 2,
+    type: "container",
     img: "",
   },
   {

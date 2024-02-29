@@ -2,7 +2,7 @@
   <div class="travel-container">
     <div v-if="$props.path" class="path">
       <div class="path-name">{{ $props.path.name }}</div>
-      <AButton @click="travelPath($props.path)">Travel</AButton>
+      <AButton @click="playerStore.travelPath($props.path)">Travel</AButton>
     </div>
     <div v-else>You can't get here from your current location</div>
   </div>
@@ -19,18 +19,6 @@ defineProps({
     default: null,
   },
 });
-
-function travelPath(path: Path) {
-  const targetLocations = path.locations.filter(
-    (endPoint) => endPoint !== playerStore.currentLocation.id
-  );
-  if (targetLocations.length === 1) {
-    const targetLocation = playerStore.getLocationById(targetLocations[0]);
-    playerStore.currentLocation = targetLocation;
-  } else {
-    console.log("Something went wrong");
-  }
-}
 </script>
 
 <style lang="scss" scoped>
