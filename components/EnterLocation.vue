@@ -1,6 +1,6 @@
 <template>
   <div class="enter-container">
-    <AButton @click="playerStore.enterLocation()">Enter</AButton>
+    <AButton @click="playerStore.enterArea()">Enter</AButton>
   </div>
 </template>
 

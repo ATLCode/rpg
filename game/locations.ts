@@ -12,7 +12,7 @@ export const locations: Location[] = [
     id: 0,
     name: "WorldMap",
     parent: 9001,
-    type: "container",
+    type: "world",
     img: "",
   },
   {

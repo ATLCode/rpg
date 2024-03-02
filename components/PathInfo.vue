@@ -30,4 +30,15 @@ defineProps({
   justify-content: center;
   align-items: center;
 }
+.path {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+
+  .path-name {
+    font-size: 2rem;
+  }
+}
 </style>

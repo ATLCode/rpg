@@ -31,7 +31,7 @@ export const usePlayerStore = defineStore("player", () => {
     }
   }
 
-  function enterLocation() {
+  function enterArea() {
     console.log(currentLocation.value);
     if (
       currentLocation.value.type === "container" &&
@@ -44,6 +44,23 @@ export const usePlayerStore = defineStore("player", () => {
     } else {
       return console.log("Can't enter into a location that is not container");
     }
+  }
+  function exitArea() {
+    console.log(currentLocation.value);
+    if (currentLocation.value.type === "exit" && currentLocation.value.parent) {
+      currentLocation.value = getLocationById(currentLocation.value.parent);
+      currentArea.value = findArea();
+      currentLocations.value = findLocations();
+      currentPaths.value = findPaths();
+    } else {
+      return console.log("Can't enter into a location that is not container");
+    }
+  }
+  function goToLocation(locationId: number) {
+    currentLocation.value = getLocationById(locationId);
+    currentArea.value = findArea();
+    currentLocations.value = findLocations();
+    currentPaths.value = findPaths();
   }
 
   function findArea() {
@@ -78,6 +95,8 @@ export const usePlayerStore = defineStore("player", () => {
     currentPaths,
     getLocationById,
     travelPath,
-    enterLocation,
+    enterArea,
+    exitArea,
+    goToLocation,
   };
 });
