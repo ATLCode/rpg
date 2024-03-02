@@ -1,10 +1,13 @@
 <template>
   <div class="enter-container">
-    <AButton>Enter</AButton>
+    <AButton @click="playerStore.enterArea()">Enter</AButton>
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { usePlayerStore } from "@/stores/player";
+const playerStore = usePlayerStore();
+</script>
 
 <style lang="scss" scoped>
 .enter-container {

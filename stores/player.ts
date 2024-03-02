@@ -7,6 +7,9 @@ export const usePlayerStore = defineStore("player", () => {
   const currentLocation = ref<Location>(
     getLocationById(defaults.startingLocationId)
   );
+  const currentArea = ref<Location>(findArea());
+  const currentLocations = ref<Location[]>(findLocations());
+  const currentPaths = ref<Path[]>(findPaths());
 
   function getLocationById(id: number) {
     const result = locations.find((location) => location.id === id);
@@ -16,11 +19,56 @@ export const usePlayerStore = defineStore("player", () => {
     return result;
   }
 
-  function showArea() {
+  function travelPath(path: Path) {
+    const targetLocations = path.locations.filter(
+      (endPoint) => endPoint !== currentLocation.value.id
+    );
+    if (targetLocations.length === 1) {
+      const targetLocation = getLocationById(targetLocations[0]);
+      currentLocation.value = targetLocation;
+    } else {
+      console.log("Something went wrong");
+    }
+  }
+
+  function enterArea() {
+    console.log(currentLocation.value);
+    if (
+      currentLocation.value.type === "container" &&
+      currentLocation.value.child
+    ) {
+      currentLocation.value = getLocationById(currentLocation.value.child);
+      currentArea.value = findArea();
+      currentLocations.value = findLocations();
+      currentPaths.value = findPaths();
+    } else {
+      return console.log("Can't enter into a location that is not container");
+    }
+  }
+  function exitArea() {
+    console.log(currentLocation.value);
+    if (currentLocation.value.type === "exit" && currentLocation.value.parent) {
+      currentLocation.value = getLocationById(currentLocation.value.parent);
+      currentArea.value = findArea();
+      currentLocations.value = findLocations();
+      currentPaths.value = findPaths();
+    } else {
+      return console.log("Can't enter into a location that is not container");
+    }
+  }
+  function goToLocation(locationId: number) {
+    currentLocation.value = getLocationById(locationId);
+    currentArea.value = findArea();
+    currentLocations.value = findLocations();
+    currentPaths.value = findPaths();
+  }
+
+  function findArea() {
+    console.log(currentLocation.value);
     return getLocationById(currentLocation.value.parent);
   }
 
-  function showLocations() {
+  function findLocations() {
     if (currentLocation.value.parent === 9001) {
       return [];
     }
@@ -29,7 +77,7 @@ export const usePlayerStore = defineStore("player", () => {
     );
   }
 
-  function showPaths(): Path[] {
+  function findPaths(): Path[] {
     const pathArray: Path[] = [];
     paths.forEach((path) => {
       if (path.locations.includes(currentLocation.value.id)) {
@@ -42,9 +90,13 @@ export const usePlayerStore = defineStore("player", () => {
   return {
     name,
     currentLocation,
+    currentArea,
+    currentLocations,
+    currentPaths,
     getLocationById,
-    showArea,
-    showLocations,
-    showPaths,
+    travelPath,
+    enterArea,
+    exitArea,
+    goToLocation,
   };
 });
