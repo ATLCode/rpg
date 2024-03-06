@@ -1,8 +1,6 @@
 <template>
   <div class="game-container">
-    <div class="game-bar">
-      <div>{{ playerStore.name }} {{ playerStore.currentLocation }}</div>
-    </div>
+    <NavBar />
     <div class="area">
       <AreaWorld
         v-if="playerStore.currentArea.type === 'world'"
@@ -11,11 +9,16 @@
       />
       <AreaContainer v-if="playerStore.currentArea.type === 'container'" />
     </div>
+    <ADialog v-model="showUi">
+      <GameUi />
+    </ADialog>
   </div>
 </template>
 <script lang="ts" setup>
 import { usePlayerStore } from "@/stores/player";
 const playerStore = usePlayerStore();
+
+const showUi = ref(false);
 
 const selectedLocation = ref(playerStore.currentLocation);
 function changeSelectedLocation(locationId: number) {
@@ -34,10 +37,7 @@ definePageMeta({ middleware: ["auth"], layout: "game" });
   padding: 1rem;
   gap: 1rem;
 }
-.game-bar {
-  display: flex;
-  gap: 1rem;
-}
+
 .area {
   height: 100%;
   width: 100%;
