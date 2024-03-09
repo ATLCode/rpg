@@ -18,7 +18,7 @@
 import { usePlayerStore } from "@/stores/player";
 const playerStore = usePlayerStore();
 
-const showUi = ref(false);
+const showUi = ref(true);
 
 const selectedLocation = ref(playerStore.currentLocation);
 function changeSelectedLocation(locationId: number) {
