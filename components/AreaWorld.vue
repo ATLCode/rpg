@@ -1,6 +1,7 @@
 <template>
   <div class="world-container">
     <h1>{{ playerStore.currentArea.name }}</h1>
+    Current Location: {{ playerStore.currentLocation }}
     <div class="world-info">
       <div class="locations">
         <div

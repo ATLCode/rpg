@@ -1,8 +1,6 @@
 <template>
   <div class="game-container">
-    <div class="game-bar">
-      <div>{{ playerStore.name }} {{ playerStore.currentLocation }}</div>
-    </div>
+    <NavBar />
     <div class="area">
       <AreaWorld
         v-if="playerStore.currentArea.type === 'world'"
@@ -34,10 +32,7 @@ definePageMeta({ middleware: ["auth"], layout: "game" });
   padding: 1rem;
   gap: 1rem;
 }
-.game-bar {
-  display: flex;
-  gap: 1rem;
-}
+
 .area {
   height: 100%;
   width: 100%;
