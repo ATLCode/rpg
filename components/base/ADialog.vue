@@ -1,23 +1,37 @@
 <template>
   <div v-if="value" class="dialog-mask" @click="value = !value">
-    <div class="dialog-content" @click.stop>
+    <div class="dialog-content" :style="style" @click.stop>
       <slot></slot>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-/*
-  const props = defineProps({
-    height: {
-      type: String,
-      default: "",
-    },
-    width: {
-      type: String,
-      default: "",
-    },
-  });
-  */
+const props = defineProps({
+  height: {
+    type: String,
+    default: "500px",
+  },
+  width: {
+    type: String,
+    default: "500px",
+  },
+  fullscreen: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const style = reactive({
+  height: props.height,
+  width: props.width,
+});
+
+onMounted(() => {
+  if (props.fullscreen) {
+    style.height = "100vh";
+    style.width = "100vw";
+  }
+});
 
 const value = defineModel<boolean>();
 </script>
@@ -37,9 +51,7 @@ const value = defineModel<boolean>();
   left: 0;
 }
 .dialog-content {
-  background-color: white;
-  color: black;
-  height: 500px;
-  width: 500px;
+  background-color: var(--background);
+  color: var(--text);
 }
 </style>

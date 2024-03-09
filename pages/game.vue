@@ -9,16 +9,11 @@
       />
       <AreaContainer v-if="playerStore.currentArea.type === 'container'" />
     </div>
-    <ADialog v-model="showUi">
-      <GameUi />
-    </ADialog>
   </div>
 </template>
 <script lang="ts" setup>
 import { usePlayerStore } from "@/stores/player";
 const playerStore = usePlayerStore();
-
-const showUi = ref(true);
 
 const selectedLocation = ref(playerStore.currentLocation);
 function changeSelectedLocation(locationId: number) {
