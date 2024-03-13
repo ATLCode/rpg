@@ -1,12 +1,58 @@
 import { defaults } from "~/game/defaults";
 import { locations, type Location } from "~/game/locations";
 import { paths, type Path } from "~/game/paths";
+import { type Item } from "~/game/items";
 
 export const usePlayerStore = defineStore("player", () => {
   const name = ref("");
   const currentLocation = ref<Location>(
     getLocationById(defaults.startingLocationId)
   );
+
+  // Like this or should each slot have id etc?
+  type Gear = {
+    head: Item | null;
+    torso: Item | null;
+    legs: Item | null;
+    hands: Item | null;
+    feet: Item | null;
+    mainHand: Item | null;
+    offHand: Item | null;
+    neck: Item | null;
+    fingers: Item | null;
+    back: Item | null;
+  };
+
+  const gear = ref<Gear>({
+    head: null,
+    torso: null,
+    legs: null,
+    hands: null,
+    feet: null,
+    mainHand: null,
+    offHand: null,
+    neck: null,
+    fingers: null,
+    back: null,
+  });
+  const inventory = ref({
+    slot1: null,
+    slot2: null,
+    slot3: null,
+    slot4: null,
+    slot5: null,
+    slot6: null,
+    slot7: null,
+    slot8: null,
+    slot9: null,
+    slot10: null,
+    slot11: null,
+    slot12: null,
+    slot13: null,
+    slot14: null,
+    slot15: null,
+  });
+
   const currentArea = ref<Location>(findArea());
   const currentLocations = ref<Location[]>(findLocations());
   const currentPaths = ref<Path[]>(findPaths());
@@ -98,5 +144,7 @@ export const usePlayerStore = defineStore("player", () => {
     enterArea,
     exitArea,
     goToLocation,
+    gear,
+    inventory,
   };
 });
