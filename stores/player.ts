@@ -1,5 +1,5 @@
 import { defaults } from "~/game/defaults";
-import { locations, type Location } from "~/game/locations";
+import { locations, type Location, LocationType } from "~/game/locations";
 import { paths, type Path } from "~/game/paths";
 import { type Item } from "~/game/items";
 
@@ -35,23 +35,20 @@ export const usePlayerStore = defineStore("player", () => {
     fingers: null,
     back: null,
   });
-  const inventory = ref({
-    slot1: null,
-    slot2: null,
-    slot3: null,
-    slot4: null,
-    slot5: null,
-    slot6: null,
-    slot7: null,
-    slot8: null,
-    slot9: null,
-    slot10: null,
-    slot11: null,
-    slot12: null,
-    slot13: null,
-    slot14: null,
-    slot15: null,
-  });
+
+  // Iventory as array of either item ids or nulls (or should there be item that's essentially empty?), this way we can handle moving items with gaps in them
+  const inventory = ref<(number | null)[]>([
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+  ]);
 
   const currentArea = ref<Location>(findArea());
   const currentLocations = ref<Location[]>(findLocations());
@@ -80,7 +77,7 @@ export const usePlayerStore = defineStore("player", () => {
   function enterArea() {
     console.log(currentLocation.value);
     if (
-      currentLocation.value.type === "container" &&
+      currentLocation.value.type === LocationType.Container &&
       currentLocation.value.child
     ) {
       currentLocation.value = getLocationById(currentLocation.value.child);
@@ -93,7 +90,10 @@ export const usePlayerStore = defineStore("player", () => {
   }
   function exitArea() {
     console.log(currentLocation.value);
-    if (currentLocation.value.type === "exit" && currentLocation.value.parent) {
+    if (
+      currentLocation.value.type === LocationType.Exit &&
+      currentLocation.value.parent
+    ) {
       currentLocation.value = getLocationById(currentLocation.value.parent);
       currentArea.value = findArea();
       currentLocations.value = findLocations();

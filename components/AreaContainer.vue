@@ -1,6 +1,6 @@
 <template>
   <div class="area-container">
-    <div v-if="currentView === 'container'" class="locations">
+    <div v-if="currentView === LocationType.Container" class="locations">
       <h1>{{ playerStore.currentArea.name }}</h1>
       <div
         v-for="location in playerStore.currentLocations"
@@ -13,21 +13,22 @@
       </div>
     </div>
     <LocationInterface
-      v-if="currentView === 'interface'"
-      @back="currentView = 'container'"
+      v-if="currentView === LocationType.Interface"
+      @back="currentView = LocationType.Container"
     />
     <LocationExit
-      v-if="currentView === 'exit'"
-      @back="currentView = 'container'"
+      v-if="currentView === LocationType.Exit"
+      @back="currentView = LocationType.Container"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { usePlayerStore } from "@/stores/player";
+import { LocationType } from "~/game/locations";
 const playerStore = usePlayerStore();
 
-const currentView = ref("container");
+const currentView = ref<LocationType>(LocationType.Container);
 
 function openLocation(locationId: number) {
   playerStore.goToLocation(locationId);
