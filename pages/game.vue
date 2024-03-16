@@ -3,16 +3,19 @@
     <NavBar />
     <div class="area">
       <AreaWorld
-        v-if="playerStore.currentArea.type === 'world'"
+        v-if="playerStore.currentArea.type === LocationType.World"
         :selected-location="selectedLocation"
         @change-selected-location="changeSelectedLocation"
       />
-      <AreaContainer v-if="playerStore.currentArea.type === 'container'" />
+      <AreaContainer
+        v-if="playerStore.currentArea.type === LocationType.Container"
+      />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { usePlayerStore } from "@/stores/player";
+import { LocationType } from "~/game/locations";
 const playerStore = usePlayerStore();
 
 const selectedLocation = ref(playerStore.currentLocation);
