@@ -17,7 +17,7 @@
       </div>
     </div>
     <div class="otherStuff">
-      <AButton>Log Out</AButton>
+      <AButton background-color="red">Log Out</AButton>
     </div>
   </div>
 </template>
@@ -48,7 +48,8 @@ definePageMeta({ middleware: ["auth"] });
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 1px solid red;
+    border: 1px solid var(--elevation1);
+    border-radius: 10px;
     padding: 1rem;
   }
 }

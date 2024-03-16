@@ -2,9 +2,9 @@ export const useWorldStore = defineStore("skill", () => {
   type Skill = {
     id: number;
     name: string;
-    currentExp: number;
+    currentExp: number; // How we do leveling and xp limits?
     currentLevel: number;
-    abilities: number[];
+    abilities: number[]; // Do we just have abilities completely separately?
   };
 
   const skills: Skill[] = [

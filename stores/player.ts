@@ -1,10 +1,24 @@
 import { defaults } from "~/game/defaults";
-import { locations, type Location, LocationType } from "~/game/locations";
+import {
+  locations,
+  type Location,
+  LocationType,
+  type Spot,
+  SpotType,
+} from "~/game/locations";
 import { paths, type Path } from "~/game/paths";
 import { type Item } from "~/game/items";
 
 export const usePlayerStore = defineStore("player", () => {
   const name = ref("");
+  enum GameState {
+    Normal = "Normal",
+    Traveling = "Traveling",
+    Combat = "Combat",
+  }
+
+  const gameState = ref<GameState>(GameState.Normal);
+
   const currentLocation = ref<Location>(
     getLocationById(defaults.startingLocationId)
   );
@@ -36,7 +50,7 @@ export const usePlayerStore = defineStore("player", () => {
     back: null,
   });
 
-  // Iventory as array of either item ids or nulls (or should there be item that's essentially empty?), this way we can handle moving items with gaps in them
+  // Iventory as array of either item ids or nulls (or should there be item that's essentially empty?), this way we can handle moving items not next to eachother
   const inventory = ref<(number | null)[]>([
     null,
     null,
@@ -80,10 +94,7 @@ export const usePlayerStore = defineStore("player", () => {
       currentLocation.value.type === LocationType.Container &&
       currentLocation.value.child
     ) {
-      currentLocation.value = getLocationById(currentLocation.value.child);
-      currentArea.value = findArea();
-      currentLocations.value = findLocations();
-      currentPaths.value = findPaths();
+      goToLocation(currentLocation.value.child);
     } else {
       return console.log("Can't enter into a location that is not container");
     }
@@ -94,10 +105,7 @@ export const usePlayerStore = defineStore("player", () => {
       currentLocation.value.type === LocationType.Exit &&
       currentLocation.value.parent
     ) {
-      currentLocation.value = getLocationById(currentLocation.value.parent);
-      currentArea.value = findArea();
-      currentLocations.value = findLocations();
-      currentPaths.value = findPaths();
+      goToLocation(currentLocation.value.parent);
     } else {
       return console.log("Can't enter into a location that is not container");
     }
@@ -133,8 +141,28 @@ export const usePlayerStore = defineStore("player", () => {
     return pathArray;
   }
 
+  type Camp = {
+    spots: Spot[];
+  };
+
+  const camp = ref<Camp>({
+    spots: [
+      {
+        name: "Bedroll",
+        type: SpotType.Sleeping,
+        img: "",
+      },
+      {
+        name: "Campfire",
+        type: SpotType.Cooking,
+        img: "",
+      },
+    ],
+  });
+
   return {
     name,
+    gameState,
     currentLocation,
     currentArea,
     currentLocations,
@@ -146,5 +174,6 @@ export const usePlayerStore = defineStore("player", () => {
     goToLocation,
     gear,
     inventory,
+    camp,
   };
 });

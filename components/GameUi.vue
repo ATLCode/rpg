@@ -20,6 +20,12 @@
         @click="selectedTab = 'abilities'"
         >Abilities</AButton
       >
+      <AButton
+        variant="plain"
+        :class="{ activeTab: selectedTab === 'quests' }"
+        @click="selectedTab = 'quests'"
+        >Quests</AButton
+      >
       <ASpacer />
       <AButton
         variant="plain"
@@ -38,6 +44,7 @@
       </div>
       <div v-if="selectedTab === 'skills'" class="skills">Skills</div>
       <div v-if="selectedTab === 'abilities'" class="abilities">Abilities</div>
+      <div v-if="selectedTab === 'quests'" class="settings">Quests TBD</div>
       <div v-if="selectedTab === 'settings'" class="settings">Settings</div>
     </div>
   </div>
