@@ -5,6 +5,16 @@ export const useSaveStore = defineStore("save", () => {
     -World
   */
 
+  /* 
+  Verkku: How do we show for example 5 save slots. If you have 3 saves, we should show those and 2 empty ones?
+   Do we fill saves array in store with slots that are ampty or what?
+  */
+  /*
+  type Save = {
+    id: string;
+  };
+  */
+
   const saves = ref<any[]>([]);
 
   async function getUserSaves() {

@@ -16,6 +16,11 @@
         >Abilities</AButton
       >
     </div>
+    <div class="btn-div">
+      <AButton background-color="var(--elevation1)" @click="showUi = true"
+        >Quests</AButton
+      >
+    </div>
     <ASpacer />
     <div class="btn-div">
       <AButton background-color="var(--elevation1)" @click="showCamp = true"
@@ -28,7 +33,7 @@
     <GameUi @close="showUi = false" />
   </ADialog>
   <ADialog v-model="showCamp" :fullscreen="true">
-    <CampLocation @close="showCamp = false" />
+    <LocationCamp @close="showCamp = false" />
   </ADialog>
 </template>
 

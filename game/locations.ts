@@ -6,11 +6,18 @@ export enum LocationType {
 }
 
 export enum SpotType {
-  Resource,
-  Cooking,
-  Sleeping, // No storage or farming since they need to remember state so should maybe be different? Can add stuff like crafting/smithing etc in future
+  Resource = "Resource",
+  Cooking = "Cooking", // Verkku: Should we try to have these all in same, or should we have seperate types for each?
+  Sleeping = "Sleeping", // No storage or farming since they need to remember state so should maybe be different? Can add stuff like crafting/smithing etc in future
 }
 export type Spot = {
+  name: string;
+  type: SpotType;
+  img: string;
+  skillId?: number; // Verkku: would name be okay here? We could have SkillName enum even?
+  levelReq?: number;
+};
+export type ResourceSpot = {
   name: string;
   type: SpotType;
   img: string;
@@ -93,13 +100,13 @@ export const locations: Location[] = [
         type: SpotType.Resource,
         img: "",
         skillId: 1,
-        levelReq: 10,
+        levelReq: 5,
       },
     ],
   },
   {
     id: 7,
-    name: "Dungeon",
+    name: "Cave",
     parent: 2,
     type: LocationType.Container,
     img: "",
