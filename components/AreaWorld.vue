@@ -1,11 +1,11 @@
 <template>
   <div class="world-container">
-    <h1>{{ playerStore.currentArea.name }}</h1>
-    Current Location: {{ playerStore.currentLocation }}
-    <div class="world-info">
+    <h1>{{ locationStore.currentArea.name }}</h1>
+    Current Location: {{ locationStore.currentLocation }}
+    <div v-if="settingStore.showMap === false" class="world-info">
       <div class="locations">
         <div
-          v-for="location in playerStore.currentLocations"
+          v-for="location in locationStore.currentLocations"
           :key="location.id"
           class="location-card"
           :class="{
@@ -14,42 +14,47 @@
           @click="$emit('changeSelectedLocation', location.id)"
         >
           <div>{{ location.name }}</div>
-          <div v-if="location.id === playerStore.currentLocation.id">
+          <div v-if="location.id === locationStore.currentLocation.id">
             <img src="../assets/icons/helmet.svg" class="character" alt="" />
           </div>
         </div>
       </div>
       <div class="selected-location">
         <EnterLocation
-          v-if="selectedLocation.id === playerStore.currentLocation.id"
+          v-if="selectedLocation.id === locationStore.currentLocation.id"
         />
         <PathInfo
           v-if="
-            !(props.selectedLocation.id === playerStore.currentLocation.id) &&
-            playerStore.currentArea.id === 0
+            !(props.selectedLocation.id === locationStore.currentLocation.id) &&
+            locationStore.currentArea.id === 0
           "
           :path="selectedPath"
         />
       </div>
     </div>
+    <div v-else class="world-map">
+      <GameMap />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { usePlayerStore } from "@/stores/player";
+import { useLocationStore } from "@/stores/location";
 import { type Location } from "@/game/locations";
-const playerStore = usePlayerStore();
+import { useSettingStore } from "@/stores/setting";
+const locationStore = useLocationStore();
+const settingStore = useSettingStore();
 
 defineEmits(["changeSelectedLocation"]);
 const props = defineProps<{
   selectedLocation: Location;
 }>();
 
-const paths = playerStore.currentPaths;
+const paths = locationStore.currentPaths;
 
 const selectedPath = computed(() => {
   return paths.find((path) =>
-    path.locations.includes(playerStore.currentLocation.id)
+    path.locations.includes(locationStore.currentLocation.id)
   );
 });
 </script>
@@ -87,5 +92,9 @@ const selectedPath = computed(() => {
   .character {
     height: 50px;
   }
+}
+.world-map {
+  height: 100%;
+  width: 100%;
 }
 </style>

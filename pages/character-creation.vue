@@ -10,13 +10,16 @@
 
 <script setup lang="ts">
 import { usePlayerStore } from "@/stores/player";
+import { useSaveStore } from "@/stores/save";
 const playerStore = usePlayerStore();
+const saveStore = useSaveStore();
 
 definePageMeta({ middleware: ["auth"] });
 const characterName = ref("");
 
 function startGame(characterName: string) {
-  playerStore.name = characterName;
+  playerStore.characterName = characterName;
+  saveStore.createSave();
   navigateTo("/game");
 }
 </script>

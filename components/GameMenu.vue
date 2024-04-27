@@ -4,56 +4,70 @@
       <ASpacer />
       <AButton
         variant="plain"
-        :class="{ activeTab: selectedTab === 'inventory' }"
-        @click="selectedTab = 'inventory'"
+        :class="{ activeTab: selectedTab === 'Inventory' }"
+        @click="selectedTab = 'Inventory'"
         >Inventory</AButton
       >
       <AButton
         variant="plain"
-        :class="{ activeTab: selectedTab === 'skills' }"
-        @click="selectedTab = 'skills'"
+        :class="{ activeTab: selectedTab === 'Skills' }"
+        @click="selectedTab = 'Skills'"
         >Skills</AButton
       >
       <AButton
         variant="plain"
-        :class="{ activeTab: selectedTab === 'abilities' }"
-        @click="selectedTab = 'abilities'"
+        :class="{ activeTab: selectedTab === 'Abilities' }"
+        @click="selectedTab = 'Abilities'"
         >Abilities</AButton
       >
       <AButton
         variant="plain"
-        :class="{ activeTab: selectedTab === 'quests' }"
-        @click="selectedTab = 'quests'"
+        :class="{ activeTab: selectedTab === 'Quests' }"
+        @click="selectedTab = 'Quests'"
         >Quests</AButton
       >
       <ASpacer />
       <AButton
         variant="plain"
-        :class="{ activeTab: selectedTab === 'settings' }"
-        @click="selectedTab = 'settings'"
+        :class="{ activeTab: selectedTab === 'Settings' }"
+        @click="selectedTab = 'Settings'"
         >Settings</AButton
       >
       <AButton background-color="var(--elevation1)" @click="$emit('close')"
         >Close</AButton
       >
     </div>
+    {{ initialTab }}
+    {{ selectedTab }}
     <div class="ui-content">
-      <div v-if="selectedTab === 'inventory'" class="inventory">
+      <div v-if="selectedTab === 'Inventory'" class="inventory">
         <div>Gear</div>
-        <div>Inventory</div>
+        <GameMenuInventory />
       </div>
-      <div v-if="selectedTab === 'skills'" class="skills">Skills</div>
-      <div v-if="selectedTab === 'abilities'" class="abilities">Abilities</div>
-      <div v-if="selectedTab === 'quests'" class="settings">Quests TBD</div>
-      <div v-if="selectedTab === 'settings'" class="settings">Settings</div>
+      <div v-if="selectedTab === 'Skills'" class="skills">
+        <GameMenuSkills />
+      </div>
+      <div v-if="selectedTab === 'Abilities'" class="abilities">Abilities</div>
+      <div v-if="selectedTab === 'Quests'" class="settings">Quests TBD</div>
+      <div v-if="selectedTab === 'Settings'" class="settings">Settings</div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+const props = defineProps({
+  initialTab: {
+    type: String,
+    default: "inventory",
+  },
+});
+
 defineEmits(["close"]);
 
 const selectedTab = ref("inventory");
+
+// Created
+selectedTab.value = props.initialTab;
 </script>
 
 <style lang="scss" scoped>

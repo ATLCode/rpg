@@ -1,23 +1,30 @@
 <template>
   <div class="nav">
+    <AButton @click="settingStore.changeMap"
+      >MapView: {{ settingStore.showMap }}</AButton
+    >
     <ASpacer />
     <div class="btn-div">
-      <AButton background-color="var(--elevation1)" @click="showUi = true"
+      <AButton
+        background-color="var(--elevation1)"
+        @click="openMenu('Inventory')"
         >Inventory</AButton
       >
     </div>
     <div class="btn-div">
-      <AButton background-color="var(--elevation1)" @click="showUi = true"
+      <AButton background-color="var(--elevation1)" @click="openMenu('Skills')"
         >Skills</AButton
       >
     </div>
     <div class="btn-div">
-      <AButton background-color="var(--elevation1)" @click="showUi = true"
+      <AButton
+        background-color="var(--elevation1)"
+        @click="openMenu('Abilities')"
         >Abilities</AButton
       >
     </div>
     <div class="btn-div">
-      <AButton background-color="var(--elevation1)" @click="showUi = true"
+      <AButton background-color="var(--elevation1)" @click="openMenu('Quests')"
         >Quests</AButton
       >
     </div>
@@ -28,9 +35,15 @@
       >
     </div>
   </div>
-  <div class="quit"><AButton background-color="red">Log Out</AButton></div>
-  <ADialog v-model="showUi" :fullscreen="true">
-    <GameUi @close="showUi = false" />
+  <div class="quit">
+    {{ playerStore.characterName }}
+    <AButton background-color="green" @click="saveStore.createSave"
+      >Save</AButton
+    >
+    <AButton background-color="red">Log Out</AButton>
+  </div>
+  <ADialog v-model="showMenu" :fullscreen="true">
+    <GameMenu :initial-tab="openTab" @close="showMenu = false" />
   </ADialog>
   <ADialog v-model="showCamp" :fullscreen="true">
     <LocationCamp @close="showCamp = false" />
@@ -38,8 +51,22 @@
 </template>
 
 <script lang="ts" setup>
-const showUi = ref(false);
+import { useSettingStore } from "@/stores/setting";
+import { usePlayerStore } from "@/stores/player";
+import { useSaveStore } from "@/stores/save";
+
+const settingStore = useSettingStore();
+const playerStore = usePlayerStore();
+const saveStore = useSaveStore();
+
+const showMenu = ref(false);
 const showCamp = ref(false);
+const openTab = ref("");
+
+function openMenu(tab: string) {
+  openTab.value = tab;
+  showMenu.value = true;
+}
 </script>
 
 <style lang="scss" scoped>
@@ -51,6 +78,7 @@ const showCamp = ref(false);
   width: 100%;
   gap: 1rem;
   padding: 1rem;
+  z-index: 500;
 }
 
 .quit {

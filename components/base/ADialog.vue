@@ -39,7 +39,7 @@ const value = defineModel<boolean>();
 .dialog-mask {
   height: 100vh;
   width: 100vw;
-  z-index: 100;
+  z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;

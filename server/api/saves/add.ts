@@ -9,7 +9,7 @@ export default eventHandler(async (event) => {
 
   const { data: saves, error } = await client
     .from("saves")
-    .insert([{ user_id: user.id, save: body.save }]);
+    .insert([{ user_id: user.id, saveData: body.saveData }]);
   if (error) {
     throw new Error("Unable to add save");
   }

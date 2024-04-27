@@ -9,7 +9,7 @@ export default eventHandler(async (event) => {
 
   const { data: saves, error } = await client
     .from("saves")
-    .update([{ save: body.save }])
+    .update([{ saveData: body.saveData }])
     .eq("id", body.saveId)
     .select();
   if (error) {

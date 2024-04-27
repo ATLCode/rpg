@@ -1,4 +1,9 @@
+import { usePlayerStore } from "./player";
+import { useLocationStore } from "@/stores/location";
+
 export const useSaveStore = defineStore("save", () => {
+  const playerStore = usePlayerStore();
+  const locationStore = useLocationStore();
   /* 
     Save includes:
     -Player
@@ -9,17 +14,53 @@ export const useSaveStore = defineStore("save", () => {
   Verkku: How do we show for example 5 save slots. If you have 3 saves, we should show those and 2 empty ones?
    Do we fill saves array in store with slots that are ampty or what?
   */
-  /*
-  type Save = {
-    id: string;
-  };
-  */
 
-  const saves = ref<any[]>([]);
+  type SaveData = {
+    currentLocationId: number;
+    characterName: string;
+  };
+
+  type Save = {
+    id: number | undefined;
+    data: SaveData;
+  };
+
+  const saves = ref<Save[]>([]);
 
   async function getUserSaves() {
-    const { data } = await useFetch("/api/saves/get-for-user");
-    saves.value = data.value as any[];
+    const { data, error } = await useFetch("/api/saves/get-for-user");
+    if (error.value || !data.value) {
+      throw new Error(`Unable to load the saves: ${error.value}`);
+    }
+    saves.value = data.value.map((save) => {
+      const { id, saveData } = save;
+      return {
+        id: id as number,
+        data: deconstructSaveData(saveData),
+      };
+    });
+  }
+
+  function constructSaveData() {
+    const save: SaveData = {
+      currentLocationId: locationStore.currentLocation.id,
+      characterName: playerStore.characterName,
+    };
+
+    // return Buffer.from(JSON.stringify(save)).toString("base64");
+    return window.btoa(unescape(encodeURIComponent(JSON.stringify(save))));
+  }
+
+  function deconstructSaveData(data: string): SaveData {
+    // const saveData = JSON.parse(Buffer.from(data, "base64").toString("ascii"));
+    const saveData = JSON.parse(decodeURIComponent(escape(window.atob(data))));
+    if (
+      !saveData.currentLocationId ||
+      typeof saveData.currentLocationId !== "number"
+    ) {
+      console.log("Houston we have a problem");
+    }
+    return saveData;
   }
 
   async function updateSave(saveId: number) {
@@ -28,7 +69,7 @@ export const useSaveStore = defineStore("save", () => {
         method: "POST",
         body: {
           saveId,
-          save: "saveeemee",
+          saveData: constructSaveData(),
         },
       });
       getUserSaves();
@@ -39,24 +80,34 @@ export const useSaveStore = defineStore("save", () => {
 
   async function createSave() {
     try {
+      console.log("Creating Save");
+      const saveData = constructSaveData();
+      console.log(saveData);
       await $fetch("/api/saves/add", {
         method: "POST",
         body: {
-          save: "",
+          saveData: constructSaveData(),
         },
       });
       getUserSaves();
     } catch (error) {
-      // console.error(error);
+      console.error(error);
     }
   }
+
+  function loadSave(saveSlot: Save) {
+    console.log(saveSlot.data);
+    playerStore.characterName = saveSlot.data.characterName;
+    locationStore.currentLocation.id = saveSlot.data.currentLocationId;
+    navigateTo("/game");
+  }
+
   async function deleteSave(saveId: number) {
     try {
       await $fetch("/api/saves/delete", {
         method: "POST",
         body: {
           saveId,
-          save: "saveeemee",
         },
       });
       getUserSaves();
@@ -65,5 +116,5 @@ export const useSaveStore = defineStore("save", () => {
     }
   }
 
-  return { saves, updateSave, createSave, deleteSave, getUserSaves };
+  return { saves, updateSave, createSave, loadSave, deleteSave, getUserSaves };
 });
