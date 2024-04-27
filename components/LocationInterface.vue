@@ -5,16 +5,17 @@
         class="exit-btn"
         background-color="--elevation1"
         @click="$emit('back')"
-        >Back to {{ playerStore.currentArea.name }}</AButton
+        >Back to {{ locationStore.currentArea.name }}</AButton
       >
       <h1>
-        {{ playerStore.currentArea.name }} -
-        {{ playerStore.currentLocation.name }}
+        {{ locationStore.currentArea.name }} -
+        {{ locationStore.currentLocation.name }}
       </h1>
     </div>
     <div class="interface-content">
+      {{ locationStore.currentResourceSpots }}
       <CardSpot
-        v-for="spot in playerStore.currentLocation.spots"
+        v-for="spot in locationStore.currentResourceSpots"
         :key="spot.name"
         :spot="spot"
       />
@@ -23,8 +24,16 @@
 </template>
 
 <script lang="ts" setup>
-import { usePlayerStore } from "@/stores/player";
-const playerStore = usePlayerStore();
+import { useLocationStore } from "@/stores/location";
+// import type { SpotResource, SpotCooking, SpotSleeping } from "@/game/spots";
+
+const locationStore = useLocationStore();
+
+/*
+const resourceSpots = ref(null);
+const cookingSpots = ref(null);
+const sleepingSpots = ref(null);
+*/
 
 defineEmits(["back"]);
 </script>

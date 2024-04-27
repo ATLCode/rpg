@@ -10,7 +10,7 @@
     </div>
     <div class="camp-content">
       <CardSpot
-        v-for="spot in playerStore.camp.spots"
+        v-for="spot in locationStore.camp.spots"
         :key="spot.name"
         :spot="spot"
       />
@@ -19,8 +19,8 @@
 </template>
 
 <script lang="ts" setup>
-import { usePlayerStore } from "@/stores/player";
-const playerStore = usePlayerStore();
+import { useLocationStore } from "@/stores/location";
+const locationStore = useLocationStore();
 defineEmits(["close"]);
 </script>
 

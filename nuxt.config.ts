@@ -1,5 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  ssr: false,
+
   devtools: {
     enabled: true,
 
@@ -13,6 +15,7 @@ export default defineNuxtConfig({
     "@nuxtjs/supabase",
     "@pinia/nuxt",
     "@vueuse/nuxt",
+    "nuxt3-leaflet",
   ],
   supabase: {
     // Options

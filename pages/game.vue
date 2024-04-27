@@ -3,24 +3,24 @@
     <NavBar />
     <div class="area">
       <AreaWorld
-        v-if="playerStore.currentArea.type === LocationType.World"
+        v-if="locationStore.currentArea.type === LocationType.World"
         :selected-location="selectedLocation"
         @change-selected-location="changeSelectedLocation"
       />
-      <AreaContainer
-        v-if="playerStore.currentArea.type === LocationType.Container"
+      <AreaLocation
+        v-if="locationStore.currentArea.type === LocationType.Container"
       />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { usePlayerStore } from "@/stores/player";
+import { useLocationStore } from "@/stores/location";
 import { LocationType } from "~/game/locations";
-const playerStore = usePlayerStore();
+const locationStore = useLocationStore();
 
-const selectedLocation = ref(playerStore.currentLocation);
+const selectedLocation = ref(locationStore.currentLocation);
 function changeSelectedLocation(locationId: number) {
-  selectedLocation.value = playerStore.getLocationById(locationId);
+  selectedLocation.value = locationStore.getLocationById(locationId);
 }
 
 definePageMeta({ middleware: ["auth"], layout: "game" });

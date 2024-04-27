@@ -2,7 +2,7 @@
   <div class="travel-container">
     <div v-if="$props.path" class="path">
       <div class="path-name">{{ $props.path.name }}</div>
-      <AButton @click="playerStore.travelPath($props.path)">Travel</AButton>
+      <AButton @click="locationStore.travelPath($props.path)">Travel</AButton>
     </div>
     <div v-else>You can't get here from your current location</div>
   </div>
@@ -11,8 +11,8 @@
 <script lang="ts" setup>
 import type { PropType } from "vue";
 import { type Path } from "~/game/paths";
-import { usePlayerStore } from "@/stores/player";
-const playerStore = usePlayerStore();
+import { useLocationStore } from "@/stores/location";
+const locationStore = useLocationStore();
 defineProps({
   path: {
     type: Object as PropType<Path> | null,

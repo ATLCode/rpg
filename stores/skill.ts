@@ -1,4 +1,4 @@
-export const useWorldStore = defineStore("skill", () => {
+export const useSkillStore = defineStore("skill", () => {
   type Skill = {
     id: number;
     name: string;
@@ -32,7 +32,23 @@ export const useWorldStore = defineStore("skill", () => {
       currentLevel: 1,
       abilities: [],
     },
+    {
+      id: 7,
+      name: "Woodcutting",
+      currentExp: 1,
+      currentLevel: 1,
+      abilities: [],
+    },
   ];
 
-  return { skills };
+  function getSkillById(skillId: number) {
+    const result = skills.find((skill) => skill.id === skillId);
+    return result;
+  }
+
+  function giveSkillExp(skillId: number, amount: number) {
+    skills[skillId].currentExp += amount;
+  }
+
+  return { skills, getSkillById, giveSkillExp };
 });

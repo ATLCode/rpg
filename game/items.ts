@@ -33,12 +33,14 @@ export type Item = {
   value: number;
   rarity: string; // Enum:
   img: string;
+  levelReq?: number;
+  xp?: number;
 };
 
 export const items: Item[] = [
   {
     id: 5,
-    name: "RawFish",
+    name: "Raw Panfish",
     type: ItemType.Resource,
     property: null,
     equipSlot: null,
@@ -47,5 +49,35 @@ export const items: Item[] = [
     value: 1,
     rarity: ItemRarity.Normal,
     img: "",
+    levelReq: 1,
+    xp: 10,
+  },
+  {
+    id: 6,
+    name: "Raw Bluegill",
+    type: ItemType.Resource,
+    property: null,
+    equipSlot: null,
+    weight: 1,
+    stackSize: 10,
+    value: 1,
+    rarity: ItemRarity.Normal,
+    img: "",
+    levelReq: 5,
+    xp: 20,
+  },
+  {
+    id: 7,
+    name: "Normal Log",
+    type: ItemType.Resource,
+    property: null,
+    equipSlot: null,
+    weight: 1,
+    stackSize: 10,
+    value: 1,
+    rarity: ItemRarity.Normal,
+    img: "",
+    levelReq: 1,
+    xp: 10,
   },
 ];

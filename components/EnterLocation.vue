@@ -1,12 +1,12 @@
 <template>
   <div class="enter-container">
-    <AButton @click="playerStore.enterArea()">Enter</AButton>
+    <AButton @click="locationStore.enterArea()">Enter</AButton>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { usePlayerStore } from "@/stores/player";
-const playerStore = usePlayerStore();
+import { useLocationStore } from "@/stores/location";
+const locationStore = useLocationStore();
 </script>
 
 <style lang="scss" scoped>

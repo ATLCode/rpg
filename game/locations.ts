@@ -5,26 +5,6 @@ export enum LocationType {
   Exit,
 }
 
-export enum SpotType {
-  Resource = "Resource",
-  Cooking = "Cooking", // Verkku: Should we try to have these all in same, or should we have seperate types for each?
-  Sleeping = "Sleeping", // No storage or farming since they need to remember state so should maybe be different? Can add stuff like crafting/smithing etc in future
-}
-export type Spot = {
-  name: string;
-  type: SpotType;
-  img: string;
-  skillId?: number; // Verkku: would name be okay here? We could have SkillName enum even?
-  levelReq?: number;
-};
-export type ResourceSpot = {
-  name: string;
-  type: SpotType;
-  img: string;
-  skillId: number; // Verkku: would name be okay here? We could have SkillName enum even?
-  levelReq: number;
-};
-
 export type Location = {
   id: number;
   name: string;
@@ -33,7 +13,9 @@ export type Location = {
   type: LocationType;
   img: string | null;
   npcs?: number[]; // Only Interfaces
-  spots?: Spot[]; // Only Interfaces
+  resourceSpots?: number[]; // Only Interfaces
+  cookingSpots?: number[]; // Only Interfaces
+  sleepingSpots?: number[]; // Only Interfaces
 };
 
 export const locations: Location[] = [
@@ -87,22 +69,7 @@ export const locations: Location[] = [
     parent: 2,
     type: LocationType.Interface,
     img: "",
-    spots: [
-      {
-        name: "Small Pond",
-        type: SpotType.Resource,
-        img: "",
-        skillId: 1,
-        levelReq: 1,
-      },
-      {
-        name: "Pond Center",
-        type: SpotType.Resource,
-        img: "",
-        skillId: 1,
-        levelReq: 5,
-      },
-    ],
+    resourceSpots: [1, 2],
   },
   {
     id: 7,
@@ -116,6 +83,13 @@ export const locations: Location[] = [
     name: "Forest Edge",
     parent: 2,
     type: LocationType.Exit,
+    img: "",
+  },
+  {
+    id: 9,
+    name: "Arena",
+    parent: 1,
+    type: LocationType.Interface,
     img: "",
   },
 ];
