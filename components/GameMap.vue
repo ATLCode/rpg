@@ -5,8 +5,8 @@
       v-model:zoom="zoom"
       :crs="crs"
       :center="[height / 2, width / 2]"
-      :minZoom="-1"
-      :maxZoom="1"
+      :min-zoom="-1"
+      :max-zoom="1"
     >
       <l-image-overlay
         :url="imageOverlayUrl"
@@ -42,6 +42,9 @@ import { CRS } from "leaflet";
 // https://vue2-leaflet.netlify.app/examples/crs-and-image-overlay.html
 // https://leafletjs.com/examples/crs-simple/crs-simple.html
 // Not sure why I can't get local image to show up something wrong with url file path thing?
+
+// "https://inkarnate-api-as-production.s3.amazonaws.com/l3y57iyuu2tg7y9m9hzw76t9lmas"
+// "/assets/images/TestMap.jpg"
 
 const imageOverlayUrl = ref(
   "https://inkarnate-api-as-production.s3.amazonaws.com/l3y57iyuu2tg7y9m9hzw76t9lmas"

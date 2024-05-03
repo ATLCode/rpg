@@ -3,12 +3,12 @@
     <div class="inv-header">Inventory</div>
     <div class="inv-content">
       <div
-        v-for="itemId in playerStore.inventory"
-        :key="itemId"
+        v-for="item in playerStore.inventory"
+        :key="item?.id"
         class="inv-slot"
       >
-        <div v-if="itemId === null">Empty</div>
-        <div v-if="itemId !== null">Item</div>
+        <div v-if="item?.id">{{ item.name }}</div>
+        <div v-else>Empty</div>
       </div>
     </div>
   </div>
