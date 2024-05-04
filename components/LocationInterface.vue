@@ -12,12 +12,14 @@
         {{ locationStore.currentLocation.name }}
       </h1>
     </div>
+    <div>{{ locationStore.currentResourceSpots }}</div>
     <div class="interface-content">
-      {{ locationStore.currentResourceSpots }}
       <CardSpot
         v-for="spot in locationStore.currentResourceSpots"
         :key="spot.name"
         :spot="spot"
+        :current-action-spot-id="currentActionSpotId"
+        @new-current-action="newCurrentAction"
       />
     </div>
   </div>
@@ -25,17 +27,16 @@
 
 <script lang="ts" setup>
 import { useLocationStore } from "@/stores/location";
-// import type { SpotResource, SpotCooking, SpotSleeping } from "@/game/spots";
 
 const locationStore = useLocationStore();
 
-/*
-const resourceSpots = ref(null);
-const cookingSpots = ref(null);
-const sleepingSpots = ref(null);
-*/
-
 defineEmits(["back"]);
+
+const currentActionSpotId = ref<number | undefined>(undefined);
+
+function newCurrentAction(id: number) {
+  currentActionSpotId.value = id;
+}
 </script>
 
 <style lang="scss" scoped>

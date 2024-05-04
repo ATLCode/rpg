@@ -37,8 +37,7 @@
         >Close</AButton
       >
     </div>
-    {{ initialTab }}
-    {{ selectedTab }}
+
     <div class="ui-content">
       <div v-if="selectedTab === 'Inventory'" class="inventory">
         <div>Gear</div>

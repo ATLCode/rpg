@@ -9,9 +9,9 @@
           :key="location.id"
           class="location-card"
           :class="{
-            active: location.id === props.selectedLocation.id,
+            active: location.id === locationStore.selectedLocation.id,
           }"
-          @click="$emit('changeSelectedLocation', location.id)"
+          @click="locationStore.changeSelectedLocation(location.id)"
         >
           <div>{{ location.name }}</div>
           <div v-if="location.id === locationStore.currentLocation.id">
@@ -21,34 +21,33 @@
       </div>
       <div class="selected-location">
         <EnterLocation
-          v-if="selectedLocation.id === locationStore.currentLocation.id"
+          v-if="
+            locationStore.selectedLocation.id ===
+            locationStore.currentLocation.id
+          "
         />
         <PathInfo
           v-if="
-            !(props.selectedLocation.id === locationStore.currentLocation.id) &&
-            locationStore.currentArea.id === 0
+            !(
+              locationStore.selectedLocation.id ===
+              locationStore.currentLocation.id
+            ) && locationStore.currentArea.id === 0
           "
           :path="selectedPath"
         />
       </div>
     </div>
     <div v-else class="world-map">
-      <GameMap />
+      <GameMap :location="locationStore.currentArea" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { useLocationStore } from "@/stores/location";
-import { type Location } from "@/game/locations";
 import { useSettingStore } from "@/stores/setting";
 const locationStore = useLocationStore();
 const settingStore = useSettingStore();
-
-defineEmits(["changeSelectedLocation"]);
-const props = defineProps<{
-  selectedLocation: Location;
-}>();
 
 const paths = locationStore.currentPaths;
 

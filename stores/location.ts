@@ -1,7 +1,7 @@
 import { defaults } from "~/game/defaults";
 import { locations, type Location, LocationType } from "~/game/locations";
 import type { SpotResource, SpotCooking, SpotSleeping } from "@/game/spots";
-import { resourceSpots, cookingSpots, sleepingSpots } from "@/game/spots";
+import { resourceSpots } from "@/game/spots";
 import { paths, type Path } from "~/game/paths";
 export const useLocationStore = defineStore("location", () => {
   const currentLocation = ref<Location>(
@@ -11,6 +11,18 @@ export const useLocationStore = defineStore("location", () => {
   const currentArea = ref<Location>(findArea());
   const currentLocations = ref<Location[]>(findLocations());
   const currentPaths = ref<Path[]>(findPaths());
+  const selectedLocation = ref<Location>(currentLocation.value);
+
+  function changeSelectedLocation(locationId: number) {
+    selectedLocation.value = getLocationById(locationId);
+  }
+
+  const playerCoordinates = computed(() => {
+    const currentMarker = currentArea.value.mapMarkers?.find(
+      (marker) => marker.locationId === currentLocation.value.id
+    );
+    return { x: currentMarker!.x, y: currentMarker!.y };
+  });
 
   type Camp = {
     resourceSpots: SpotResource[];
@@ -50,12 +62,23 @@ export const useLocationStore = defineStore("location", () => {
     return result;
   }
 
+  const selectedPath = ref<Path | null>(null);
+  function selectPath(locationId: number) {
+    const foundPath = currentPaths.value.find((path) => {
+      return path.locations.includes(locationId);
+    });
+    if (foundPath) {
+      selectedPath.value = foundPath;
+    }
+  }
+
   function travelPath(path: Path) {
     const targetLocations = path.locations.filter(
       (endPoint) => endPoint !== currentLocation.value.id
     );
     if (targetLocations.length === 1) {
       const targetLocation = getLocationById(targetLocations[0]);
+      // How To travel here
       currentLocation.value = targetLocation;
     } else {
       console.log("Something went wrong");
@@ -131,7 +154,12 @@ export const useLocationStore = defineStore("location", () => {
     currentLocations,
     currentPaths,
     currentResourceSpots,
+    selectedLocation,
+    playerCoordinates,
+    changeSelectedLocation,
     getLocationById,
+    selectedPath,
+    selectPath,
     travelPath,
     enterArea,
     exitArea,

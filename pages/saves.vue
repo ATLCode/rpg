@@ -18,26 +18,19 @@
       </div>
     </div>
     <div class="otherStuff">
-      <AButton background-color="red" @click="signOut">Log Out</AButton>
+      <AButton background-color="red" @click="saveStore.logOut"
+        >Log Out</AButton
+      >
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { useSaveStore } from "@/stores/save";
 
-const client = useSupabaseClient();
 const saveStore = useSaveStore();
 saveStore.getUserSaves();
 
 definePageMeta({ middleware: ["auth"] });
-
-async function signOut() {
-  const { error } = await client.auth.signOut();
-
-  if (error) {
-    console.log(error.message);
-  }
-}
 </script>
 <style lang="scss" scoped>
 .sContainer {

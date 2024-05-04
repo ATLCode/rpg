@@ -4,6 +4,21 @@ import { useLocationStore } from "@/stores/location";
 export const useSaveStore = defineStore("save", () => {
   const playerStore = usePlayerStore();
   const locationStore = useLocationStore();
+
+  const client = useSupabaseClient();
+
+  async function logIn() {
+    // Move stuff here from index after figuring how to do errors
+  }
+
+  async function logOut() {
+    const { error } = await client.auth.signOut();
+
+    if (error) {
+      console.log(error.message);
+    }
+  }
+
   /* 
     Save includes:
     -Player
@@ -116,5 +131,14 @@ export const useSaveStore = defineStore("save", () => {
     }
   }
 
-  return { saves, updateSave, createSave, loadSave, deleteSave, getUserSaves };
+  return {
+    saves,
+    logIn,
+    logOut,
+    updateSave,
+    createSave,
+    loadSave,
+    deleteSave,
+    getUserSaves,
+  };
 });

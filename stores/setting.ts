@@ -1,5 +1,5 @@
 export const useSettingStore = defineStore("setting", () => {
-  const showMap = ref(false);
+  const showMap = ref(true);
 
   function changeMap() {
     showMap.value = !showMap.value;

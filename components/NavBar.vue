@@ -3,6 +3,7 @@
     <AButton @click="settingStore.changeMap"
       >MapView: {{ settingStore.showMap }}</AButton
     >
+
     <ASpacer />
     <div class="btn-div">
       <AButton
@@ -35,12 +36,17 @@
       >
     </div>
   </div>
-  <div class="quit">
+  <div class="options">
     {{ playerStore.characterName }}
-    <AButton background-color="green" @click="saveStore.createSave"
-      >Save</AButton
-    >
-    <AButton background-color="red">Log Out</AButton>
+    <AMenu>
+      <template #activator>
+        <AButton>X</AButton>
+      </template>
+      <template #menu>
+        <div @click="saveStore.createSave">Save</div>
+        <div>Log Out</div>
+      </template>
+    </AMenu>
   </div>
   <ADialog v-model="showMenu" :fullscreen="true">
     <GameMenu :initial-tab="openTab" @close="showMenu = false" />
@@ -54,10 +60,12 @@
 import { useSettingStore } from "@/stores/setting";
 import { usePlayerStore } from "@/stores/player";
 import { useSaveStore } from "@/stores/save";
+import { LocationType } from "~/game/locations";
 
 const settingStore = useSettingStore();
 const playerStore = usePlayerStore();
 const saveStore = useSaveStore();
+const locationStore = useLocationStore();
 
 const showMenu = ref(false);
 const showCamp = ref(false);
@@ -81,9 +89,10 @@ function openMenu(tab: string) {
   z-index: 500;
 }
 
-.quit {
+.options {
   position: absolute;
   top: 1rem;
   right: 1rem;
+  z-index: 500;
 }
 </style>
