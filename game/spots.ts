@@ -45,6 +45,15 @@ export const resourceSpots: SpotResource[] = [
     products: [7],
     interval: 10,
   },
+  {
+    id: 1,
+    name: "Medium Fishing Spot",
+    img: "",
+    skillId: 1,
+    levelReq: 1,
+    products: [5, 6],
+    interval: 10,
+  },
 ];
 export const cookingSpots: SpotCooking[] = [];
 export const sleepingSpots: SpotSleeping[] = [];

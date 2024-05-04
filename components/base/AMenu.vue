@@ -1,7 +1,14 @@
 <template>
   <div class="a-menu">
     <slot name="prepend" />
-    <slot></slot>
+    <div class="activator-slot" @click="menuVisible = !menuVisible">
+      <slot name="activator"></slot>
+    </div>
+
+    <div class="menu-slot" :class="{ 'menu-open': menuVisible }">
+      <slot name="menu"></slot>
+    </div>
+
     <slot name="append" />
   </div>
 </template>
@@ -29,7 +36,7 @@ const props = defineProps({
   },
 });
 
-const value = defineModel();
+const menuVisible = ref(false);
 </script>
 <style lang="scss" scoped>
 .afield {
@@ -50,6 +57,31 @@ const value = defineModel();
   &:focus {
     border: 1px solid white !important;
     outline: none !important;
+  }
+}
+.a-menu {
+  z-index: 500;
+}
+.activator-slot {
+  display: flex;
+  justify-content: end;
+}
+.menu-slot {
+  display: none;
+}
+.menu-open {
+  z-index: 500;
+  display: block;
+  border-radius: 10px;
+  background-color: var(--elevation2);
+  :nth-child(n) {
+    padding: 1rem;
+    z-index: 500;
+    cursor: pointer;
+    &:hover {
+      border-radius: 10px;
+      background-color: var(--elevation3);
+    }
   }
 }
 </style>

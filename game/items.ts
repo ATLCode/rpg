@@ -81,3 +81,41 @@ export const items: Item[] = [
     xp: 10,
   },
 ];
+
+// Items array to itemst object where key is enum?
+
+enum itemIds {
+  NormalLog = "Normal Log",
+  SuperLog = "Super Log",
+}
+
+export const itemsTest: Record<itemIds, any> = {
+  [itemIds.NormalLog]: {
+    id: 7,
+    name: "Normal Log",
+    type: ItemType.Resource,
+    property: null,
+    equipSlot: null,
+    weight: 1,
+    stackSize: 10,
+    value: 1,
+    rarity: ItemRarity.Normal,
+    img: "",
+    levelReq: 1,
+    xp: 10,
+  },
+  [itemIds.SuperLog]: {
+    id: 7,
+    name: "Normal Log",
+    type: ItemType.Resource,
+    property: null,
+    equipSlot: null,
+    weight: 1,
+    stackSize: 10,
+    value: 1,
+    rarity: ItemRarity.Normal,
+    img: "",
+    levelReq: 1,
+    xp: 10,
+  },
+};

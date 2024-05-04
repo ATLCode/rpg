@@ -2,11 +2,7 @@
   <div class="game-container">
     <NavBar />
     <div class="area">
-      <AreaWorld
-        v-if="locationStore.currentArea.type === LocationType.World"
-        :selected-location="selectedLocation"
-        @change-selected-location="changeSelectedLocation"
-      />
+      <AreaWorld v-if="locationStore.currentArea.type === LocationType.World" />
       <AreaLocation
         v-if="locationStore.currentArea.type === LocationType.Container"
       />
@@ -17,11 +13,6 @@
 import { useLocationStore } from "@/stores/location";
 import { LocationType } from "~/game/locations";
 const locationStore = useLocationStore();
-
-const selectedLocation = ref(locationStore.currentLocation);
-function changeSelectedLocation(locationId: number) {
-  selectedLocation.value = locationStore.getLocationById(locationId);
-}
 
 definePageMeta({ middleware: ["auth"], layout: "game" });
 </script>

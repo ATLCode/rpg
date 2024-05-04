@@ -23,7 +23,7 @@
       />
     </div>
     <div v-else class="location-map">
-      <GameMap />
+      <GameMap :location="locationStore.currentArea" />
     </div>
   </div>
 </template>
@@ -75,5 +75,9 @@ function openLocation(locationId: number) {
   .location-name {
     text-align: center;
   }
+}
+.location-map {
+  height: 100%;
+  width: 100%;
 }
 </style>
