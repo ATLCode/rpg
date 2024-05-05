@@ -60,12 +60,10 @@
 import { useSettingStore } from "@/stores/setting";
 import { usePlayerStore } from "@/stores/player";
 import { useSaveStore } from "@/stores/save";
-import { LocationType } from "~/game/locations";
 
 const settingStore = useSettingStore();
 const playerStore = usePlayerStore();
 const saveStore = useSaveStore();
-const locationStore = useLocationStore();
 
 const showMenu = ref(false);
 const showCamp = ref(false);

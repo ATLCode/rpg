@@ -6,6 +6,7 @@ export type Path = {
   reqSkills: null;
   reqItem: null;
   reqQuest: null;
+  travelTime: number; // Seconds
 };
 
 export const paths: Path[] = [
@@ -17,5 +18,6 @@ export const paths: Path[] = [
     reqSkills: null,
     reqItem: null,
     reqQuest: null,
+    travelTime: 5,
   },
 ];
