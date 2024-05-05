@@ -3,7 +3,10 @@ import { locations, type Location, LocationType } from "~/game/locations";
 import type { SpotResource, SpotCooking, SpotSleeping } from "@/game/spots";
 import { resourceSpots } from "@/game/spots";
 import { paths, type Path } from "~/game/paths";
+import { usePlayerStore, GameState } from "@/stores/player";
 export const useLocationStore = defineStore("location", () => {
+  const playerStore = usePlayerStore();
+
   const currentLocation = ref<Location>(
     getLocationById(defaults.startingLocationId)
   );
@@ -62,8 +65,15 @@ export const useLocationStore = defineStore("location", () => {
     return result;
   }
 
+  // TRAVELING & PATHS
+
+  const targetLocation = ref<Location | null>(null);
+  const activePath = ref<Path | null>(null);
+
   const selectedPath = ref<Path | null>(null);
   function selectPath(locationId: number) {
+    console.log("Selecting path for");
+    console.log(locationId);
     const foundPath = currentPaths.value.find((path) => {
       return path.locations.includes(locationId);
     });
@@ -77,9 +87,11 @@ export const useLocationStore = defineStore("location", () => {
       (endPoint) => endPoint !== currentLocation.value.id
     );
     if (targetLocations.length === 1) {
-      const targetLocation = getLocationById(targetLocations[0]);
+      const pathTargetLocation = getLocationById(targetLocations[0]);
       // How To travel here
-      currentLocation.value = targetLocation;
+      targetLocation.value = pathTargetLocation;
+      activePath.value = path;
+      playerStore.gameState = GameState.Travel;
     } else {
       console.log("Something went wrong");
     }
@@ -158,6 +170,8 @@ export const useLocationStore = defineStore("location", () => {
     playerCoordinates,
     changeSelectedLocation,
     getLocationById,
+    targetLocation,
+    activePath,
     selectedPath,
     selectPath,
     travelPath,

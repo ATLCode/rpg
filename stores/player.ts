@@ -2,13 +2,14 @@ import { defaults } from "~/game/defaults";
 import { type Item } from "~/game/items";
 import { items } from "~/game/items";
 
+export enum GameState {
+  Normal = "Normal",
+  Travel = "Travel",
+  Combat = "Combat",
+}
+
 export const usePlayerStore = defineStore("player", () => {
   const characterName = ref("");
-  enum GameState {
-    Normal = "Normal",
-    Traveling = "Traveling",
-    Combat = "Combat",
-  }
 
   const gameState = ref<GameState>(GameState.Normal);
 

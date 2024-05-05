@@ -1,6 +1,12 @@
 <template>
   <div v-if="!isLoaded">Loading</div>
-  <div v-else class="world-map-container">
+  <div
+    v-else-if="
+      currentView === LocationType.Container ||
+      currentView === LocationType.World
+    "
+    class="world-map-container"
+  >
     <LMap
       ref="map"
       v-model:zoom="zoom"
@@ -9,6 +15,7 @@
       :min-zoom="-1"
       :max-zoom="1"
       :max-bounds="maxBounds"
+      :options="{ attributionControl: false }"
     >
       <l-image-overlay
         :url="props.location.mapImg!"
@@ -19,10 +26,10 @@
         v-for="marker in markers"
         :key="marker.locationId"
         :lat-lng="[marker.y, marker.x]"
-        @click="locationStore.selectPath(marker.locationId)"
+        @click="clickMarker(marker.locationId)"
       >
-        <l-popup
-          >{{ locationStore.getLocationById(marker.locationId).name }}
+        <l-popup v-if="locationStore.currentArea.type === LocationType.World">
+          {{ locationStore.getLocationById(marker.locationId).name }}
           <div v-if="marker.locationId === locationStore.currentLocation.id">
             <AButton @click="locationStore.enterArea()">ENTER</AButton>
           </div>
@@ -38,7 +45,23 @@
             >
           </div>
         </l-popup>
+        <l-popup v-else>
+          {{ locationStore.selectedLocation.name }}
+          <div v-if="locationStore.selectedLocation.type === LocationType.Exit">
+            <AButton @click="locationStore.exitArea()">EXIT</AButton>
+          </div>
+          <div
+            v-if="
+              locationStore.selectedLocation.type === LocationType.Interface
+            "
+          >
+            <AButton @click="openLocation(locationStore.selectedLocation.id)"
+              >OPEN</AButton
+            >
+          </div>
+        </l-popup>
       </l-marker>
+
       <l-marker
         :lat-lng="[
           locationStore.playerCoordinates.y - 20,
@@ -47,32 +70,20 @@
       >
         <l-icon icon-url="/icons/player.svg" :icon-size="[40, 40]"></l-icon>
       </l-marker>
-
-      <!--
-         <LTileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&amp;copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-        layer-type="base"
-        name="OpenStreetMap"
-      />
-     
-      <l-marker
-        v-for="(marker, idx) in markers"
-        :key="idx"
-        :lat-lng="marker.coordinates"
-        ><l-popup>{{ idx }}</l-popup></l-marker
-      >
-
-      -->
     </LMap>
+  </div>
+  <div v-else-if="currentView === LocationType.Interface">
+    <LocationInterface @back="currentView = LocationType.Container" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { CRS } from "leaflet";
 import type { PropType } from "vue";
+import { LocationType } from "@/game/locations";
 import type { Location } from "@/game/locations";
 import { useLocationStore } from "@/stores/location";
+
 const locationStore = useLocationStore();
 
 const props = defineProps({
@@ -81,6 +92,21 @@ const props = defineProps({
     default: null,
   },
 });
+
+function clickMarker(markerLocationId: number) {
+  if (locationStore.currentLocation.parent === LocationType.World) {
+    locationStore.selectPath(markerLocationId);
+  } else {
+    locationStore.changeSelectedLocation(markerLocationId);
+  }
+}
+
+function openLocation(locationId: number) {
+  locationStore.goToLocation(locationId);
+  currentView.value = locationStore.currentLocation.type;
+}
+
+const currentView = ref<LocationType>(LocationType.Container);
 
 const isLoaded = ref(true);
 const markers = ref(props.location.mapMarkers || []);
@@ -126,5 +152,8 @@ updateImageSize(props.location.mapImg!);
 }
 .leaflet-container {
   background-color: var(--elevation0);
+}
+.leaflet-control-attribution leaflet-control {
+  display: none !important;
 }
 </style>
