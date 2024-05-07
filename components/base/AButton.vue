@@ -39,11 +39,16 @@ const props = defineProps({
     type: Array,
     default: null,
   },
+  padding: {
+    type: String,
+    default: "1rem",
+  },
 });
 
 const style = reactive({
   color: "",
   "background-color": "",
+  padding: props.padding,
 });
 
 function handleVariant(variant: string) {
@@ -81,7 +86,6 @@ onMounted(() => {
 </script>
 <style lang="scss" scoped>
 .button {
-  padding: 1rem;
   border-radius: 10px;
   border: none;
   cursor: pointer;

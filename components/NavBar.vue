@@ -36,18 +36,7 @@
       >
     </div>
   </div>
-  <div class="options">
-    {{ playerStore.characterName }}
-    <AMenu>
-      <template #activator>
-        <AButton>X</AButton>
-      </template>
-      <template #menu>
-        <div @click="saveStore.createSave">Save</div>
-        <div>Log Out</div>
-      </template>
-    </AMenu>
-  </div>
+
   <ADialog v-model="showMenu" :fullscreen="true">
     <GameMenu :initial-tab="openTab" @close="showMenu = false" />
   </ADialog>
@@ -58,12 +47,8 @@
 
 <script lang="ts" setup>
 import { useSettingStore } from "@/stores/setting";
-import { usePlayerStore } from "@/stores/player";
-import { useSaveStore } from "@/stores/save";
 
 const settingStore = useSettingStore();
-const playerStore = usePlayerStore();
-const saveStore = useSaveStore();
 
 const showMenu = ref(false);
 const showCamp = ref(false);
@@ -83,14 +68,7 @@ function openMenu(tab: string) {
   flex-direction: row;
   width: 100%;
   gap: 1rem;
-  padding: 1rem;
-  z-index: 500;
-}
-
-.options {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
+  padding: 0.5rem;
   z-index: 500;
 }
 </style>

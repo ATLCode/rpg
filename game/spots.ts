@@ -38,7 +38,7 @@ export const resourceSpots: SpotResource[] = [
   },
   {
     id: 2,
-    name: "Normal Tree",
+    name: "Oak Tree",
     img: "",
     skillId: 7,
     levelReq: 1,

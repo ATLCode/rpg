@@ -27,12 +27,6 @@
         >Quests</AButton
       >
       <ASpacer />
-      <AButton
-        variant="plain"
-        :class="{ activeTab: selectedTab === 'Settings' }"
-        @click="selectedTab = 'Settings'"
-        >Settings</AButton
-      >
       <AButton background-color="var(--elevation1)" @click="$emit('close')"
         >Close</AButton
       >
@@ -40,7 +34,7 @@
 
     <div class="ui-content">
       <div v-if="selectedTab === 'Inventory'" class="inventory">
-        <div>Gear</div>
+        <GameMenuGear />
         <GameMenuInventory />
       </div>
       <div v-if="selectedTab === 'Skills'" class="skills">
@@ -48,7 +42,6 @@
       </div>
       <div v-if="selectedTab === 'Abilities'" class="abilities">Abilities</div>
       <div v-if="selectedTab === 'Quests'" class="settings">Quests TBD</div>
-      <div v-if="selectedTab === 'Settings'" class="settings">Settings</div>
     </div>
   </div>
 </template>

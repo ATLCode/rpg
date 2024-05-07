@@ -109,14 +109,16 @@ export const useLocationStore = defineStore("location", () => {
     }
   }
   function exitArea() {
-    console.log(currentLocation.value);
+    console.log(selectedLocation.value);
     if (
-      currentLocation.value.type === LocationType.Exit &&
-      currentLocation.value.parent
+      selectedLocation.value.type === LocationType.Exit &&
+      selectedLocation.value.parent
     ) {
-      goToLocation(currentLocation.value.parent);
+      goToLocation(selectedLocation.value.parent);
     } else {
-      return console.log("Can't enter into a location that is not container");
+      return console.log(
+        "Can't enter into a location that is not container - exit"
+      );
     }
   }
 

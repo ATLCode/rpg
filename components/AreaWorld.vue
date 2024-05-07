@@ -1,6 +1,5 @@
 <template>
   <div class="world-container">
-    <h1>{{ locationStore.currentArea.name }}</h1>
     <div v-if="settingStore.showMap === false" class="world-info">
       <div class="locations">
         <div

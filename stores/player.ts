@@ -1,4 +1,3 @@
-import { defaults } from "~/game/defaults";
 import { type Item } from "~/game/items";
 import { items } from "~/game/items";
 
@@ -25,6 +24,7 @@ export const usePlayerStore = defineStore("player", () => {
     neck: Item | null;
     fingers: Item | null;
     back: Item | null;
+    ammo: Item | null;
   };
 
   const gear = ref<Gear>({
@@ -38,6 +38,7 @@ export const usePlayerStore = defineStore("player", () => {
     neck: null,
     fingers: null,
     back: null,
+    ammo: null,
   });
 
   // Iventory as array of either item ids or nulls (or should there be item that's essentially empty?), this way we can handle moving items not next to eachother
@@ -82,12 +83,16 @@ export const usePlayerStore = defineStore("player", () => {
 
   function addItemToInventory(itemId: number) {
     let added = false;
-    const mappedInventory = inventory.value.map((element) => {
-      if (element === null && added === false) {
+    const mappedInventory = inventory.value.map((inventorySlot) => {
+      if (inventorySlot?.id === itemId && added === false) {
+        // Item of this type already exists
+        // How to do stacking?
+      }
+      if (inventorySlot === null && added === false) {
         added = true;
         return getItemById(itemId);
       }
-      return element;
+      return inventorySlot;
     });
     if (added === false) {
       console.log("Can't add item to invetory. Your inventory is full.");

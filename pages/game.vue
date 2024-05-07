@@ -1,14 +1,19 @@
 <template>
   <div class="game-container">
     <NavBar />
-    <div v-if="playerStore.gameState === GameState.Normal" class="area">
-      <AreaWorld v-if="locationStore.currentArea.type === LocationType.World" />
-      <AreaLocation
-        v-if="locationStore.currentArea.type === LocationType.Container"
-      />
-    </div>
-    <div v-if="playerStore.gameState === GameState.Travel" class="travel">
-      <GameTravel />
+    <GameBar class="game-bar" />
+    <div class="game-content">
+      <div v-if="playerStore.gameState === GameState.Normal" class="area">
+        <AreaWorld
+          v-if="locationStore.currentArea.type === LocationType.World"
+        />
+        <AreaLocation
+          v-if="locationStore.currentArea.type === LocationType.Container"
+        />
+      </div>
+      <div v-if="playerStore.gameState === GameState.Travel" class="travel">
+        <GameTravel />
+      </div>
     </div>
   </div>
 </template>
@@ -28,10 +33,14 @@ definePageMeta({ middleware: ["auth"], layout: "game" });
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 1rem;
-  gap: 1rem;
 }
-
+.game-bar {
+  height: 4.5rem;
+}
+.game-content {
+  height: 100%;
+  width: 100%;
+}
 .area {
   height: 100%;
   width: 100%;
