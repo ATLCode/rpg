@@ -21,6 +21,9 @@
         :current-action-spot-id="currentActionSpotId"
         @new-current-action="newCurrentAction"
       />
+      <div v-if="locationStore.currentLocation.id === 9">
+        <AButton>Test Combat</AButton>
+      </div>
     </div>
   </div>
 </template>

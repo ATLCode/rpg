@@ -10,7 +10,7 @@
     </div>
     <div class="camp-content">
       <CardSpot
-        v-for="spot in locationStore.camp.spots"
+        v-for="spot in locationStore.camp.cookingSpots"
         :key="spot.name"
         :spot="spot"
       />
@@ -30,6 +30,7 @@ defineEmits(["close"]);
   display: flex;
   flex-direction: column;
   justify-content: center;
+  z-index: 900;
 }
 .camp-header {
   display: flex;

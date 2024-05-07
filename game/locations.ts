@@ -32,7 +32,7 @@ export const locations: Location[] = [
     name: "WorldMap",
     parent: 9001,
     type: LocationType.World,
-    mapImg: "/TestMap.jpg",
+    mapImg: "/maps/TestMap.jpg",
     mapMarkers: [
       { locationId: 1, x: 770, y: 830 },
       { locationId: 2, x: 1000, y: 1000 },
@@ -40,15 +40,15 @@ export const locations: Location[] = [
   },
   {
     id: 1,
-    name: "City",
+    name: "Town",
     parent: 0,
     child: 5,
     type: LocationType.Container,
-    mapImg:
-      "https://cdn2.inkarnate.com/cdn-cgi/image/width=1800,height=1400/https://inkarnate-api-as-production.s3.amazonaws.com/Hnr3u3xG8TYPqk7BLnZBPR",
+    mapImg: "/maps/town.jpeg",
     mapMarkers: [
       { locationId: 3, x: 222, y: 830 },
       { locationId: 4, x: 555, y: 830 },
+      { locationId: 5, x: 660, y: 830 },
       { locationId: 9, x: 770, y: 830 },
     ],
   },
