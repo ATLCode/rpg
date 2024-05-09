@@ -29,18 +29,18 @@
         @click="clickMarker(marker.locationId)"
       >
         <l-popup v-if="locationStore.currentArea.type === LocationType.World">
-          {{ locationStore.getLocationById(marker.locationId).name }}
-          <div v-if="marker.locationId === locationStore.currentLocation.id">
+          {{ locations[marker.locationId].name }}
+          <div v-if="marker.locationId === locationStore.currentLocationId">
             <AButton @click="locationStore.enterArea()">ENTER</AButton>
           </div>
           <div
             v-if="
-              !(marker.locationId === locationStore.currentLocation.id) &&
-              locationStore.currentArea.id === 0
+              !(marker.locationId === locationStore.currentLocationId) &&
+              locationStore.currentAreaId === LocationId.WorldMap
             "
           >
             <AButton
-              @click="locationStore.travelPath(locationStore.selectedPath!)"
+              @click="locationStore.travelPath(locationStore.selectedPath)"
               >TRAVEL</AButton
             >
           </div>
@@ -55,7 +55,7 @@
               locationStore.selectedLocation.type === LocationType.Interface
             "
           >
-            <AButton @click="openLocation(locationStore.selectedLocation.id)"
+            <AButton @click="openLocation(locationStore.selectedLocationId)"
               >OPEN</AButton
             >
           </div>
@@ -80,7 +80,7 @@
 <script lang="ts" setup>
 import { CRS } from "leaflet";
 import type { PropType } from "vue";
-import { LocationType } from "@/game/locations";
+import { LocationId, LocationType, locations } from "@/game/locations";
 import type { Location } from "@/game/locations";
 import { useLocationStore } from "@/stores/location";
 
@@ -94,7 +94,7 @@ const props = defineProps({
 });
 
 function clickMarker(markerLocationId: number) {
-  if (locationStore.currentLocation.parent === LocationType.World) {
+  if (locationStore.currentArea.type === LocationType.World) {
     locationStore.selectPath(markerLocationId);
   } else {
     locationStore.changeSelectedLocation(markerLocationId);

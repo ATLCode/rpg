@@ -1,59 +1,74 @@
-export type SpotResource = {
-  id: number;
-  name: string;
-  img: string;
-  skillId: number; // Verkku: would name be okay here? We could have SkillName enum even?
-  levelReq: number;
-  products: number[]; // itemId
-  interval: number; // In seconds or something the time it takes for 1 resource gathering attempt
-};
-export type SpotCooking = {
-  id: number;
-  name: string;
-  img: string;
-  skillId: number; // Verkku: would name be okay here? We could have SkillName enum even?
-  levelReq: number;
-  products: number[]; // itemId
-  interval: number; // In seconds or something the time it takes for 1 resource gathering attempt
-};
-export type SpotSleeping = {
-  id: number;
-  name: string;
-  img: string;
-  skillId: number; // Verkku: would name be okay here? We could have SkillName enum even?
-  levelReq: number;
-  products?: number[]; // itemId
-  interval: number; // In seconds or something the time it takes for 1 resource gathering attempt
+import { ItemId } from "./items";
+import { SkillId } from "~/stores/skill";
+
+export type WeightedItem = {
+  itemId: ItemId;
+  weight: number;
 };
 
-export const resourceSpots: SpotResource[] = [
-  {
-    id: 1,
+export type SpotResource = {
+  name: string;
+  img: string;
+  skillId: SkillId;
+  levelReq?: number;
+  products?: WeightedItem[];
+  interval: number;
+};
+export type SpotCooking = {
+  name: string;
+  img: string;
+  skillId: SkillId;
+  levelReq?: number;
+  products?: WeightedItem[];
+  interval: number;
+};
+export type SpotSleeping = {
+  name: string;
+  img: string;
+  skillId: SkillId;
+  levelReq?: number;
+  products?: WeightedItem[];
+  interval: number;
+};
+
+export enum ResourceSpotId {
+  UndefinedSpot,
+  SmallFishingSpot,
+  OakTree,
+}
+export enum CookingSpotId {}
+export enum SleepingSpotId {}
+
+export const resourceSpots: Record<ResourceSpotId, SpotResource> = {
+  [ResourceSpotId.UndefinedSpot]: {
+    name: "",
+    img: "",
+    skillId: SkillId.Archery,
+    interval: 1,
+  },
+  [ResourceSpotId.SmallFishingSpot]: {
     name: "Small Fishing Spot",
     img: "",
-    skillId: 1,
-    levelReq: 1,
-    products: [5, 6],
-    interval: 10,
+    skillId: SkillId.Fishing,
+    products: [
+      {
+        itemId: ItemId.RawPanfish,
+        weight: 500,
+      },
+      {
+        itemId: ItemId.RawBluegill,
+        weight: 100,
+      },
+    ],
+    interval: 3,
   },
-  {
-    id: 2,
+  [ResourceSpotId.OakTree]: {
     name: "Oak Tree",
     img: "",
-    skillId: 7,
-    levelReq: 1,
-    products: [7],
+    skillId: SkillId.Woodcutting,
+    products: [{ itemId: ItemId.OakLog, weight: 100 }],
     interval: 10,
   },
-  {
-    id: 1,
-    name: "Medium Fishing Spot",
-    img: "",
-    skillId: 1,
-    levelReq: 1,
-    products: [5, 6],
-    interval: 10,
-  },
-];
+};
 export const cookingSpots: SpotCooking[] = [];
 export const sleepingSpots: SpotSleeping[] = [];

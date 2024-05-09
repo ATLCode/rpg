@@ -1,8 +1,9 @@
+import { SkillId } from "~/stores/skill";
+
 export type Ability = {
-  id: number;
   name: string;
-  effects: number[];
-  skillId: number;
+  effects?: number[];
+  skillId: SkillId;
   levelReq: number;
 };
 
@@ -13,4 +14,14 @@ isAutomatic (You get this ability as you level up)
 isCombat (Shows up during combat)
 */
 
-export const abilities: Ability[] = [];
+export enum AbilityId {
+  FishBluegill,
+}
+
+export const abilities: Record<AbilityId, Ability> = {
+  [AbilityId.FishBluegill]: {
+    name: "Fish Bluegill",
+    skillId: SkillId.Fishing,
+    levelReq: 5,
+  },
+};

@@ -3,14 +3,18 @@
     <div class="inv-header">Inventory</div>
     <div class="inv-content">
       <div
-        v-for="item in playerStore.inventory"
-        :key="item?.id"
+        v-for="(inventoryItem, index) in playerStore.inventory"
+        :key="index"
         class="inv-slot"
       >
-        <div v-if="item?.id" class="item-slot">
-          <div>{{ item.name }}</div>
+        <div
+          v-if="inventoryItem && inventoryItem?.id !== null"
+          class="item-slot"
+        >
+          <div>{{ inventoryItem.item.name }}</div>
           <div class="item-img">
-            <img :src="item.img" class="item-icon" alt="" />
+            <img :src="inventoryItem.item.img" class="item-icon" alt="" />
+            <span>{{ inventoryItem.currentStackSize }}</span>
           </div>
         </div>
         <div v-else>Empty</div>

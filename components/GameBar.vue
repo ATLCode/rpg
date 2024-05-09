@@ -16,9 +16,10 @@
           >
         </template>
         <template #menu>
-          <div @click="saveStore.createSave">Save</div>
+          <div @click="saveStore.updateSave()">Save</div>
           <div>Settings</div>
-          <div>Log Out</div>
+          <div @click="toMenu">Save and Menu</div>
+          <div @click="saveStore.logOut">Log Out</div>
         </template>
       </AMenu>
     </div>
@@ -31,6 +32,11 @@ import { useSaveStore } from "@/stores/save";
 const locationStore = useLocationStore();
 const playerStore = usePlayerStore();
 const saveStore = useSaveStore();
+
+async function toMenu() {
+  await saveStore.updateSave();
+  navigateTo("/saves");
+}
 </script>
 <style lang="scss" scoped>
 .gamebar-container {

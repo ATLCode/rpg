@@ -1,5 +1,6 @@
-import { type Item } from "~/game/items";
+import { ItemId, type Item } from "~/game/items";
 import { items } from "~/game/items";
+import type { WeightedItem } from "~/game/spots";
 
 export enum GameState {
   Normal = "Normal",
@@ -7,25 +8,32 @@ export enum GameState {
   Combat = "Combat",
 }
 
+export type InventoryItem = {
+  id: ItemId;
+  item: Item;
+  currentStackSize: number;
+};
+
+export type Gear = {
+  head: Item | null;
+  torso: Item | null;
+  legs: Item | null;
+  hands: Item | null;
+  feet: Item | null;
+  mainHand: Item | null;
+  offHand: Item | null;
+  neck: Item | null;
+  fingers: Item | null;
+  back: Item | null;
+  ammo: Item | null;
+};
+
 export const usePlayerStore = defineStore("player", () => {
   const characterName = ref("");
 
   const gameState = ref<GameState>(GameState.Normal);
 
   // Like this or should each slot have id etc?
-  type Gear = {
-    head: Item | null;
-    torso: Item | null;
-    legs: Item | null;
-    hands: Item | null;
-    feet: Item | null;
-    mainHand: Item | null;
-    offHand: Item | null;
-    neck: Item | null;
-    fingers: Item | null;
-    back: Item | null;
-    ammo: Item | null;
-  };
 
   const gear = ref<Gear>({
     head: null,
@@ -42,63 +50,74 @@ export const usePlayerStore = defineStore("player", () => {
   });
 
   // Iventory as array of either item ids or nulls (or should there be item that's essentially empty?), this way we can handle moving items not next to eachother
-  const inventory = ref<(Item | null)[]>([
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-  ]);
+  const inventory = ref<(InventoryItem | null)[]>(new Array(28).fill(null));
 
-  function getItemById(itemId: number) {
-    const result = items.find((item) => item.id === itemId);
+  function getItemById(itemId: ItemId) {
+    const result = items[itemId];
     if (!result) {
-      throw new Error(`Can't find location with id: ${itemId}`);
+      throw new Error(`Can't find item with id: ${itemId}`);
     }
     return result;
   }
 
-  function addItemToInventory(itemId: number) {
+  function addItemToInventory(itemId: ItemId) {
+    const item = items[itemId];
     let added = false;
-    const mappedInventory = inventory.value.map((inventorySlot) => {
-      if (inventorySlot?.id === itemId && added === false) {
-        // Item of this type already exists
-        // How to do stacking?
-      }
-      if (inventorySlot === null && added === false) {
-        added = true;
-        return getItemById(itemId);
-      }
-      return inventorySlot;
-    });
-    if (added === false) {
-      console.log("Can't add item to invetory. Your inventory is full.");
+    if (item.stackSize > 1) {
+      inventory.value = inventory.value.map((inventoryItem) => {
+        if (
+          inventoryItem &&
+          inventoryItem.id === itemId &&
+          item.stackSize > inventoryItem.currentStackSize &&
+          !added
+        ) {
+          inventoryItem.currentStackSize += 1;
+          added = true;
+        }
+        return inventoryItem;
+      });
     }
-    inventory.value = mappedInventory;
-    console.log(mappedInventory);
+
+    inventory.value = inventory.value.map((inventoryItem) => {
+      if (!inventoryItem && !added) {
+        inventoryItem = {
+          id: itemId,
+          item,
+          currentStackSize: 1,
+        };
+        added = true;
+      }
+      return inventoryItem;
+    });
+
+    if (!added) {
+      throw new Error("No space in inventory");
+    }
+  }
+
+  function chooseWeightedItem(weightedItems: WeightedItem[]) {
+    const totalWeight = weightedItems.reduce(
+      (acc, curr) => curr.weight + acc,
+      0
+    );
+
+    const magicNumber = Math.ceil(Math.random() * totalWeight);
+    let itemFound = false;
+    const itemId: ItemId = weightedItems.reduce(
+      (acc: ItemId | number, curr) => {
+        if (itemFound) {
+          return acc;
+        }
+        const weightToCheck = curr.weight + acc;
+        if (magicNumber > weightToCheck) {
+          return weightToCheck;
+        }
+        itemFound = true;
+        return curr.itemId;
+      },
+      0
+    );
+    return itemId;
   }
 
   return {
@@ -108,5 +127,6 @@ export const usePlayerStore = defineStore("player", () => {
     inventory,
     getItemById,
     addItemToInventory,
+    chooseWeightedItem,
   };
 });

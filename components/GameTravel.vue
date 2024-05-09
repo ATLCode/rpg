@@ -1,7 +1,7 @@
 <template>
   <div class="travel-container">
-    <div class="travel-text">
-      Traveling to {{ locationStore.targetLocation?.name }}
+    <div v-if="locationStore.targetLocationId" class="travel-text">
+      Traveling to {{ locations[locationStore.targetLocationId].name }}
     </div>
     <AProgressLinear v-model="progress" :max="totalSeconds" />
   </div>
@@ -10,11 +10,12 @@
 <script lang="ts" setup>
 import { useLocationStore } from "@/stores/location";
 import { usePlayerStore, GameState } from "@/stores/player";
+import { locations } from "~/game/locations";
 const locationStore = useLocationStore();
 const playerStore = usePlayerStore();
 
 onMounted(() => {
-  if (!locationStore.activePath || !locationStore.targetLocation) {
+  if (!locationStore.activePath || !locationStore.targetLocationId) {
     console.log("Can't find active path or target location");
     return;
   }
@@ -54,7 +55,7 @@ watch(finishedInterval, () => {
 });
 
 function endTravel() {
-  locationStore.currentLocation = locationStore.targetLocation!;
+  locationStore.currentLocationId = locationStore.targetLocationId!;
   playerStore.gameState = GameState.Normal;
 }
 </script>

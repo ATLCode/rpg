@@ -15,13 +15,13 @@
     <div>{{ locationStore.currentResourceSpots }}</div>
     <div class="interface-content">
       <CardSpot
-        v-for="spot in locationStore.currentResourceSpots"
-        :key="spot.name"
-        :spot="spot"
+        v-for="spotId in locationStore.currentLocation.resourceSpots"
+        :key="spotId"
+        :spot-id="spotId"
         :current-action-spot-id="currentActionSpotId"
         @new-current-action="newCurrentAction"
       />
-      <div v-if="locationStore.currentLocation.id === 9">
+      <div v-if="locationStore.currentLocationId === LocationId.Arena">
         <AButton>Test Combat</AButton>
       </div>
     </div>
@@ -30,14 +30,18 @@
 
 <script lang="ts" setup>
 import { useLocationStore } from "@/stores/location";
+import { LocationId } from "~/game/locations";
+import type { ResourceSpotId } from "~/game/spots";
 
 const locationStore = useLocationStore();
 
 defineEmits(["back"]);
 
-const currentActionSpotId = ref<number | undefined>(undefined);
+const currentActionSpotId = ref<ResourceSpotId | undefined>(undefined);
 
-function newCurrentAction(id: number) {
+function newCurrentAction(id: ResourceSpotId) {
+  console.log("new current action started");
+  console.log(id);
   currentActionSpotId.value = id;
 }
 </script>

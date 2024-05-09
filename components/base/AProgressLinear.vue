@@ -1,6 +1,6 @@
 <template>
   <div class="aprogress">
-    <progress :value="value" :max="props.max"></progress>
+    <progress :value="value" :max="props.max" class="progress"></progress>
   </div>
 </template>
 <script lang="ts" setup>
@@ -26,4 +26,17 @@ const props = defineProps({
 
 const value = defineModel<number>();
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+progress {
+  height: 1.5rem;
+  border-radius: 5px;
+}
+progress::-webkit-progress-bar {
+  border-radius: 5px;
+  background-color: var(--elevation2);
+}
+progress::-webkit-progress-value {
+  background-color: var(--success);
+  border-radius: 5px;
+}
+</style>

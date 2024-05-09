@@ -20,5 +20,10 @@ const skillStore = useSkillStore();
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  padding: 1rem;
+}
+.skill-info {
+  border: 1px solid grey;
+  padding: 0.5rem;
 }
 </style>

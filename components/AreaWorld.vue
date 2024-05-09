@@ -3,16 +3,23 @@
     <div v-if="settingStore.showMap === false" class="world-info">
       <div class="locations">
         <div
-          v-for="location in locationStore.currentLocations"
-          :key="location.id"
+          v-for="[locationId, location] in Object.entries(
+            locationStore.currentLocations
+          ) as unknown as [LocationId, Location][]"
+          :key="locationId"
           class="location-card"
           :class="{
-            active: location.id === locationStore.selectedLocation.id,
+            active: locationId === locationStore.selectedLocationId,
           }"
-          @click="locationStore.changeSelectedLocation(location.id)"
+          @click="locationStore.changeSelectedLocation(locationId)"
         >
           <div>{{ location.name }}</div>
-          <div v-if="location.id === locationStore.currentLocation.id">
+          <div
+            v-if="
+              (locationId as unknown as LocationId) ===
+              locationStore.currentLocationId
+            "
+          >
             <img src="../assets/icons/helmet.svg" class="character" alt="" />
           </div>
         </div>
@@ -20,16 +27,15 @@
       <div class="selected-location">
         <EnterLocation
           v-if="
-            locationStore.selectedLocation.id ===
-            locationStore.currentLocation.id
+            locationStore.selectedLocationId === locationStore.currentLocationId
           "
         />
         <PathInfo
           v-if="
             !(
-              locationStore.selectedLocation.id ===
-              locationStore.currentLocation.id
-            ) && locationStore.currentArea.id === 0
+              locationStore.selectedLocationId ===
+              locationStore.currentLocationId
+            ) && locationStore.currentAreaId === LocationId.WorldMap
           "
           :path="selectedPath"
         />
@@ -44,6 +50,7 @@
 <script lang="ts" setup>
 import { useLocationStore } from "@/stores/location";
 import { useSettingStore } from "@/stores/setting";
+import { LocationId, type Location } from "~/game/locations";
 const locationStore = useLocationStore();
 const settingStore = useSettingStore();
 
@@ -51,7 +58,7 @@ const paths = locationStore.currentPaths;
 
 const selectedPath = computed(() => {
   return paths.find((path) =>
-    path.locations.includes(locationStore.currentLocation.id)
+    path.locations.includes(locationStore.currentLocationId)
   );
 });
 </script>
