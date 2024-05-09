@@ -71,12 +71,12 @@ export const useSaveStore = defineStore("save", () => {
     };
 
     // return Buffer.from(JSON.stringify(save)).toString("base64");
-    return window.btoa(unescape(encodeURIComponent(JSON.stringify(save))));
+    return window.btoa(encodeURIComponent(JSON.stringify(save)));
   }
 
   function deconstructSaveData(data: string): SaveData {
     // const saveData = JSON.parse(Buffer.from(data, "base64").toString("ascii"));
-    const saveData = JSON.parse(decodeURIComponent(escape(window.atob(data))));
+    const saveData = JSON.parse(decodeURIComponent(window.atob(data)));
     if (!saveData.currentLocationId) {
       console.log("Houston we have a problem");
     }
@@ -84,13 +84,11 @@ export const useSaveStore = defineStore("save", () => {
   }
 
   async function updateSave() {
-    console.log(selectedSaveId);
-
     try {
       await $fetch("/api/saves/update", {
         method: "POST",
         body: {
-          saveId: selectedSaveId,
+          saveId: selectedSaveId.value,
           saveData: constructSaveData(),
         },
       });
