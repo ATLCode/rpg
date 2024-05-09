@@ -1,3 +1,5 @@
+import { AbilityId } from "./abilities";
+
 export enum ItemType {
   Equipment = "Equipment",
   Key = "Key",
@@ -23,7 +25,6 @@ export enum ItemRarity {
 }
 
 export type Item = {
-  id: number;
   name: string;
   type: ItemType;
   property: ItemProperty | null;
@@ -33,13 +34,20 @@ export type Item = {
   value: number;
   rarity: string; // Enum:
   img: string;
-  levelReq?: number;
+  abilityRequirements?: AbilityId[];
   xp?: number;
 };
 
-export const items: Item[] = [
-  {
-    id: 5,
+// Items array to itemst object where key is enum?
+
+export enum ItemId {
+  RawPanfish,
+  RawBluegill,
+  OakLog,
+}
+
+export const items: Record<ItemId, Item> = {
+  [ItemId.RawPanfish]: {
     name: "Raw Panfish",
     type: ItemType.Resource,
     property: null,
@@ -49,11 +57,9 @@ export const items: Item[] = [
     value: 1,
     rarity: ItemRarity.Normal,
     img: "/items/panfish.png",
-    levelReq: 1,
     xp: 10,
   },
-  {
-    id: 6,
+  [ItemId.RawBluegill]: {
     name: "Raw Bluegill",
     type: ItemType.Resource,
     property: null,
@@ -63,11 +69,10 @@ export const items: Item[] = [
     value: 1,
     rarity: ItemRarity.Normal,
     img: "/items/bluegill.png",
-    levelReq: 5,
+    abilityRequirements: [AbilityId.FishBluegill],
     xp: 20,
   },
-  {
-    id: 7,
+  [ItemId.OakLog]: {
     name: "Oak Log",
     type: ItemType.Resource,
     property: null,
@@ -77,45 +82,7 @@ export const items: Item[] = [
     value: 1,
     rarity: ItemRarity.Normal,
     img: "/items/oak_log.png",
-    levelReq: 1,
-    xp: 10,
-  },
-];
 
-// Items array to itemst object where key is enum?
-
-enum itemIds {
-  NormalLog = "Normal Log",
-  SuperLog = "Super Log",
-}
-
-export const itemsTest: Record<itemIds, any> = {
-  [itemIds.NormalLog]: {
-    id: 7,
-    name: "Normal Log",
-    type: ItemType.Resource,
-    property: null,
-    equipSlot: null,
-    weight: 1,
-    stackSize: 10,
-    value: 1,
-    rarity: ItemRarity.Normal,
-    img: "",
-    levelReq: 1,
-    xp: 10,
-  },
-  [itemIds.SuperLog]: {
-    id: 7,
-    name: "Normal Log",
-    type: ItemType.Resource,
-    property: null,
-    equipSlot: null,
-    weight: 1,
-    stackSize: 10,
-    value: 1,
-    rarity: ItemRarity.Normal,
-    img: "",
-    levelReq: 1,
-    xp: 10,
+    xp: 500,
   },
 };

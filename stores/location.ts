@@ -1,28 +1,46 @@
 import { defaults } from "~/game/defaults";
-import { locations, type Location, LocationType } from "~/game/locations";
+import {
+  locations,
+  type Location,
+  LocationType,
+  LocationId,
+} from "~/game/locations";
 import type { SpotResource, SpotCooking, SpotSleeping } from "@/game/spots";
 import { resourceSpots } from "@/game/spots";
 import { paths, type Path } from "~/game/paths";
 import { usePlayerStore, GameState } from "@/stores/player";
+
 export const useLocationStore = defineStore("location", () => {
   const playerStore = usePlayerStore();
 
-  const currentLocation = ref<Location>(
-    getLocationById(defaults.startingLocationId)
-  );
+  const currentLocationId = ref<LocationId>(defaults.startingLocationId);
 
-  const currentArea = ref<Location>(findArea());
-  const currentLocations = ref<Location[]>(findLocations());
+  const currentLocation = computed(() => {
+    return locations[currentLocationId.value];
+  });
+
+  const currentAreaId = computed(() => {
+    return currentLocation.value.parent;
+  });
+  const currentArea = computed(() => {
+    return locations[currentAreaId.value];
+  });
+
+  const currentLocations = ref<Record<LocationId, Location>>(findLocations());
   const currentPaths = ref<Path[]>(findPaths());
-  const selectedLocation = ref<Location>(currentLocation.value);
 
-  function changeSelectedLocation(locationId: number) {
-    selectedLocation.value = getLocationById(locationId);
+  const selectedLocationId = ref<LocationId>(currentLocationId.value);
+  const selectedLocation = computed(() => {
+    return locations[selectedLocationId.value];
+  });
+
+  function changeSelectedLocation(locationId: LocationId) {
+    selectedLocationId.value = locationId;
   }
 
   const playerCoordinates = computed(() => {
     const currentMarker = currentArea.value.mapMarkers?.find(
-      (marker) => marker.locationId === currentLocation.value.id
+      (marker) => marker.locationId === currentLocationId.value
     );
     return { x: currentMarker!.x, y: currentMarker!.y };
   });
@@ -39,8 +57,6 @@ export const useLocationStore = defineStore("location", () => {
     sleepingSpots: [],
   });
 
-  // Verkku, should this be computed or just make function of this?
-
   const currentResourceSpots = computed(() => {
     if (currentLocation.value.resourceSpots?.length === 0) {
       return;
@@ -48,7 +64,7 @@ export const useLocationStore = defineStore("location", () => {
     const spots: SpotResource[] = [];
 
     currentLocation.value.resourceSpots?.forEach((spotId) => {
-      const spot = resourceSpots.find((rSpot) => rSpot.id === spotId);
+      const spot = resourceSpots[spotId];
       if (!spot) {
         return;
       }
@@ -57,39 +73,31 @@ export const useLocationStore = defineStore("location", () => {
     return spots;
   });
 
-  function getLocationById(id: number) {
-    const result = locations.find((location) => location.id === id);
-    if (!result) {
-      throw new Error(`Can't find location with id: ${id}`);
-    }
-    return result;
-  }
-
   // TRAVELING & PATHS
 
-  const targetLocation = ref<Location | null>(null);
+  const targetLocationId = ref<LocationId | null>(null);
   const activePath = ref<Path | null>(null);
 
   const selectedPath = ref<Path | null>(null);
   function selectPath(locationId: number) {
-    console.log("Selecting path for");
-    console.log(locationId);
     const foundPath = currentPaths.value.find((path) => {
-      return path.locations.includes(locationId);
+      return Object.values(path.locations).includes(locationId);
     });
     if (foundPath) {
       selectedPath.value = foundPath;
     }
   }
 
-  function travelPath(path: Path) {
+  function travelPath(path: Path | null) {
+    if (!path) {
+      throw new Error("Path not selected");
+    }
     const targetLocations = path.locations.filter(
-      (endPoint) => endPoint !== currentLocation.value.id
+      (endPoint) => endPoint !== currentLocationId.value
     );
+
     if (targetLocations.length === 1) {
-      const pathTargetLocation = getLocationById(targetLocations[0]);
-      // How To travel here
-      targetLocation.value = pathTargetLocation;
+      targetLocationId.value = targetLocations[0];
       activePath.value = path;
       playerStore.gameState = GameState.Travel;
     } else {
@@ -122,31 +130,27 @@ export const useLocationStore = defineStore("location", () => {
     }
   }
 
-  function goToLocation(locationId: number) {
-    currentLocation.value = getLocationById(locationId);
-    currentArea.value = findArea();
+  function goToLocation(locationId: LocationId) {
+    currentLocationId.value = locationId;
     currentLocations.value = findLocations();
     currentPaths.value = findPaths();
   }
 
-  function findArea() {
-    console.log(currentLocation.value);
-    return getLocationById(currentLocation.value.parent);
-  }
-
-  function findLocations() {
-    if (currentLocation.value.parent === 9001) {
-      return [];
+  function findLocations(): Record<LocationId, Location> {
+    if (currentLocation.value.parent === LocationId.None) {
+      return {} as Record<LocationId, Location>;
     }
-    return locations.filter(
-      (location) => location.parent === currentLocation.value.parent
-    );
+    return Object.fromEntries(
+      Object.entries(locations).filter(
+        ([_key, value]) => value.parent === currentLocation.value.parent
+      )
+    ) as Record<LocationId, Location>;
   }
 
   function findPaths(): Path[] {
     const pathArray: Path[] = [];
-    paths.forEach((path) => {
-      if (path.locations.includes(currentLocation.value.id)) {
+    Object.values(paths).forEach((path) => {
+      if (path.locations.includes(currentLocationId.value)) {
         pathArray.push(path);
       }
     });
@@ -154,7 +158,7 @@ export const useLocationStore = defineStore("location", () => {
   }
 
   function $reset() {
-    currentLocation.value = getLocationById(defaults.startingLocationId);
+    currentLocationId.value = defaults.startingLocationId;
     camp.value = {
       resourceSpots: [],
       cookingSpots: [],
@@ -163,16 +167,18 @@ export const useLocationStore = defineStore("location", () => {
   }
 
   return {
+    currentLocationId,
     currentLocation,
+    currentAreaId,
     currentArea,
     currentLocations,
     currentPaths,
     currentResourceSpots,
+    selectedLocationId,
     selectedLocation,
     playerCoordinates,
     changeSelectedLocation,
-    getLocationById,
-    targetLocation,
+    targetLocationId,
     activePath,
     selectedPath,
     selectPath,

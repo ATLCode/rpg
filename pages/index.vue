@@ -51,6 +51,7 @@ async function signIn() {
     msg.value = error.message;
   } else {
     msg.value = "Success";
+    navigateTo("/saves");
   }
 }
 </script>

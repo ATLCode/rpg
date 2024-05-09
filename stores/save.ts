@@ -1,4 +1,6 @@
-import { usePlayerStore } from "./player";
+import { usePlayerStore, type Gear, type InventoryItem } from "./player";
+import type { LocationId } from "~/game/locations";
+
 import { useLocationStore } from "@/stores/location";
 
 export const useSaveStore = defineStore("save", () => {
@@ -12,6 +14,7 @@ export const useSaveStore = defineStore("save", () => {
   }
 
   async function logOut() {
+    await updateSave();
     const { error } = await client.auth.signOut();
 
     if (error) {
@@ -31,8 +34,10 @@ export const useSaveStore = defineStore("save", () => {
   */
 
   type SaveData = {
-    currentLocationId: number;
+    currentLocationId: LocationId;
     characterName: string;
+    gear: Gear;
+    inventory: (InventoryItem | null)[];
   };
 
   type Save = {
@@ -41,6 +46,7 @@ export const useSaveStore = defineStore("save", () => {
   };
 
   const saves = ref<Save[]>([]);
+  const selectedSaveId = ref<number | undefined>(undefined);
 
   async function getUserSaves() {
     const { data, error } = await useFetch("/api/saves/get-for-user");
@@ -58,8 +64,10 @@ export const useSaveStore = defineStore("save", () => {
 
   function constructSaveData() {
     const save: SaveData = {
-      currentLocationId: locationStore.currentLocation.id,
+      currentLocationId: locationStore.currentLocationId,
       characterName: playerStore.characterName,
+      gear: playerStore.gear,
+      inventory: playerStore.inventory,
     };
 
     // return Buffer.from(JSON.stringify(save)).toString("base64");
@@ -69,21 +77,20 @@ export const useSaveStore = defineStore("save", () => {
   function deconstructSaveData(data: string): SaveData {
     // const saveData = JSON.parse(Buffer.from(data, "base64").toString("ascii"));
     const saveData = JSON.parse(decodeURIComponent(escape(window.atob(data))));
-    if (
-      !saveData.currentLocationId ||
-      typeof saveData.currentLocationId !== "number"
-    ) {
+    if (!saveData.currentLocationId) {
       console.log("Houston we have a problem");
     }
     return saveData;
   }
 
-  async function updateSave(saveId: number) {
+  async function updateSave() {
+    console.log(selectedSaveId);
+
     try {
       await $fetch("/api/saves/update", {
         method: "POST",
         body: {
-          saveId,
+          saveId: selectedSaveId,
           saveData: constructSaveData(),
         },
       });
@@ -113,7 +120,10 @@ export const useSaveStore = defineStore("save", () => {
   function loadSave(saveSlot: Save) {
     console.log(saveSlot.data);
     playerStore.characterName = saveSlot.data.characterName;
-    locationStore.currentLocation.id = saveSlot.data.currentLocationId;
+    locationStore.currentLocationId = saveSlot.data.currentLocationId;
+    playerStore.gear = saveSlot.data.gear;
+    playerStore.inventory = saveSlot.data.inventory;
+    selectedSaveId.value = saveSlot.id;
     navigateTo("/game");
   }
 
@@ -137,6 +147,7 @@ export const useSaveStore = defineStore("save", () => {
     logOut,
     updateSave,
     createSave,
+    selectedSaveId,
     loadSave,
     deleteSave,
     getUserSaves,

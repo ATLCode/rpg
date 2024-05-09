@@ -4,10 +4,12 @@
       <div v-if="currentView === LocationType.Container" class="locations">
         <h1>{{ locationStore.currentArea.name }}</h1>
         <div
-          v-for="location in locationStore.currentLocations"
-          :key="location.id"
+          v-for="[locationId, location] in Object.entries(
+            locationStore.currentLocations
+          )"
+          :key="locationId"
           class="location-card"
-          @click="openLocation(location.id)"
+          @click="openLocation(locationId as unknown as LocationId)"
         >
           <div class="location-icon"></div>
           <div class="location-name">{{ location.name }}</div>
@@ -30,7 +32,7 @@
 
 <script lang="ts" setup>
 import { useLocationStore } from "@/stores/location";
-import { LocationType } from "~/game/locations";
+import { LocationId, LocationType } from "~/game/locations";
 import { useSettingStore } from "@/stores/setting";
 
 const locationStore = useLocationStore();
@@ -38,7 +40,7 @@ const settingStore = useSettingStore();
 
 const currentView = ref<LocationType>(LocationType.Container);
 
-function openLocation(locationId: number) {
+function openLocation(locationId: LocationId) {
   locationStore.goToLocation(locationId);
   currentView.value = locationStore.currentLocation.type;
 }

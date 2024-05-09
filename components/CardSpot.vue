@@ -7,30 +7,29 @@
     <div class="spot-header">
       <div>{{ spot.name }}</div>
       <ASpacer />
-      <!--
-        <div>{{ skillStore.getSkillById(spot.skillId)?.name }}</div>
-      -->
       <div>{{ spot.levelReq }}</div>
     </div>
-    <div>{{ skillStore.getSkillById(spot.skillId)?.name }}</div>
+    <div>{{ skillStore.skills[spot.skillId].name }}</div>
     <div>Spot Image</div>
     <AProgressLinear v-model="progress" :max="totalSeconds" />
     <div>{{ isDisabled }}</div>
+    <div>{{ props.currentActionSpotId || "undefined" }}</div>
+    <div>{{ props.spotId }}</div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import type { SpotResource, SpotCooking, SpotSleeping } from "@/game/spots";
+import { ResourceSpotId, resourceSpots } from "@/game/spots";
 import { useSkillStore } from "@/stores/skill";
 import { usePlayerStore } from "@/stores/player";
 const skillStore = useSkillStore();
 const playerStore = usePlayerStore();
 
 const props = defineProps({
-  spot: {
-    type: Object as PropType<SpotResource | SpotCooking | SpotSleeping>,
-    default: null,
+  spotId: {
+    type: Number as PropType<ResourceSpotId>,
+    required: true,
   },
   currentActionSpotId: {
     type: Number,
@@ -40,12 +39,16 @@ const props = defineProps({
 
 const emit = defineEmits(["newCurrentAction"]);
 
-const totalSeconds = ref(props.spot.interval);
+const spot = computed(() => {
+  return resourceSpots[props.spotId];
+});
+
+const totalSeconds = ref(spot.value.interval);
 const progress = ref(0);
 const isDisabled = computed(() => {
   if (
-    props.currentActionSpotId &&
-    props.currentActionSpotId !== props.spot.id
+    props.currentActionSpotId !== undefined &&
+    props.currentActionSpotId !== props.spotId
   ) {
     return true;
   } else {
@@ -65,12 +68,11 @@ const actionInterval = ref<ReturnType<typeof setTimeout> | undefined>(
 );
 
 function startAction() {
-  console.log(props.currentActionSpotId);
-  if (props.currentActionSpotId) {
+  if (props.currentActionSpotId !== undefined) {
     stopAction();
     return;
   }
-  emit("newCurrentAction", props.spot.id);
+  emit("newCurrentAction", props.spotId);
   actionInterval.value = setInterval(() => {
     addTime(1);
   }, 1000);
@@ -103,10 +105,15 @@ watch(finishedInterval, () => {
 
 function getResource() {
   console.log("got resource");
-  console.log(props.spot);
-  skillStore.giveSkillExp(props.spot.skillId, 10);
-  if (props.spot.products) {
-    playerStore.addItemToInventory(props.spot.products[0]);
+  skillStore.giveSkillExp(spot.value.skillId, 500);
+  if (spot.value.products) {
+    try {
+      playerStore.addItemToInventory(
+        playerStore.chooseWeightedItem(spot.value.products)
+      );
+    } catch (error) {
+      console.log("Inventory is full");
+    }
   }
 }
 </script>
@@ -119,6 +126,7 @@ function getResource() {
   border-radius: 10px;
   padding: 1rem;
   cursor: pointer;
+  gap: 0.5rem;
   .spot-header {
     display: flex;
   }

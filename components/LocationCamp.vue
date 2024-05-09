@@ -8,19 +8,11 @@
         >Close</AButton
       >
     </div>
-    <div class="camp-content">
-      <CardSpot
-        v-for="spot in locationStore.camp.cookingSpots"
-        :key="spot.name"
-        :spot="spot"
-      />
-    </div>
+    <div class="camp-content"></div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useLocationStore } from "@/stores/location";
-const locationStore = useLocationStore();
 defineEmits(["close"]);
 </script>
 

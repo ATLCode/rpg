@@ -1,113 +1,126 @@
+import {
+  ResourceSpotId,
+  type CookingSpotId,
+  type SleepingSpotId,
+} from "./spots";
+
 export enum LocationType {
   World,
   Container,
   Interface,
   Exit,
 }
+export enum LocationId {
+  None,
+  WorldMap,
+  Town,
+  Forest,
+  Shop,
+  Tavern,
+  CityGate,
+  ForestPond,
+  ForestEdge,
+  Arena,
+  Cave,
+}
 
 export type Marker = {
-  locationId: number;
+  locationId: LocationId;
   x: number;
   y: number;
 };
 
 export type Location = {
-  id: number;
   name: string;
-  parent: number;
-  child?: number;
+  parent: LocationId;
+  child?: LocationId;
   type: LocationType;
   flavorImg?: string;
   mapImg?: string;
   mapMarkers?: Marker[];
   npcs?: number[]; // Only Interfaces
-  resourceSpots?: number[]; // Only Interfaces
-  cookingSpots?: number[]; // Only Interfaces
-  sleepingSpots?: number[]; // Only Interfaces
+  resourceSpots?: ResourceSpotId[]; // Only Interfaces
+  cookingSpots?: CookingSpotId[]; // Only Interfaces
+  sleepingSpots?: SleepingSpotId[]; // Only Interfaces
 };
 
-export const locations: Location[] = [
-  {
-    id: 0,
+export const locations: Record<LocationId, Location> = {
+  [LocationId.None]: {
+    name: "None",
+    parent: LocationId.None,
+    type: LocationType.World,
+    mapImg: "",
+  },
+  [LocationId.WorldMap]: {
     name: "WorldMap",
-    parent: 9001,
+    parent: LocationId.None,
     type: LocationType.World,
     mapImg: "/maps/TestMap.jpg",
     mapMarkers: [
-      { locationId: 1, x: 770, y: 830 },
-      { locationId: 2, x: 1000, y: 1000 },
+      { locationId: LocationId.Town, x: 770, y: 830 },
+      { locationId: LocationId.Forest, x: 1000, y: 1000 },
     ],
   },
-  {
-    id: 1,
+  [LocationId.Town]: {
     name: "Town",
-    parent: 0,
-    child: 5,
+    parent: LocationId.WorldMap,
+    child: LocationId.CityGate,
     type: LocationType.Container,
     mapImg: "/maps/town.jpeg",
     mapMarkers: [
-      { locationId: 3, x: 222, y: 830 },
-      { locationId: 4, x: 555, y: 830 },
-      { locationId: 5, x: 660, y: 830 },
-      { locationId: 9, x: 770, y: 830 },
+      { locationId: LocationId.Shop, x: 1000, y: 730 },
+      { locationId: LocationId.Tavern, x: 555, y: 830 },
+      { locationId: LocationId.CityGate, x: 70, y: 170 },
+      { locationId: LocationId.Arena, x: 770, y: 830 },
     ],
   },
-  {
-    id: 2,
+  [LocationId.Forest]: {
     name: "Forest",
-    parent: 0,
-    child: 8,
+    parent: LocationId.WorldMap,
+    child: LocationId.ForestEdge,
     type: LocationType.Container,
     mapImg:
       "https://www.forgotten-adventures.net/wp-content/uploads/2020/03/Forest_Pond_30x28_200dpi_Magical_Day_THUMBNAIL.jpg",
     mapMarkers: [
-      { locationId: 6, x: 222, y: 830 },
-      { locationId: 7, x: 555, y: 830 },
-      { locationId: 8, x: 770, y: 830 },
+      { locationId: LocationId.ForestPond, x: 375, y: 330 },
+      { locationId: LocationId.Cave, x: 750, y: 650 },
+      { locationId: LocationId.ForestEdge, x: 280, y: 830 },
     ],
   },
-  {
-    id: 3,
+  [LocationId.Shop]: {
     name: "Shop",
-    parent: 1,
+    parent: LocationId.Town,
     type: LocationType.Interface,
   },
-  {
-    id: 4,
+  [LocationId.Tavern]: {
     name: "Tavern",
-    parent: 1,
+    parent: LocationId.Town,
     type: LocationType.Interface,
   },
-  {
-    id: 5,
+  [LocationId.CityGate]: {
     name: "City Gate",
-    parent: 1,
+    parent: LocationId.Town,
     type: LocationType.Exit,
   },
-  {
-    id: 6,
+  [LocationId.ForestPond]: {
     name: "Forest Pond",
-    parent: 2,
+    parent: LocationId.Forest,
     type: LocationType.Interface,
-
-    resourceSpots: [1, 2],
+    resourceSpots: [ResourceSpotId.SmallFishingSpot, ResourceSpotId.OakTree],
   },
-  {
-    id: 7,
+  [LocationId.Cave]: {
     name: "Cave",
-    parent: 2,
+    parent: LocationId.Forest,
     type: LocationType.Container,
   },
-  {
-    id: 8,
+  [LocationId.ForestEdge]: {
     name: "Forest Edge",
-    parent: 2,
+    parent: LocationId.Forest,
     type: LocationType.Exit,
   },
-  {
-    id: 9,
+  [LocationId.Arena]: {
     name: "Arena",
-    parent: 1,
+    parent: LocationId.Town,
     type: LocationType.Interface,
   },
-];
+};

@@ -1,7 +1,9 @@
+import { LocationId } from "./locations";
+
 type Defaults = {
-  startingLocationId: number;
+  startingLocationId: LocationId;
 };
 
 export const defaults: Defaults = {
-  startingLocationId: 1,
+  startingLocationId: LocationId.Town,
 };

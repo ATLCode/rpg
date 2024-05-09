@@ -1,7 +1,8 @@
+import { LocationId } from "./locations";
+
 export type Path = {
-  id: number;
   name: string;
-  locations: [number, number];
+  locations: [LocationId, LocationId];
   encounters: number[]; // Give type later
   reqSkills: null;
   reqItem: null;
@@ -9,15 +10,18 @@ export type Path = {
   travelTime: number; // Seconds
 };
 
-export const paths: Path[] = [
-  {
-    id: 1,
+export enum PathId {
+  ForestPath,
+}
+
+export const paths: Record<PathId, Path> = {
+  [PathId.ForestPath]: {
     name: "Forest Path",
-    locations: [1, 2],
+    locations: [LocationId.Town, LocationId.Forest],
     encounters: [],
     reqSkills: null,
     reqItem: null,
     reqQuest: null,
-    travelTime: 5,
+    travelTime: 1,
   },
-];
+};
