@@ -11,8 +11,7 @@ export default eventHandler(async (event) => {
   const { error } = await client
     .from("saves")
     .delete()
-    .eq("id", body.saveId)
-    .select();
+    .eq("id", body.saveId);
 
   if (error) {
     throw new Error("Unable to delete save");
