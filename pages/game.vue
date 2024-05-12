@@ -1,7 +1,10 @@
 <template>
   <div class="game-container">
-    <NavBar />
-    <GameBar class="game-bar" />
+    <NavBar v-if="!(playerStore.gameState === GameState.Combat)" />
+    <GameBar
+      class="game-bar"
+      v-if="!(playerStore.gameState === GameState.Combat)"
+    />
     <div class="game-content">
       <div v-if="playerStore.gameState === GameState.Normal" class="area">
         <AreaWorld
@@ -13,6 +16,9 @@
       </div>
       <div v-if="playerStore.gameState === GameState.Travel" class="travel">
         <GameTravel />
+      </div>
+      <div v-if="playerStore.gameState === GameState.Combat" class="combat">
+        <GameCombat />
       </div>
     </div>
   </div>
@@ -46,6 +52,10 @@ definePageMeta({ middleware: ["auth"], layout: "game" });
   width: 100%;
 }
 .travel {
+  height: 100%;
+  width: 100%;
+}
+.combat {
   height: 100%;
   width: 100%;
 }

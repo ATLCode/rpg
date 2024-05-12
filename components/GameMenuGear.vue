@@ -29,6 +29,8 @@
 .gear-container {
   height: 100%;
   width: 100%;
+  display: flex;
+  justify-content: center;
   border: 1px grey solid;
 }
 .gear-slot {
@@ -36,6 +38,7 @@
 }
 .gear-grid {
   height: 100%;
+  width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr;

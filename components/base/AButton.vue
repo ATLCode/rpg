@@ -6,9 +6,16 @@
     :style="style"
   >
     <div class="button-content">
-      <slot name="prepend" />
-      <slot></slot>
-      <slot name="append" />
+      <div class="prepend-slot">
+        <slot name="prepend" />
+      </div>
+
+      <div class="main-slot">
+        <slot></slot>
+      </div>
+      <div class="appendslot">
+        <slot name="append" />
+      </div>
     </div>
   </button>
 </template>
@@ -94,5 +101,9 @@ onMounted(() => {
     grid-template-columns: auto 1fr auto;
     align-items: center;
   }
+}
+.main-slot {
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>

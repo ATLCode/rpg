@@ -22,7 +22,9 @@
         @new-current-action="newCurrentAction"
       />
       <div v-if="locationStore.currentLocationId === LocationId.Arena">
-        <AButton>Test Combat</AButton>
+        <AButton @click="playerStore.gameState = GameState.Combat"
+          >Test Combat</AButton
+        >
       </div>
     </div>
   </div>
@@ -32,16 +34,16 @@
 import { useLocationStore } from "@/stores/location";
 import { LocationId } from "~/game/locations";
 import type { ResourceSpotId } from "~/game/spots";
+import { usePlayerStore, GameState } from "@/stores/player";
 
 const locationStore = useLocationStore();
+const playerStore = usePlayerStore();
 
 defineEmits(["back"]);
 
 const currentActionSpotId = ref<ResourceSpotId | undefined>(undefined);
 
 function newCurrentAction(id: ResourceSpotId) {
-  console.log("new current action started");
-  console.log(id);
   currentActionSpotId.value = id;
 }
 </script>

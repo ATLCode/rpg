@@ -2,14 +2,16 @@
   <div class="sContainer">
     <div class="sSlots">
       <div v-for="saveSlot of saveStore.saves" :key="saveSlot.id" class="sSlot">
-        <div>Save Slot</div>
         <div v-if="saveSlot.id" class="saveContent">
-          <div>{{ saveSlot.data.characterName }}</div>
-          <AButton @click="saveStore.deleteSave(saveSlot.id)">Delete</AButton>
-          <AButton hidden @click="saveStore.updateSave(saveSlot.id)"
-            >Update Save</AButton
-          >
-          <AButton @click="saveStore.loadSave(saveSlot)">Load Save</AButton>
+          <h1>{{ saveSlot.data.characterName }}</h1>
+          <div class="save-actions">
+            <AButton @click="saveStore.loadSave(saveSlot)">Load Save</AButton>
+            <AButton
+              background-color="--error"
+              @click="saveStore.deleteSave(saveSlot.id)"
+              >Delete</AButton
+            >
+          </div>
         </div>
       </div>
       <div v-if="saveStore.saves.length < 5" class="saveEmpty">
@@ -17,8 +19,8 @@
         <AButton @click="navigateTo('/character-creation')">New Save</AButton>
       </div>
     </div>
-    <div class="otherStuff">
-      <AButton background-color="red" @click="saveStore.logOut"
+    <div class="other-stuff">
+      <AButton background-color="--error" @click="saveStore.logOut"
         >Log Out</AButton
       >
     </div>
@@ -69,5 +71,16 @@ definePageMeta({ middleware: ["auth"] });
     justify-content: center;
     align-items: center;
   }
+  .save-actions {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+  }
+}
+.other-stuff {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
 }
 </style>
