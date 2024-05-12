@@ -16,9 +16,9 @@
           >
         </template>
         <template #menu>
-          <div @click="saveStore.updateSave()">Save</div>
           <div>Settings</div>
-          <div @click="toMenu">Save and Menu</div>
+          <div @click="saveStore.updateSave()">Save</div>
+          <div @click="toMenu()">Save and Menu</div>
           <div @click="saveStore.logOut">Log Out</div>
         </template>
       </AMenu>

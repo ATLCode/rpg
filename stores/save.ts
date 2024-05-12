@@ -99,23 +99,31 @@ export const useSaveStore = defineStore("save", () => {
   }
 
   async function createSave() {
+    // How can we initially find out save slot of the save after creating it
     try {
       console.log("Creating Save");
       const saveData = constructSaveData();
       console.log(saveData);
+
       await $fetch("/api/saves/add", {
         method: "POST",
         body: {
           saveData: constructSaveData(),
         },
       });
-      getUserSaves();
+      await getUserSaves();
+
+      // Momentary solution
+      selectedSaveId.value = saves.value.reduce((prev, current) =>
+        prev && prev.id! > current.id! ? prev : current
+      ).id;
     } catch (error) {
       console.error(error);
     }
   }
 
   function loadSave(saveSlot: Save) {
+    console.log(saveSlot);
     console.log(saveSlot.data);
     playerStore.characterName = saveSlot.data.characterName;
     locationStore.currentLocationId = saveSlot.data.currentLocationId;

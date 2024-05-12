@@ -59,12 +59,16 @@ export const resourceSpots: Record<ResourceSpotId, SpotResource> = {
         itemId: ItemId.RawBluegill,
         weight: 100,
       },
+      {
+        itemId: ItemId.WoodenSword,
+        weight: 100,
+      },
     ],
     interval: 3,
   },
   [ResourceSpotId.OakTree]: {
     name: "Oak Tree",
-    img: "",
+    img: "/sprites/spot_oak.png",
     skillId: SkillId.Woodcutting,
     products: [{ itemId: ItemId.OakLog, weight: 100 }],
     interval: 10,

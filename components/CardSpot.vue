@@ -10,7 +10,9 @@
       <div>{{ spot.levelReq }}</div>
     </div>
     <div>{{ skillStore.skills[spot.skillId].name }}</div>
-    <div>Spot Image</div>
+    <div class="spot-img">
+      <img :src="spot.img" alt="image" />
+    </div>
     <AProgressLinear v-model="progress" :max="totalSeconds" />
     <div>{{ isDisabled }}</div>
     <div>{{ props.currentActionSpotId || "undefined" }}</div>
@@ -133,5 +135,13 @@ function getResource() {
 }
 .disabled {
   color: grey;
+}
+.spot-img {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0.5rem;
 }
 </style>

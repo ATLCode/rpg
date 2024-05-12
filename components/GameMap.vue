@@ -68,7 +68,7 @@
           locationStore.playerCoordinates.x,
         ]"
       >
-        <l-icon icon-url="/icons/player.svg" :icon-size="[40, 40]"></l-icon>
+        <l-icon icon-url="/icons/21.png" :icon-size="[40, 40]"></l-icon>
       </l-marker>
     </LMap>
   </div>

@@ -73,11 +73,6 @@ export const useSkillStore = defineStore("skill", () => {
     10: 450,
   };
 
-  function getSkillById(skillId: number) {
-    const result = skills.find((skill) => skill.id === skillId);
-    return result;
-  }
-
   function giveSkillExp(skillId: SkillId, amount: number) {
     const skill = skills[skillId];
     skill.currentExp += amount;
@@ -103,5 +98,5 @@ export const useSkillStore = defineStore("skill", () => {
     return skill.currentLevel;
   }
 
-  return { skills, getSkillById, giveSkillExp };
+  return { skills, giveSkillExp };
 });
