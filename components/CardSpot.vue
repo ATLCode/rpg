@@ -25,6 +25,7 @@ import type { PropType } from "vue";
 import { ResourceSpotId, resourceSpots } from "@/game/spots";
 import { useSkillStore } from "@/stores/skill";
 import { usePlayerStore } from "@/stores/player";
+import { items } from "~/game/items";
 const skillStore = useSkillStore();
 const playerStore = usePlayerStore();
 
@@ -106,15 +107,17 @@ watch(finishedInterval, () => {
 });
 
 function getResource() {
-  console.log("got resource");
-  skillStore.giveSkillExp(spot.value.skillId, 500);
+  console.log("Getting resource");
   if (spot.value.products) {
+    const chosenItemId = playerStore.chooseWeightedItem(spot.value.products);
+    const itemXp = items[chosenItemId].xp;
     try {
-      playerStore.addItemToInventory(
-        playerStore.chooseWeightedItem(spot.value.products)
-      );
+      playerStore.addItemToInventory(chosenItemId);
     } catch (error) {
       console.log("Inventory is full");
+    }
+    if (itemXp) {
+      skillStore.giveSkillExp(spot.value.skillId, itemXp);
     }
   }
 }

@@ -33,11 +33,14 @@
     :x="menuX"
     :y="menuY"
     :selected-item="selectedItem"
+    :mode="ContextMode.Inventory"
+    @close="showItemActions = false"
   />
 </template>
 
 <script setup lang="ts">
 import { usePlayerStore, type InventoryItem } from "@/stores/player";
+import { ContextMode } from "~/game/items";
 const playerStore = usePlayerStore();
 
 // https://medium.com/@sj.anyway/custom-right-click-context-menu-in-vue3-b323a3913684
@@ -63,6 +66,7 @@ function closeItemActionsMenu() {
 .inv-container {
   height: 100%;
   width: 100%;
+  display: flex;
   border: 1px grey solid;
   .inv-header {
   }

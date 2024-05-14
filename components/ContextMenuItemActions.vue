@@ -1,10 +1,10 @@
 <template>
   <div class="menu-container" :style="{ top: y + 'px', left: x + 'px' }">
     <div
-      v-for="action in props.selectedItem?.item.actions"
+      v-for="action in visibleActions"
       :key="action"
       class="action"
-      @click="handleActionClick"
+      @click="handleActionClick(action)"
     >
       {{ action }}
     </div>
@@ -12,7 +12,9 @@
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import { type InventoryItem } from "@/stores/player";
+import { type InventoryItem, usePlayerStore } from "@/stores/player";
+import { ContextMode, ItemAction } from "@/game/items";
+const playerStore = usePlayerStore();
 
 const props = defineProps({
   x: {
@@ -27,11 +29,53 @@ const props = defineProps({
     type: Object as PropType<InventoryItem | null>,
     default: null,
   },
+  mode: {
+    type: Number as PropType<ContextMode>,
+    required: true,
+  },
 });
 
-function handleActionClick() {
-  console.log();
+const emit = defineEmits(["close"]);
+
+const visibleActions = computed(() => {
+  const rawActions = props.selectedItem?.item.actions;
+
+  if (props.mode === ContextMode.Inventory) {
+    return rawActions?.filter((action) => action !== ItemAction.Unequip);
+  }
+  if (props.mode === ContextMode.Gear) {
+    // Drop is shown as option for item in gear, but is bugged, need for loop to remove more than 1 word from array
+    // https://stackoverflow.com/questions/11752143/remove-several-words-from-an-array-javascript
+    // Either this or handle drop from gear
+    return rawActions?.filter((action) => action !== ItemAction.Equip);
+  }
+});
+
+function handleActionClick(action: ItemAction) {
+  if (!props.selectedItem) {
+    throw new Error("Selected item doesn't exist");
+  }
+  console.log(action);
+  if (action === ItemAction.Drop) {
+    console.log("Dropping");
+
+    playerStore.removeItemFromInventory(props.selectedItem);
+  }
+  if (action === ItemAction.Eat) {
+    console.log("Eating");
+  }
+  if (action === ItemAction.Equip) {
+    console.log("Equipping");
+    playerStore.equipItem(props.selectedItem);
+  }
+  if (action === ItemAction.Unequip) {
+    console.log("Unequipping");
+    playerStore.unequipItem(props.selectedItem);
+  }
+  emit("close");
 }
+
+// TODO: Context Menu can partly go below screen.
 </script>
 <style lang="scss" scoped>
 .menu-container {

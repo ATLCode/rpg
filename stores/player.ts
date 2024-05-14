@@ -1,4 +1,4 @@
-import { ItemId, type Item } from "~/game/items";
+import { EquipSlot, ItemId, type Item } from "~/game/items";
 import { items } from "~/game/items";
 import type { WeightedItem } from "~/game/spots";
 
@@ -9,24 +9,13 @@ export enum GameState {
 }
 
 export type InventoryItem = {
+  inventoryIndex: number;
   id: ItemId;
   item: Item;
   currentStackSize: number;
 };
 
-export type Gear = {
-  head: Item | null;
-  torso: Item | null;
-  legs: Item | null;
-  hands: Item | null;
-  feet: Item | null;
-  mainHand: Item | null;
-  offHand: Item | null;
-  neck: Item | null;
-  fingers: Item | null;
-  back: Item | null;
-  ammo: Item | null;
-};
+export type Gear = Record<EquipSlot, InventoryItem | null>;
 
 export const usePlayerStore = defineStore("player", () => {
   const characterName = ref("");
@@ -36,17 +25,17 @@ export const usePlayerStore = defineStore("player", () => {
   // Like this or should each slot have id etc?
 
   const gear = ref<Gear>({
-    head: null,
-    torso: null,
-    legs: null,
-    hands: null,
-    feet: null,
-    mainHand: null,
-    offHand: null,
-    neck: null,
-    fingers: null,
-    back: null,
-    ammo: null,
+    [EquipSlot.Head]: null,
+    [EquipSlot.Torso]: null,
+    [EquipSlot.Legs]: null,
+    [EquipSlot.Hands]: null,
+    [EquipSlot.Feet]: null,
+    [EquipSlot.MainHand]: null,
+    [EquipSlot.OffHand]: null,
+    [EquipSlot.Neck]: null,
+    [EquipSlot.Fingers]: null,
+    [EquipSlot.Back]: null,
+    [EquipSlot.Ammo]: null,
   });
 
   // Iventory as array of either item ids or nulls (or should there be item that's essentially empty?), this way we can handle moving items not next to eachother
@@ -78,9 +67,10 @@ export const usePlayerStore = defineStore("player", () => {
       });
     }
 
-    inventory.value = inventory.value.map((inventoryItem) => {
+    inventory.value = inventory.value.map((inventoryItem, index) => {
       if (!inventoryItem && !added) {
         inventoryItem = {
+          inventoryIndex: index,
           id: itemId,
           item,
           currentStackSize: 1,
@@ -93,6 +83,38 @@ export const usePlayerStore = defineStore("player", () => {
     if (!added) {
       throw new Error("No space in inventory");
     }
+  }
+
+  function removeItemFromInventory(item: InventoryItem) {
+    inventory.value[item.inventoryIndex] = null;
+  }
+
+  function equipItem(inventoryItem: InventoryItem) {
+    const equipSlot = inventoryItem.item.equipSlot;
+
+    if (!equipSlot) {
+      throw new Error("This item can't be equipped");
+    }
+
+    const equippedBefore = gear.value[equipSlot];
+
+    gear.value[equipSlot] = inventoryItem;
+    removeItemFromInventory(inventoryItem);
+
+    if (equippedBefore) {
+      addItemToInventory(equippedBefore.id);
+    }
+  }
+
+  function unequipItem(inventoryItem: InventoryItem) {
+    const equipSlot = inventoryItem.item.equipSlot;
+
+    if (!equipSlot) {
+      throw new Error("This item doesn't have equip slot");
+    }
+
+    addItemToInventory(inventoryItem.id);
+    gear.value[equipSlot] = null;
   }
 
   function chooseWeightedItem(weightedItems: WeightedItem[]) {
@@ -127,6 +149,9 @@ export const usePlayerStore = defineStore("player", () => {
     inventory,
     getItemById,
     addItemToInventory,
+    equipItem,
+    unequipItem,
+    removeItemFromInventory,
     chooseWeightedItem,
   };
 });
