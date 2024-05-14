@@ -61,7 +61,15 @@ export const resourceSpots: Record<ResourceSpotId, SpotResource> = {
       },
       {
         itemId: ItemId.WoodenSword,
-        weight: 100,
+        weight: 500,
+      },
+      {
+        itemId: ItemId.IronSword,
+        weight: 500,
+      },
+      {
+        itemId: ItemId.LeatherBoots,
+        weight: 500,
       },
     ],
     interval: 3,

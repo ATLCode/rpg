@@ -4,6 +4,8 @@ import {
   type SleepingSpotId,
 } from "./spots";
 
+import { NpcId } from "./npcs";
+
 export enum LocationType {
   World,
   Container,
@@ -38,7 +40,7 @@ export type Location = {
   flavorImg?: string;
   mapImg?: string;
   mapMarkers?: Marker[];
-  npcs?: number[]; // Only Interfaces
+  npcs?: NpcId[]; // Only Interfaces
   resourceSpots?: ResourceSpotId[]; // Only Interfaces
   cookingSpots?: CookingSpotId[]; // Only Interfaces
   sleepingSpots?: SleepingSpotId[]; // Only Interfaces
@@ -96,6 +98,7 @@ export const locations: Record<LocationId, Location> = {
     name: "Tavern",
     parent: LocationId.Town,
     type: LocationType.Interface,
+    npcs: [NpcId.Harold],
   },
   [LocationId.CityGate]: {
     name: "City Gate",

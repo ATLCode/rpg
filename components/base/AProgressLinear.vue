@@ -11,7 +11,7 @@ const props = defineProps({
   },
   color: {
     type: String,
-    default: "",
+    default: "var(--success)",
   },
   // Later do loader variant
   variant: {
@@ -27,6 +27,10 @@ const props = defineProps({
 const value = defineModel<number>();
 </script>
 <style lang="scss" scoped>
+.aprogress {
+  display: flex;
+}
+
 progress {
   height: 1.5rem;
   border-radius: 5px;
@@ -36,7 +40,7 @@ progress::-webkit-progress-bar {
   background-color: var(--elevation2);
 }
 progress::-webkit-progress-value {
-  background-color: var(--success);
+  background-color: v-bind(color);
   border-radius: 5px;
 }
 </style>

@@ -24,24 +24,30 @@ export enum ItemRarity {
   Rare = "Rare",
 }
 
-export enum ItemActions {
-  Equip,
-  Drop,
-  Eat,
+export enum ItemAction {
+  Equip = "Equip",
+  Unequip = "Unequip",
+  Drop = "Drop",
+  Eat = "Eat",
 }
 
 export enum EquipSlot {
-  Head,
-  Torso,
-  Legs,
-  Hands,
-  Feet,
-  MainHand,
-  OffHand,
-  Neck,
-  Fingers,
-  Back,
-  Ammo,
+  Head = "Head",
+  Torso = "Torso",
+  Legs = "Legs",
+  Hands = "Hands",
+  Feet = "Feet",
+  MainHand = "MainHand",
+  OffHand = "OffHand",
+  Neck = "Neck",
+  Fingers = "Fingers",
+  Back = "Back",
+  Ammo = "Ammo",
+}
+
+export enum ContextMode {
+  Inventory,
+  Gear,
 }
 
 export type Item = {
@@ -56,7 +62,7 @@ export type Item = {
   img: string;
   abilityRequirements?: AbilityId[];
   xp?: number;
-  actions?: ItemActions[];
+  actions?: ItemAction[];
 };
 
 // What if item would have craftable key which would include object with abilityRequirements, xp etc.
@@ -64,10 +70,12 @@ export type Item = {
 // Items array to itemst object where key is enum?
 
 export enum ItemId {
-  RawPanfish,
-  RawBluegill,
-  OakLog,
-  WoodenSword,
+  RawPanfish = "RawPanfish",
+  RawBluegill = "RawBluegill",
+  OakLog = "OakLog",
+  WoodenSword = "WoodenSword",
+  IronSword = "IronSword",
+  LeatherBoots = "LeatherBoots",
 }
 
 export const items: Record<ItemId, Item> = {
@@ -82,7 +90,7 @@ export const items: Record<ItemId, Item> = {
     rarity: ItemRarity.Normal,
     img: "/items/panfish.png",
     xp: 10,
-    actions: [ItemActions.Drop],
+    actions: [ItemAction.Drop],
   },
   [ItemId.RawBluegill]: {
     name: "Raw Bluegill",
@@ -96,7 +104,7 @@ export const items: Record<ItemId, Item> = {
     img: "/items/bluegill.png",
     abilityRequirements: [AbilityId.FishBluegill],
     xp: 20,
-    actions: [ItemActions.Drop],
+    actions: [ItemAction.Drop],
   },
   [ItemId.WoodenSword]: {
     name: "Wooden Sword",
@@ -107,8 +115,32 @@ export const items: Record<ItemId, Item> = {
     stackSize: 1,
     value: 10,
     rarity: ItemRarity.Normal,
-    img: "/items/sword_1.png",
-    actions: [ItemActions.Drop, ItemActions.Equip],
+    img: "/items/sword_01.png",
+    actions: [ItemAction.Equip, ItemAction.Unequip, ItemAction.Drop],
+  },
+  [ItemId.IronSword]: {
+    name: "Iron Sword",
+    type: ItemType.Equipment,
+    property: null,
+    equipSlot: EquipSlot.MainHand,
+    weight: 1,
+    stackSize: 1,
+    value: 10,
+    rarity: ItemRarity.Normal,
+    img: "/items/sword_02.png",
+    actions: [ItemAction.Equip, ItemAction.Unequip, ItemAction.Drop],
+  },
+  [ItemId.LeatherBoots]: {
+    name: "Leather Boots",
+    type: ItemType.Equipment,
+    property: null,
+    equipSlot: EquipSlot.Feet,
+    weight: 1,
+    stackSize: 1,
+    value: 10,
+    rarity: ItemRarity.Normal,
+    img: "/items/boots_01.png",
+    actions: [ItemAction.Equip, ItemAction.Unequip, ItemAction.Drop],
   },
   [ItemId.OakLog]: {
     name: "Oak Log",
@@ -121,6 +153,6 @@ export const items: Record<ItemId, Item> = {
     rarity: ItemRarity.Normal,
     img: "/items/oak_log.png",
     xp: 10,
-    actions: [ItemActions.Drop],
+    actions: [ItemAction.Drop],
   },
 };

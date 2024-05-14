@@ -1,7 +1,19 @@
 <template>
   <div class="combat-container">
     <div class="combat-visual">
-      {{ selectedPlayerView }}
+      <div class="unit-card">
+        <div class="img-container">
+          <img src="/icons/21.png" class="unit-img" alt="" />
+        </div>
+        <AProgressLinear v-model="playerHp" color="var(--error)" />
+      </div>
+      <ASpacer />
+      <div class="unit-card">
+        <div class="img-container">
+          <img src="/npcs/27.png" class="unit-img" alt="" />
+        </div>
+        <AProgressLinear v-model="enemyHp" color="var(--error)" />
+      </div>
     </div>
     <div class="combat-info">
       <div class="info-player">
@@ -11,6 +23,12 @@
             :class="{ activeTab: selectedPlayerView === PlayerView.Equipment }"
             @click="selectedPlayerView = PlayerView.Equipment"
             >EQ</AButton
+          >
+          <AButton
+            background-color="--elevation1"
+            :class="{ activeTab: selectedPlayerView === PlayerView.Inventory }"
+            @click="selectedPlayerView = PlayerView.Inventory"
+            >IN</AButton
           >
           <AButton
             background-color="--elevation1"
@@ -31,6 +49,12 @@
             class="tab-content"
           >
             <GameMenuGear />
+          </div>
+          <div
+            v-if="selectedPlayerView === PlayerView.Inventory"
+            class="tab-content"
+          >
+            <GameMenuInventory />
           </div>
           <div
             v-if="selectedPlayerView === PlayerView.Abilities"
@@ -54,19 +78,43 @@
 <script lang="ts" setup>
 enum PlayerView {
   Equipment,
+  Inventory,
   Abilities,
   Stats,
 }
 
 const selectedPlayerView = ref(PlayerView.Equipment);
+
+const playerHp = ref(100);
+const enemyHp = ref(100);
 </script>
 <style lang="scss" scoped>
 .combat-container {
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-rows: 1fr 5fr;
+  grid-template-rows: 1fr 3fr;
 }
+
+.combat-visual {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  padding: 1rem;
+  .unit-card {
+    align-self: center;
+    border: 1px solid var(--elevation2);
+    height: 200px;
+    width: 150px;
+  }
+  .unit-img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+  }
+}
+
 .combat-info {
   height: 100%;
   width: 100%;

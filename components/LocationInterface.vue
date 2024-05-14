@@ -7,12 +7,11 @@
         @click="$emit('back')"
         >Back to {{ locationStore.currentArea.name }}</AButton
       >
-      <h1>
-        {{ locationStore.currentArea.name }} -
+      <h2>
         {{ locationStore.currentLocation.name }}
-      </h1>
+      </h2>
     </div>
-    <div>{{ locationStore.currentResourceSpots }}</div>
+
     <div class="interface-content">
       <CardSpot
         v-for="spotId in locationStore.currentLocation.resourceSpots"
@@ -26,6 +25,11 @@
           >Test Combat</AButton
         >
       </div>
+      <CardNpc
+        v-for="npcId in locationStore.currentLocation.npcs"
+        :key="npcId"
+        :npc-id="npcId"
+      />
     </div>
   </div>
 </template>

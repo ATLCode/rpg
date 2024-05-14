@@ -14,18 +14,23 @@ export type Question = {
 
 export type Npc = {
   name: string;
+  title: string;
+  img: string;
+  // unit
   dialog: {
     questions: Question[];
   };
 };
 
 export enum NpcId {
-  test,
+  Harold,
 }
 
 export const npcs: Record<NpcId, Npc> = {
-  [NpcId.test]: {
-    name: "test",
+  [NpcId.Harold]: {
+    name: "Harold",
+    title: "Innkeeper",
+    img: "/npcs/11.png",
     dialog: {
       questions: [
         {
