@@ -1,10 +1,22 @@
 <template>
   <div class="skills-container">
-    <div v-for="skill in skillStore.skills" :key="skill.id" class="skill-info">
+    <div
+      v-for="skill in skillStore.skills"
+      :key="skill.name"
+      class="skill-info"
+    >
       <div>{{ skill.name }}</div>
       <div>Lv{{ skill.currentLevel }}</div>
-      <div>Exp:{{ skill.currentExp }}</div>
-      <div></div>
+      <div>
+        Exp:{{ skill.currentExp }} /
+        {{ skillStore.levelTresholds[skill.currentLevel + 1] }}
+      </div>
+      <div>
+        Exp left:
+        {{
+          skillStore.levelTresholds[skill.currentLevel + 1] - skill.currentExp
+        }}
+      </div>
     </div>
   </div>
 </template>

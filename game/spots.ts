@@ -53,23 +53,23 @@ export const resourceSpots: Record<ResourceSpotId, SpotResource> = {
     products: [
       {
         itemId: ItemId.RawPanfish,
-        weight: 500,
+        weight: 1000,
       },
       {
         itemId: ItemId.RawBluegill,
-        weight: 100,
+        weight: 300,
       },
       {
         itemId: ItemId.WoodenSword,
-        weight: 500,
+        weight: 100,
       },
       {
         itemId: ItemId.IronSword,
-        weight: 500,
+        weight: 100,
       },
       {
         itemId: ItemId.LeatherBoots,
-        weight: 500,
+        weight: 100,
       },
     ],
     interval: 3,
@@ -79,7 +79,7 @@ export const resourceSpots: Record<ResourceSpotId, SpotResource> = {
     img: "/sprites/spot_oak.png",
     skillId: SkillId.Woodcutting,
     products: [{ itemId: ItemId.OakLog, weight: 100 }],
-    interval: 10,
+    interval: 3,
   },
 };
 export const cookingSpots: SpotCooking[] = [];

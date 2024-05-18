@@ -11,7 +11,7 @@
     <div class="options">
       <AMenu>
         <template #activator>
-          <AButton padding="1rem">
+          <AButton padding="1rem" background-color="--elevation1">
             {{ playerStore.characterName || "Character Name" }}</AButton
           >
         </template>

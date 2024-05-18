@@ -1,11 +1,13 @@
+import { useNotificationStore, NotificationType } from "@/stores/notification";
+import { Ability } from "~/game/abilities";
+
 export enum SkillId {
-  Fishing,
-  Cooking,
-  OneHanded,
-  TwoHanded,
-  Magic,
-  Woodcutting,
-  Archery,
+  Fishing = "Fishing",
+  Woodcutting = "Woodcutting",
+  Cooking = "Cooking",
+  OneHanded = "OneHanded",
+  Archery = "Archery",
+  Elemental = "Elemental",
 }
 
 export const useSkillStore = defineStore("skill", () => {
@@ -23,20 +25,21 @@ export const useSkillStore = defineStore("skill", () => {
       currentLevel: 1,
       abilities: [],
     },
+    [SkillId.Woodcutting]: {
+      name: "Woodcutting",
+      currentExp: 1,
+      currentLevel: 1,
+      abilities: [],
+    },
     [SkillId.Cooking]: {
       name: "Cooking",
       currentExp: 1,
       currentLevel: 1,
       abilities: [],
     },
+
     [SkillId.OneHanded]: {
       name: "One Handed",
-      currentExp: 1,
-      currentLevel: 1,
-      abilities: [],
-    },
-    [SkillId.TwoHanded]: {
-      name: "Two Handed",
       currentExp: 1,
       currentLevel: 1,
       abilities: [],
@@ -47,14 +50,8 @@ export const useSkillStore = defineStore("skill", () => {
       currentLevel: 1,
       abilities: [],
     },
-    [SkillId.Magic]: {
-      name: "Magic",
-      currentExp: 1,
-      currentLevel: 1,
-      abilities: [],
-    },
-    [SkillId.Woodcutting]: {
-      name: "Woodcutting",
+    [SkillId.Elemental]: {
+      name: "Elemental",
       currentExp: 1,
       currentLevel: 1,
       abilities: [],
@@ -73,14 +70,25 @@ export const useSkillStore = defineStore("skill", () => {
     10: 450,
   };
 
+  const abilities = ref<Ability[]>([]);
+
   function giveSkillExp(skillId: SkillId, amount: number) {
+    console.log("Test");
     const skill = skills[skillId];
     skill.currentExp += amount;
+
+    const notificationStore = useNotificationStore();
+    notificationStore.showNotification(
+      NotificationType.Drop,
+      `${skill.name} ${amount}xp`,
+      false,
+      1000
+    );
     checkLevelUp(skillId, skill.currentExp, skill.currentLevel + 1);
   }
 
   function checkLevelUp(
-    skillId: number,
+    skillId: SkillId,
     currentExp: number,
     levelToCheck: number
   ) {
@@ -95,8 +103,20 @@ export const useSkillStore = defineStore("skill", () => {
     skill.currentLevel += 1;
 
     console.log("New level is", skill.currentLevel, skill.name);
+    const notificationStore = useNotificationStore();
+    notificationStore.showNotification(
+      NotificationType.Level,
+      `${skill.name} level increased to ${skill.currentLevel}`,
+      false,
+      5000
+    );
+
+    checkAbilities(skillId);
+
     return skill.currentLevel;
   }
 
-  return { skills, giveSkillExp };
+  function checkAbilities(skllId: SkillId) {}
+
+  return { skills, giveSkillExp, levelTresholds, abilities };
 });
