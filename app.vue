@@ -1,6 +1,7 @@
 <template>
   <div>
     <NuxtLayout class="layout">
+      <ModalNotification />
       <NuxtPage />
     </NuxtLayout>
   </div>

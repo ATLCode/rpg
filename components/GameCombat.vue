@@ -77,13 +77,13 @@
 </template>
 <script lang="ts" setup>
 enum PlayerView {
-  Equipment,
-  Inventory,
-  Abilities,
-  Stats,
+  Equipment = "Equipment",
+  Inventory = "Inventory",
+  Abilities = "Abilities",
+  Stats = "Stats",
 }
 
-const selectedPlayerView = ref(PlayerView.Equipment);
+const selectedPlayerView = ref(PlayerView.Abilities);
 
 const playerHp = ref(100);
 const enemyHp = ref(100);
