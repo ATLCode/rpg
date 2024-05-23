@@ -1,19 +1,35 @@
 <template>
   <div class="camp-container">
     <div class="camp-header">
-      <ASpacer />
-      <h1>Camp</h1>
-      <ASpacer />
       <AButton background-color="var(--elevation1)" @click="$emit('close')"
         >Close</AButton
       >
+      <ASpacer />
+      <h1>Camp</h1>
+      <ASpacer />
     </div>
-    <div class="camp-content"></div>
+    <div class="camp-content">
+      <CardRefiningSpot
+        v-for="spotId in refiningSpots"
+        :key="spotId"
+        :spot-id="spotId"
+        :current-action-spot-id="currentActionSpotId"
+        @new-current-action="newCurrentAction"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { RefiningSpotId } from "@/game/spots";
 defineEmits(["close"]);
+
+const refiningSpots = ref<RefiningSpotId[]>([RefiningSpotId.Campfire]);
+
+const currentActionSpotId = ref<RefiningSpotId | undefined>(undefined);
+function newCurrentAction(id: RefiningSpotId) {
+  currentActionSpotId.value = id;
+}
 </script>
 
 <style lang="scss" scoped>
@@ -25,6 +41,7 @@ defineEmits(["close"]);
   z-index: 900;
 }
 .camp-header {
+  padding: 0.5rem;
   display: flex;
   flex-direction: row;
 }

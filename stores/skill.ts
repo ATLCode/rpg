@@ -1,5 +1,5 @@
 import { useNotificationStore, NotificationType } from "@/stores/notification";
-import { Ability } from "~/game/abilities";
+import { type Ability } from "~/game/abilities";
 
 export enum SkillId {
   Fishing = "Fishing",
@@ -116,7 +116,9 @@ export const useSkillStore = defineStore("skill", () => {
     return skill.currentLevel;
   }
 
-  function checkAbilities(skllId: SkillId) {}
+  function checkAbilities(skillId: SkillId) {
+    console.log(skillId);
+  }
 
   return { skills, giveSkillExp, levelTresholds, abilities };
 });

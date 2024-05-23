@@ -1,6 +1,6 @@
 import {
   ResourceSpotId,
-  type CookingSpotId,
+  type RefiningSpotId,
   type SleepingSpotId,
 } from "./spots";
 
@@ -42,7 +42,7 @@ export type Location = {
   mapMarkers?: Marker[];
   npcs?: NpcId[]; // Only Interfaces
   resourceSpots?: ResourceSpotId[]; // Only Interfaces
-  cookingSpots?: CookingSpotId[]; // Only Interfaces
+  refiningSpots?: RefiningSpotId[]; // Only Interfaces
   sleepingSpots?: SleepingSpotId[]; // Only Interfaces
 };
 

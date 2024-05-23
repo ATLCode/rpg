@@ -1,3 +1,4 @@
+import { ItemId } from "@/game/items";
 import { SkillId } from "~/stores/skill";
 
 export enum DamageType {
@@ -26,6 +27,9 @@ export type Ability = {
   isAutomatic: boolean;
   effects?: Effect[];
   itemPropertyReq?: number[];
+  xp?: number;
+  product?: ItemId;
+  ingredients?: ItemId[];
 };
 
 /*
@@ -37,6 +41,8 @@ isCombat (Shows up during combat)
 
 export enum AbilityId {
   FishBluegill = "Fishbluegill",
+  CookPanfish = "CookPanfish",
+  CookBluegill = "CookBluegill",
   BasicBunch = "BasicPunch",
 }
 
@@ -61,5 +67,25 @@ export const abilities: Record<AbilityId, Ability> = {
         damageType: DamageType.Blunt,
       },
     ],
+  },
+  [AbilityId.CookBluegill]: {
+    name: "Cook Bluegill",
+    skillId: SkillId.Cooking,
+    xp: 10,
+    ingredients: [ItemId.RawBluegill],
+    product: ItemId.CookedBluegill,
+    levelReq: 5,
+    isCombat: false,
+    isAutomatic: true,
+  },
+  [AbilityId.CookPanfish]: {
+    name: "Cook Panfish",
+    skillId: SkillId.Cooking,
+    xp: 10,
+    ingredients: [ItemId.RawPanfish],
+    product: ItemId.CookedPanfish,
+    levelReq: 5,
+    isCombat: false,
+    isAutomatic: true,
   },
 };

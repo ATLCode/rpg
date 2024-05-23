@@ -6,41 +6,41 @@ export type WeightedItem = {
   weight: number;
 };
 
+// Should itemId actually be abilityId here? So we pick ability to run that then gives the item, xp etc.
+
 export type SpotResource = {
   name: string;
   img: string;
   skillId: SkillId;
-  levelReq?: number;
   products?: WeightedItem[];
   interval: number;
 };
-export type SpotCooking = {
+export type SpotRefining = {
   name: string;
   img: string;
   skillId: SkillId;
-  levelReq?: number;
-  products?: WeightedItem[];
   interval: number;
 };
 export type SpotSleeping = {
   name: string;
   img: string;
   skillId: SkillId;
-  levelReq?: number;
   products?: WeightedItem[];
   interval: number;
 };
 
 export enum ResourceSpotId {
-  UndefinedSpot,
-  SmallFishingSpot,
-  OakTree,
+  IronOre = "IronOre",
+  SmallFishingSpot = "SmallFishingSpot",
+  OakTree = "OakTree",
 }
-export enum CookingSpotId {}
+export enum RefiningSpotId {
+  Campfire = "Campfire",
+}
 export enum SleepingSpotId {}
 
 export const resourceSpots: Record<ResourceSpotId, SpotResource> = {
-  [ResourceSpotId.UndefinedSpot]: {
+  [ResourceSpotId.IronOre]: {
     name: "",
     img: "",
     skillId: SkillId.Archery,
@@ -48,7 +48,7 @@ export const resourceSpots: Record<ResourceSpotId, SpotResource> = {
   },
   [ResourceSpotId.SmallFishingSpot]: {
     name: "Small Fishing Spot",
-    img: "",
+    img: "/sprites/small_fishing.png",
     skillId: SkillId.Fishing,
     products: [
       {
@@ -82,5 +82,11 @@ export const resourceSpots: Record<ResourceSpotId, SpotResource> = {
     interval: 3,
   },
 };
-export const cookingSpots: SpotCooking[] = [];
-export const sleepingSpots: SpotSleeping[] = [];
+export const refiningSpots: Record<RefiningSpotId, SpotRefining> = {
+  [RefiningSpotId.Campfire]: {
+    name: "Campfire",
+    img: "/sprites/campfire.png",
+    skillId: SkillId.Cooking,
+    interval: 3,
+  },
+};

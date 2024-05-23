@@ -22,7 +22,6 @@
 <script lang="ts" setup>
 import { onMounted, reactive } from "vue";
 
-// TODO: Disabled
 // TDOO: Variants
 
 const props = defineProps({
@@ -58,6 +57,18 @@ const style = reactive({
   padding: props.padding,
 });
 
+watch(
+  () => props.disabled,
+  (newDisabled) => {
+    if (newDisabled === true) {
+      handleBackgroundColor("grey");
+    }
+    if (newDisabled === false) {
+      handleBackgroundColor(props.backgroundColor);
+    }
+  }
+);
+
 function handleVariant(variant: string) {
   if (variant === "plain") {
     style["background-color"] = "transparent";
@@ -88,6 +99,9 @@ onMounted(() => {
   handleColor(props.color);
   if (props.variant !== "plain") {
     handleBackgroundColor(props.backgroundColor);
+  }
+  if (props.disabled) {
+    handleBackgroundColor("grey");
   }
 });
 </script>

@@ -13,7 +13,7 @@
     </div>
 
     <div class="interface-content">
-      <CardSpot
+      <CardResourceSpot
         v-for="spotId in locationStore.currentLocation.resourceSpots"
         :key="spotId"
         :spot-id="spotId"
