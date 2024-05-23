@@ -1,5 +1,3 @@
-import { AbilityId } from "./abilities";
-
 export enum ItemType {
   Equipment = "Equipment",
   Key = "Key",
@@ -60,14 +58,11 @@ export type Item = {
   value: number;
   rarity: string; // Enum:
   img: string;
-  abilityRequirements?: AbilityId[];
   xp?: number;
   actions?: ItemAction[];
 };
 
 // What if item would have craftable key which would include object with abilityRequirements, xp etc.
-
-// Items array to itemst object where key is enum?
 
 export enum ItemId {
   RawPanfish = "RawPanfish",
@@ -76,6 +71,8 @@ export enum ItemId {
   WoodenSword = "WoodenSword",
   IronSword = "IronSword",
   LeatherBoots = "LeatherBoots",
+  CookedBluegill = "CookedBluegill",
+  CookedPanfish = "CookedPanfish",
 }
 
 export const items: Record<ItemId, Item> = {
@@ -102,7 +99,6 @@ export const items: Record<ItemId, Item> = {
     value: 1,
     rarity: ItemRarity.Normal,
     img: "/items/bluegill.png",
-    abilityRequirements: [AbilityId.FishBluegill],
     xp: 20,
     actions: [ItemAction.Drop],
   },
@@ -152,6 +148,32 @@ export const items: Record<ItemId, Item> = {
     value: 1,
     rarity: ItemRarity.Normal,
     img: "/items/oak_log.png",
+    xp: 10,
+    actions: [ItemAction.Drop],
+  },
+  [ItemId.CookedBluegill]: {
+    name: "Cooked Bluegill",
+    type: ItemType.Food,
+    property: null,
+    equipSlot: null,
+    weight: 1,
+    stackSize: 10,
+    value: 1,
+    rarity: ItemRarity.Normal,
+    img: "/items/cooked_bluegill.png",
+    xp: 10,
+    actions: [ItemAction.Drop],
+  },
+  [ItemId.CookedPanfish]: {
+    name: "Cooked Panfish",
+    type: ItemType.Food,
+    property: null,
+    equipSlot: null,
+    weight: 1,
+    stackSize: 10,
+    value: 1,
+    rarity: ItemRarity.Normal,
+    img: "/items/cooked_panfish.png",
     xp: 10,
     actions: [ItemAction.Drop],
   },

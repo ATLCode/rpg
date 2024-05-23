@@ -85,8 +85,30 @@ export const usePlayerStore = defineStore("player", () => {
     }
   }
 
-  function removeItemFromInventory(item: InventoryItem) {
+  function removeSpecificItemFromInventory(item: InventoryItem) {
     inventory.value[item.inventoryIndex] = null;
+  }
+
+  function removeItemsFromInventory(itemId: ItemId, amount: number = 1) {
+    if (itemCountInInventory(itemId) < amount) {
+      return;
+    }
+
+    let itemsToRemove = amount;
+
+    for (let i = 0; i < inventory.value.length; i++) {
+      const invItem = inventory.value[i];
+
+      if (invItem?.id === itemId) {
+        if (invItem.currentStackSize > itemsToRemove) {
+          invItem.currentStackSize = invItem.currentStackSize - itemsToRemove;
+          return;
+        } else {
+          itemsToRemove = itemsToRemove - invItem.currentStackSize;
+          removeSpecificItemFromInventory(invItem);
+        }
+      }
+    }
   }
 
   function equipItem(inventoryItem: InventoryItem) {
@@ -99,7 +121,7 @@ export const usePlayerStore = defineStore("player", () => {
     const equippedBefore = gear.value[equipSlot];
 
     gear.value[equipSlot] = inventoryItem;
-    removeItemFromInventory(inventoryItem);
+    removeSpecificItemFromInventory(inventoryItem);
 
     if (equippedBefore) {
       addItemToInventory(equippedBefore.id);
@@ -142,6 +164,17 @@ export const usePlayerStore = defineStore("player", () => {
     return itemId;
   }
 
+  function itemCountInInventory(itemId: ItemId) {
+    let count = 0;
+    for (let i = 0; i < inventory.value.length; i++) {
+      const invItem = inventory.value[i];
+      if (invItem?.id === itemId) {
+        count += invItem.currentStackSize;
+      }
+    }
+    return count;
+  }
+
   return {
     characterName,
     gameState,
@@ -151,7 +184,9 @@ export const usePlayerStore = defineStore("player", () => {
     addItemToInventory,
     equipItem,
     unequipItem,
-    removeItemFromInventory,
+    removeItemsFromInventory,
+    removeSpecificItemFromInventory,
     chooseWeightedItem,
+    itemCountInInventory,
   };
 });

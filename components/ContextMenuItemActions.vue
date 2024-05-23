@@ -59,7 +59,7 @@ function handleActionClick(action: ItemAction) {
   if (action === ItemAction.Drop) {
     console.log("Dropping");
 
-    playerStore.removeItemFromInventory(props.selectedItem);
+    playerStore.removeSpecificItemFromInventory(props.selectedItem);
   }
   if (action === ItemAction.Eat) {
     console.log("Eating");

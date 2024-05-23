@@ -5,18 +5,15 @@
     @click="clickCard"
   >
     <div class="spot-header">
-      <div>{{ spot.name }}</div>
-      <ASpacer />
-      <div>{{ spot.levelReq }}</div>
+      <div>
+        <h4>{{ spot.name }}</h4>
+      </div>
     </div>
     <div>{{ skillStore.skills[spot.skillId].name }}</div>
     <div class="spot-img">
       <img :src="spot.img" alt="image" />
     </div>
     <AProgressLinear v-model="progress" :max="totalSeconds" />
-    <div>{{ isDisabled }}</div>
-    <div>{{ props.currentActionSpotId || "undefined" }}</div>
-    <div>{{ props.spotId }}</div>
   </div>
 </template>
 
@@ -31,11 +28,11 @@ const playerStore = usePlayerStore();
 
 const props = defineProps({
   spotId: {
-    type: Number as PropType<ResourceSpotId>,
+    type: String as PropType<ResourceSpotId>,
     required: true,
   },
   currentActionSpotId: {
-    type: Number,
+    type: String,
     default: undefined,
   },
 });
@@ -106,6 +103,8 @@ watch(finishedInterval, () => {
   }
 });
 
+// Refactor xp to separate function if going with ability idea for everything
+
 function getResource() {
   console.log("Getting resource");
   if (spot.value.products) {
@@ -146,5 +145,9 @@ function getResource() {
   justify-content: center;
   align-items: center;
   margin-top: 0.5rem;
+}
+img {
+  max-height: 100px;
+  max-width: 100px;
 }
 </style>
