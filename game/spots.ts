@@ -1,10 +1,8 @@
 import { ItemId } from "./items";
 import { SkillId } from "~/stores/skill";
+import type { WeightedObject } from "~/utils/weight-calculation";
 
-export type WeightedItem = {
-  itemId: ItemId;
-  weight: number;
-};
+export type WeightedItem = WeightedObject<ItemId>;
 
 // Should itemId actually be abilityId here? So we pick ability to run that then gives the item, xp etc.
 
@@ -52,23 +50,23 @@ export const resourceSpots: Record<ResourceSpotId, SpotResource> = {
     skillId: SkillId.Fishing,
     products: [
       {
-        itemId: ItemId.RawPanfish,
+        id: ItemId.RawPanfish,
         weight: 1000,
       },
       {
-        itemId: ItemId.RawBluegill,
+        id: ItemId.RawBluegill,
         weight: 300,
       },
       {
-        itemId: ItemId.WoodenSword,
+        id: ItemId.WoodenSword,
         weight: 100,
       },
       {
-        itemId: ItemId.IronSword,
+        id: ItemId.IronSword,
         weight: 100,
       },
       {
-        itemId: ItemId.LeatherBoots,
+        id: ItemId.LeatherBoots,
         weight: 100,
       },
     ],
@@ -78,7 +76,7 @@ export const resourceSpots: Record<ResourceSpotId, SpotResource> = {
     name: "Oak Tree",
     img: "/sprites/spot_oak.png",
     skillId: SkillId.Woodcutting,
-    products: [{ itemId: ItemId.OakLog, weight: 100 }],
+    products: [{ id: ItemId.OakLog, weight: 100 }],
     interval: 3,
   },
 };

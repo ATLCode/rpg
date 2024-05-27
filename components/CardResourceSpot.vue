@@ -19,6 +19,7 @@
 
 <script lang="ts" setup>
 import type { PropType } from "vue";
+import { chooseRandomWeightedObject } from "~/utils/weight-calculation";
 import { ResourceSpotId, resourceSpots } from "@/game/spots";
 import { useSkillStore } from "@/stores/skill";
 import { usePlayerStore } from "@/stores/player";
@@ -108,7 +109,7 @@ watch(finishedInterval, () => {
 function getResource() {
   console.log("Getting resource");
   if (spot.value.products) {
-    const chosenItemId = playerStore.chooseWeightedItem(spot.value.products);
+    const chosenItemId = chooseRandomWeightedObject(spot.value.products);
     const itemXp = items[chosenItemId].xp;
     try {
       playerStore.addItemToInventory(chosenItemId);
