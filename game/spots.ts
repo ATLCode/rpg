@@ -1,6 +1,5 @@
 import { ItemId } from "./items";
-import { SkillId } from "~/stores/skill";
-import type { WeightedObject } from "~/utils/weight-calculation";
+import { SkillId } from "~/game/abilities";
 
 export type WeightedItem = WeightedObject<ItemId>;
 
@@ -41,7 +40,7 @@ export const resourceSpots: Record<ResourceSpotId, SpotResource> = {
   [ResourceSpotId.IronOre]: {
     name: "",
     img: "",
-    skillId: SkillId.Archery,
+    skillId: SkillId.Ranged,
     interval: 1,
   },
   [ResourceSpotId.SmallFishingSpot]: {

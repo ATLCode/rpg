@@ -40,7 +40,9 @@
       <div v-if="selectedTab === 'Skills'" class="skills">
         <GameMenuSkills />
       </div>
-      <div v-if="selectedTab === 'Abilities'" class="abilities">Abilities</div>
+      <div v-if="selectedTab === 'Abilities'" class="abilities">
+        <GameMenuAbilities />
+      </div>
       <div v-if="selectedTab === 'Quests'" class="settings">Quests TBD</div>
     </div>
   </div>

@@ -1,18 +1,36 @@
 <template>
   <div class="combat-container">
     <div class="combat-visual">
-      <div class="unit-card">
+      <div
+        v-for="(unit, index) in playerStore.playerGroup"
+        :key="index"
+        class="unit-card"
+        @click="useAbility(unit)"
+      >
         <div class="img-container">
           <img src="/icons/21.png" class="unit-img" alt="" />
         </div>
-        <AProgressLinear v-model="playerHp" color="var(--error)" />
+        <AProgressLinear
+          v-model="unit.currentHealth"
+          :max="unit.maxHealth"
+          color="var(--error)"
+        />
       </div>
       <ASpacer />
-      <div class="unit-card">
+      <div
+        v-for="(unit, index) in arenaGroup"
+        :key="index"
+        class="unit-card"
+        @click="useAbility(unit)"
+      >
         <div class="img-container">
           <img src="/npcs/27.png" class="unit-img" alt="" />
         </div>
-        <AProgressLinear v-model="enemyHp" color="var(--error)" />
+        <AProgressLinear
+          v-model="unit.currentHealth"
+          :max="unit.maxHealth"
+          color="var(--error)"
+        />
       </div>
     </div>
     <div class="combat-info">
@@ -60,7 +78,19 @@
             v-if="selectedPlayerView === PlayerView.Abilities"
             class="tab-content"
           >
-            <GameMenuAbilities />
+            <div
+              v-if="playerStore.gameState === GameState.Combat"
+              class="abilities-container"
+            >
+              <CardAbility
+                v-for="ability in skillStore.activeAbilities"
+                :key="ability.name"
+                :ability="ability"
+                :selected-ability-id="selectedAbility?.id"
+                class="abilities-container"
+                @select-ability="selectedAbility = ability"
+              />
+            </div>
           </div>
           <div
             v-if="selectedPlayerView === PlayerView.Stats"
@@ -70,12 +100,32 @@
           </div>
         </div>
       </div>
-      <div class="info-middle">Middle</div>
+      <div class="info-middle">
+        <AButton @click="endTurn" @keyup.space="endTurn">End Turn</AButton>
+        <AButton @click="playerStore.gameState = GameState.Normal"
+          >Flee</AButton
+        >
+        <div>
+          Action Points Left {{ currentActionPoints }} / {{ maxActionPoints }}
+        </div>
+      </div>
       <div class="info-enemy">Enemy</div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
+import { EffectType, type Ability } from "~/game/abilities";
+import { usePlayerStore } from "@/stores/player";
+import { useSkillStore } from "@/stores/skill";
+
+const playerStore = usePlayerStore();
+const skillStore = useSkillStore();
+
+const arenaGroup = ref<Unit[]>([
+  { currentHealth: 10, maxHealth: 10 },
+  { currentHealth: 10, maxHealth: 10 },
+]);
+
 enum PlayerView {
   Equipment = "Equipment",
   Inventory = "Inventory",
@@ -84,9 +134,42 @@ enum PlayerView {
 }
 
 const selectedPlayerView = ref(PlayerView.Abilities);
+const playerTurn = ref(true);
+const selectedAbility = ref<Ability | undefined>(undefined);
+const currentActionPoints = ref(3);
+const maxActionPoints = 3;
 
-const playerHp = ref(100);
-const enemyHp = ref(100);
+function useAbility(target: Unit) {
+  if (!playerTurn) {
+    return;
+  }
+  if (!selectedAbility.value?.effects) {
+    return;
+  }
+  if (
+    !selectedAbility.value.cost ||
+    !(currentActionPoints.value >= selectedAbility.value.cost)
+  ) {
+    return;
+  }
+  const effects = selectedAbility.value.effects;
+
+  for (const effect of effects) {
+    if (effect.effectType === EffectType.Damage) {
+      console.log("Dealing Damage");
+      target.currentHealth -= effect.value;
+    }
+    if (effect.effectType === EffectType.Heal) {
+      console.log("Healing");
+    }
+  }
+
+  currentActionPoints.value -= selectedAbility.value.cost;
+}
+
+function endTurn() {
+  currentActionPoints.value = maxActionPoints;
+}
 </script>
 <style lang="scss" scoped>
 .combat-container {
@@ -107,6 +190,10 @@ const enemyHp = ref(100);
     border: 1px solid var(--elevation2);
     height: 200px;
     width: 150px;
+    cursor: pointer;
+    &:hover {
+      border: 1px solid var(--error);
+    }
   }
   .unit-img {
     height: 100%;
@@ -141,7 +228,19 @@ const enemyHp = ref(100);
   }
 }
 
+.info-middle {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .activeTab {
   border: 2px var(--elevation4) solid;
+}
+.abilities-container {
+  padding: 1rem;
+  width: 100%;
+  display: flex;
+  gap: 1rem;
 }
 </style>

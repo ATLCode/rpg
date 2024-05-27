@@ -15,12 +15,21 @@ export type InventoryItem = {
   currentStackSize: number;
 };
 
+export type Unit = {
+  currentHealth: number;
+  maxHealth: number;
+  // resistances
+};
+
 export type Gear = Record<EquipSlot, InventoryItem | null>;
 
 export const usePlayerStore = defineStore("player", () => {
   const characterName = ref("");
 
   const gameState = ref<GameState>(GameState.Normal);
+
+  const playerUnit = ref<Unit>({ currentHealth: 10, maxHealth: 10 });
+  const playerGroup = ref<Unit[]>([playerUnit.value]);
 
   // Like this or should each slot have id etc?
 
@@ -188,5 +197,7 @@ export const usePlayerStore = defineStore("player", () => {
     removeSpecificItemFromInventory,
     chooseWeightedItem,
     itemCountInInventory,
+    playerUnit,
+    playerGroup,
   };
 });
