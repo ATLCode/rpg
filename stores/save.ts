@@ -53,13 +53,19 @@ export const useSaveStore = defineStore("save", () => {
     if (error.value || !data.value) {
       throw new Error(`Unable to load the saves: ${error.value}`);
     }
-    saves.value = data.value.map((save) => {
-      const { id, saveData } = save;
-      return {
-        id: id as number,
-        data: deconstructSaveData(saveData),
-      };
-    });
+    saves.value = data.value
+      .sort((a, b) => {
+        return (
+          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+        );
+      })
+      .map((save) => {
+        const { id, saveData } = save;
+        return {
+          id: id as number,
+          data: deconstructSaveData(saveData),
+        };
+      });
   }
 
   function constructSaveData() {
@@ -125,12 +131,23 @@ export const useSaveStore = defineStore("save", () => {
   function loadSave(saveSlot: Save) {
     console.log(saveSlot);
     console.log(saveSlot.data);
-    playerStore.characterName = saveSlot.data.characterName;
-    locationStore.currentLocationId = saveSlot.data.currentLocationId;
-    playerStore.gear = saveSlot.data.gear;
-    playerStore.inventory = saveSlot.data.inventory;
-    selectedSaveId.value = saveSlot.id;
+    prepareSaveData(saveSlot);
     navigateTo("/game");
+  }
+
+  function loadLatestSave() {
+    if (saves.value.length) {
+      const save = saves.value[0];
+      prepareSaveData(save);
+    }
+  }
+
+  function prepareSaveData(save: Save) {
+    selectedSaveId.value = save.id;
+    locationStore.currentLocationId = save.data.currentLocationId;
+    playerStore.characterName = save.data.characterName;
+    playerStore.gear = save.data.gear;
+    playerStore.inventory = save.data.inventory;
   }
 
   async function deleteSave(saveId: number) {
@@ -157,5 +174,6 @@ export const useSaveStore = defineStore("save", () => {
     loadSave,
     deleteSave,
     getUserSaves,
+    loadLatestSave,
   };
 });
