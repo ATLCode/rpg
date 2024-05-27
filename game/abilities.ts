@@ -110,7 +110,7 @@ export const abilities: Record<AbilityId, Ability> = {
     effects: [
       {
         effectType: EffectType.Damage,
-        value: 2,
+        value: 5,
         damageType: DamageType.Blunt,
       },
     ],

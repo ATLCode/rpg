@@ -1,6 +1,5 @@
 import { EquipSlot, ItemId, type Item } from "~/game/items";
 import { items } from "~/game/items";
-import type { WeightedItem } from "~/game/spots";
 
 export enum GameState {
   Normal = "Normal",
@@ -148,31 +147,6 @@ export const usePlayerStore = defineStore("player", () => {
     gear.value[equipSlot] = null;
   }
 
-  function chooseWeightedItem(weightedItems: WeightedItem[]) {
-    const totalWeight = weightedItems.reduce(
-      (acc, curr) => curr.weight + acc,
-      0
-    );
-
-    const magicNumber = Math.ceil(Math.random() * totalWeight);
-    let itemFound = false;
-    const itemId: ItemId = weightedItems.reduce(
-      (acc: ItemId | number, curr) => {
-        if (itemFound) {
-          return acc;
-        }
-        const weightToCheck = curr.weight + acc;
-        if (magicNumber > weightToCheck) {
-          return weightToCheck;
-        }
-        itemFound = true;
-        return curr.itemId;
-      },
-      0
-    );
-    return itemId;
-  }
-
   function itemCountInInventory(itemId: ItemId) {
     let count = 0;
     for (let i = 0; i < inventory.value.length; i++) {
@@ -189,15 +163,14 @@ export const usePlayerStore = defineStore("player", () => {
     gameState,
     gear,
     inventory,
+    playerUnit,
+    playerGroup,
     getItemById,
     addItemToInventory,
     equipItem,
     unequipItem,
     removeItemsFromInventory,
     removeSpecificItemFromInventory,
-    chooseWeightedItem,
     itemCountInInventory,
-    playerUnit,
-    playerGroup,
   };
 });

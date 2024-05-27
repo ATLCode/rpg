@@ -2,7 +2,7 @@
   <div class="combat-container">
     <div class="combat-visual">
       <div
-        v-for="(unit, index) in playerStore.playerGroup"
+        v-for="(unit, index) in combatState.playerGroup"
         :key="index"
         class="unit-card"
         @click="useAbility(unit)"
@@ -15,10 +15,16 @@
           :max="unit.maxHealth"
           color="var(--error)"
         />
+        <AButton
+          v-if="
+            combatState.playerGroupTurn &&
+            combatState.currentTurn.unitIndex === index
+          "
+        />
       </div>
       <ASpacer />
       <div
-        v-for="(unit, index) in arenaGroup"
+        v-for="(unit, index) in combatState.enemyGroup"
         :key="index"
         class="unit-card"
         @click="useAbility(unit)"
@@ -30,6 +36,12 @@
           v-model="unit.currentHealth"
           :max="unit.maxHealth"
           color="var(--error)"
+        />
+        <AButton
+          v-if="
+            !combatState.playerGroupTurn &&
+            combatState.currentTurn.unitIndex === index
+          "
         />
       </div>
     </div>
@@ -102,8 +114,12 @@
       </div>
       <div class="info-middle">
         <div class="middle-ap">
-          <h1>{{ currentActionPoints }} / {{ maxActionPoints }}</h1>
+          <h1>
+            {{ combatState.currentTurn.currentActionPoints }} /
+            {{ combatState.currentTurn.maxActionPoints }}
+          </h1>
         </div>
+        <pre>{{ JSON.stringify(combatState, null, 4) }}</pre>
         <AButton @click="endTurn" @keyup.space="endTurn">
           <div>End Turn</div>
           <div>(Space)</div>
@@ -121,17 +137,10 @@ import { EffectType, type Ability } from "~/game/abilities";
 import { usePlayerStore } from "@/stores/player";
 import { useSkillStore } from "@/stores/skill";
 import { useEvent } from "@/composables/keyEvent";
+import { useDeepCloneArray } from "@/composables/deepClone";
 
 const playerStore = usePlayerStore();
 const skillStore = useSkillStore();
-
-const arenaGroup = ref<Unit[]>([
-  { currentHealth: 10, maxHealth: 10 },
-  { currentHealth: 10, maxHealth: 10 },
-]);
-
-// Should we have "CombatState" reactive or ref object? Then after combat update stats etc?
-// Would clear things up and make it clear with saving in mid combat.
 
 enum PlayerView {
   Equipment = "Equipment",
@@ -141,13 +150,24 @@ enum PlayerView {
 }
 
 const selectedPlayerView = ref(PlayerView.Abilities);
-const playerTurn = ref(true);
 const selectedAbility = ref<Ability | undefined>(undefined);
-const currentActionPoints = ref(3);
-const maxActionPoints = 3;
+
+const combatState = ref({
+  playerGroup: useDeepCloneArray(playerStore.playerGroup),
+  enemyGroup: [
+    { currentHealth: 10, maxHealth: 10 },
+    { currentHealth: 10, maxHealth: 10 },
+  ],
+  playerGroupTurn: true,
+  currentTurn: {
+    unitIndex: 0,
+    currentActionPoints: 3,
+    maxActionPoints: 3,
+  },
+});
 
 function useAbility(target: Unit) {
-  if (!playerTurn) {
+  if (!combatState.value.currentTurn) {
     return;
   }
   if (!selectedAbility.value?.effects) {
@@ -155,7 +175,10 @@ function useAbility(target: Unit) {
   }
   if (
     !selectedAbility.value.cost ||
-    !(currentActionPoints.value >= selectedAbility.value.cost)
+    !(
+      combatState.value.currentTurn.currentActionPoints >=
+      selectedAbility.value.cost
+    )
   ) {
     return;
   }
@@ -171,14 +194,43 @@ function useAbility(target: Unit) {
     }
   }
 
-  currentActionPoints.value -= selectedAbility.value.cost;
+  combatState.value.currentTurn.currentActionPoints -=
+    selectedAbility.value.cost;
+}
+
+function resetCurrentTurn(playerGroupTurn: boolean, nextIndex: number = 0) {
+  combatState.value.currentTurn = {
+    unitIndex: nextIndex,
+    currentActionPoints: 3,
+    maxActionPoints: 3,
+  };
+  combatState.value.playerGroupTurn = playerGroupTurn;
 }
 
 function endTurn() {
-  if (!playerTurn.value) {
+  const nextIndex = combatState.value.currentTurn.unitIndex + 1;
+  if (nextIndex >= combatState.value.playerGroup.length) {
+    console.log("Go to enemy turn");
+    resetCurrentTurn(false);
+    handleEnemyGroupTurn();
     return;
   }
-  currentActionPoints.value = maxActionPoints;
+  console.log("Next player turn");
+  resetCurrentTurn(true, nextIndex);
+}
+
+async function handleEnemyGroupTurn() {
+  console.log("Enemy turn");
+
+  for (const enemy of combatState.value.enemyGroup) {
+    if (enemy.currentHealth < 1) {
+      continue;
+    }
+    combatState.value.playerGroup[0].currentHealth -= 1;
+    await wait(500);
+    combatState.value.currentTurn.unitIndex += 1;
+  }
+  resetCurrentTurn(true);
 }
 
 useEvent("Space", endTurn);
