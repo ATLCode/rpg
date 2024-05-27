@@ -101,13 +101,16 @@
         </div>
       </div>
       <div class="info-middle">
-        <AButton @click="endTurn" @keyup.space="endTurn">End Turn</AButton>
+        <div class="middle-ap">
+          <h1>{{ currentActionPoints }} / {{ maxActionPoints }}</h1>
+        </div>
+        <AButton @click="endTurn" @keyup.space="endTurn">
+          <div>End Turn</div>
+          <div>(Space)</div>
+        </AButton>
         <AButton @click="playerStore.gameState = GameState.Normal"
           >Flee</AButton
         >
-        <div>
-          Action Points Left {{ currentActionPoints }} / {{ maxActionPoints }}
-        </div>
       </div>
       <div class="info-enemy">Enemy</div>
     </div>
@@ -117,6 +120,7 @@
 import { EffectType, type Ability } from "~/game/abilities";
 import { usePlayerStore } from "@/stores/player";
 import { useSkillStore } from "@/stores/skill";
+import { useEvent } from "@/composables/keyEvent";
 
 const playerStore = usePlayerStore();
 const skillStore = useSkillStore();
@@ -125,6 +129,9 @@ const arenaGroup = ref<Unit[]>([
   { currentHealth: 10, maxHealth: 10 },
   { currentHealth: 10, maxHealth: 10 },
 ]);
+
+// Should we have "CombatState" reactive or ref object? Then after combat update stats etc?
+// Would clear things up and make it clear with saving in mid combat.
 
 enum PlayerView {
   Equipment = "Equipment",
@@ -168,8 +175,18 @@ function useAbility(target: Unit) {
 }
 
 function endTurn() {
+  if (!playerTurn.value) {
+    return;
+  }
   currentActionPoints.value = maxActionPoints;
 }
+
+useEvent("Space", endTurn);
+
+onMounted(() => {
+  // Add event listeners
+  useEvent("Space", endTurn);
+});
 </script>
 <style lang="scss" scoped>
 .combat-container {
@@ -241,6 +258,11 @@ function endTurn() {
   padding: 1rem;
   width: 100%;
   display: flex;
+  flex-direction: column;
   gap: 1rem;
+}
+.middle-ap {
+  display: flex;
+  justify-content: center;
 }
 </style>

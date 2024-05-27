@@ -33,6 +33,6 @@ const emit = defineEmits(["selectAbility"]);
   border-radius: 10px;
 }
 .active {
-  border: 1px solid var(--elevation3);
+  border: 1px solid var(--gold);
 }
 </style>

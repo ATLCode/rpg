@@ -34,6 +34,7 @@ export enum AbilityId {
   CookPanfish = "CookPanfish",
   CookBluegill = "CookBluegill",
   BasicPunch = "BasicPunch",
+  BasicKick = "BasicKick",
 }
 
 export type Ability = {
@@ -98,6 +99,22 @@ export const abilities: Record<AbilityId, Ability> = {
       },
     ],
     cost: 2,
+  },
+  [AbilityId.BasicKick]: {
+    id: AbilityId.BasicKick,
+    name: "Basic Kick",
+    skillId: SkillId.Melee,
+    levelReq: 1,
+    isActive: true,
+    isAutomatic: true,
+    effects: [
+      {
+        effectType: EffectType.Damage,
+        value: 2,
+        damageType: DamageType.Blunt,
+      },
+    ],
+    cost: 3,
   },
   [AbilityId.CookPanfish]: {
     id: AbilityId.CookPanfish,

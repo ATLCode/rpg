@@ -51,7 +51,7 @@ export enum ContextMode {
 export type Item = {
   name: string;
   type: ItemType;
-  property: ItemProperty | null;
+  properties: ItemProperty[] | null;
   equipSlot: EquipSlot | null; // Enum, gear slot name or id
   weight: number;
   stackSize: number;
@@ -79,7 +79,7 @@ export const items: Record<ItemId, Item> = {
   [ItemId.RawPanfish]: {
     name: "Raw Panfish",
     type: ItemType.Resource,
-    property: null,
+    properties: null,
     equipSlot: null,
     weight: 1,
     stackSize: 10,
@@ -92,7 +92,7 @@ export const items: Record<ItemId, Item> = {
   [ItemId.RawBluegill]: {
     name: "Raw Bluegill",
     type: ItemType.Resource,
-    property: null,
+    properties: null,
     equipSlot: null,
     weight: 1,
     stackSize: 10,
@@ -105,7 +105,7 @@ export const items: Record<ItemId, Item> = {
   [ItemId.WoodenSword]: {
     name: "Wooden Sword",
     type: ItemType.Equipment,
-    property: null,
+    properties: [ItemProperty.Weapon, ItemProperty.OneHanded],
     equipSlot: EquipSlot.MainHand,
     weight: 1,
     stackSize: 1,
@@ -117,7 +117,7 @@ export const items: Record<ItemId, Item> = {
   [ItemId.IronSword]: {
     name: "Iron Sword",
     type: ItemType.Equipment,
-    property: null,
+    properties: null,
     equipSlot: EquipSlot.MainHand,
     weight: 1,
     stackSize: 1,
@@ -129,7 +129,7 @@ export const items: Record<ItemId, Item> = {
   [ItemId.LeatherBoots]: {
     name: "Leather Boots",
     type: ItemType.Equipment,
-    property: null,
+    properties: null,
     equipSlot: EquipSlot.Feet,
     weight: 1,
     stackSize: 1,
@@ -141,7 +141,7 @@ export const items: Record<ItemId, Item> = {
   [ItemId.OakLog]: {
     name: "Oak Log",
     type: ItemType.Resource,
-    property: null,
+    properties: null,
     equipSlot: null,
     weight: 1,
     stackSize: 10,
@@ -154,7 +154,7 @@ export const items: Record<ItemId, Item> = {
   [ItemId.CookedBluegill]: {
     name: "Cooked Bluegill",
     type: ItemType.Food,
-    property: null,
+    properties: null,
     equipSlot: null,
     weight: 1,
     stackSize: 10,
@@ -167,7 +167,7 @@ export const items: Record<ItemId, Item> = {
   [ItemId.CookedPanfish]: {
     name: "Cooked Panfish",
     type: ItemType.Food,
-    property: null,
+    properties: null,
     equipSlot: null,
     weight: 1,
     stackSize: 10,
