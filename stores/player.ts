@@ -1,3 +1,4 @@
+import type { AbilityId } from "~/game/abilities";
 import { EquipSlot, ItemId, type Item } from "~/game/items";
 import { items } from "~/game/items";
 
@@ -15,8 +16,14 @@ export type InventoryItem = {
 };
 
 export type Unit = {
+  isPlayer?: boolean;
+  name: string;
+  img: string;
+  currentActionPoints: number;
+  maxActionPoints: number;
   currentHealth: number;
   maxHealth: number;
+  abilities: AbilityId[];
   // resistances
 };
 
@@ -27,10 +34,17 @@ export const usePlayerStore = defineStore("player", () => {
 
   const gameState = ref<GameState>(GameState.Normal);
 
-  const playerUnit = ref<Unit>({ currentHealth: 10, maxHealth: 10 });
+  const playerUnit = ref<Unit>({
+    isPlayer: true,
+    name: characterName.value,
+    img: "/icons/21.png",
+    currentActionPoints: 3,
+    maxActionPoints: 3,
+    currentHealth: 10,
+    maxHealth: 10,
+    abilities: [],
+  });
   const playerGroup = ref<Unit[]>([playerUnit.value]);
-
-  // Like this or should each slot have id etc?
 
   const gear = ref<Gear>({
     [EquipSlot.Head]: null,

@@ -99,6 +99,7 @@ export const abilities: Record<AbilityId, Ability> = {
       },
     ],
     cost: 2,
+    xp: 5,
   },
   [AbilityId.BasicKick]: {
     id: AbilityId.BasicKick,
@@ -115,6 +116,7 @@ export const abilities: Record<AbilityId, Ability> = {
       },
     ],
     cost: 3,
+    xp: 10,
   },
   [AbilityId.CookPanfish]: {
     id: AbilityId.CookPanfish,

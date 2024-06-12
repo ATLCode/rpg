@@ -1,48 +1,58 @@
 <template>
-  <div class="combat-container">
+  <div v-if="combatStore.combatState" class="combat-container">
     <div class="combat-visual">
       <div
-        v-for="(unit, index) in combatState.playerGroup"
+        v-for="(unit, index) in combatStore.combatState.playerGroup"
         :key="index"
-        class="unit-card"
-        @click="useAbility(unit)"
+        class="unit-card-container"
+        @click="
+          useAbility(
+            selectedAbility,
+            combatStore.combatState.playerGroup[0],
+            unit
+          )
+        "
       >
-        <div class="img-container">
-          <img src="/icons/21.png" class="unit-img" alt="" />
+        <div class="unit-header">
+          <div
+            v-if="
+              combatStore.combatState.playerGroupTurn &&
+              combatStore.combatState.currentTurn.unitIndex === index
+            "
+            class="turn-indicator"
+          >
+            <img src="/assets/icons/chevron-down.svg" alt="" class="turn-img" />
+          </div>
         </div>
-        <AProgressLinear
-          v-model="unit.currentHealth"
-          :max="unit.maxHealth"
-          color="var(--error)"
-        />
-        <AButton
-          v-if="
-            combatState.playerGroupTurn &&
-            combatState.currentTurn.unitIndex === index
-          "
-        />
+
+        <CardUnit :unit="unit" />
       </div>
       <ASpacer />
       <div
-        v-for="(unit, index) in combatState.enemyGroup"
+        v-for="(unit, index) in combatStore.combatState.enemyGroup"
         :key="index"
-        class="unit-card"
-        @click="useAbility(unit)"
+        class="unit-card-container"
+        @click="
+          useAbility(
+            selectedAbility,
+            combatStore.combatState.playerGroup[0],
+            unit
+          )
+        "
       >
-        <div class="img-container">
-          <img src="/npcs/27.png" class="unit-img" alt="" />
+        <div class="unit-header">
+          <div
+            v-if="
+              !combatStore.combatState.playerGroupTurn &&
+              combatStore.combatState.currentTurn.unitIndex === index
+            "
+            class="turn-indicator"
+          >
+            <img src="/assets/icons/chevron-down.svg" alt="" class="turn-img" />
+          </div>
         </div>
-        <AProgressLinear
-          v-model="unit.currentHealth"
-          :max="unit.maxHealth"
-          color="var(--error)"
-        />
-        <AButton
-          v-if="
-            !combatState.playerGroupTurn &&
-            combatState.currentTurn.unitIndex === index
-          "
-        />
+
+        <CardUnit :unit="unit" />
       </div>
     </div>
     <div class="combat-info">
@@ -115,11 +125,14 @@
       <div class="info-middle">
         <div class="middle-ap">
           <h1>
-            {{ combatState.currentTurn.currentActionPoints }} /
-            {{ combatState.currentTurn.maxActionPoints }}
+            {{ combatStore.combatState.playerGroup[0].currentActionPoints }}
+            /
+            {{ combatStore.combatState.playerGroup[0].maxActionPoints }}
           </h1>
         </div>
-        <pre>{{ JSON.stringify(combatState, null, 4) }}</pre>
+        <div class="extra-info">
+          <pre>{{ JSON.stringify(combatStore.combatState, null, 4) }}</pre>
+        </div>
         <AButton @click="endTurn" @keyup.space="endTurn">
           <div>End Turn</div>
           <div>(Space)</div>
@@ -130,17 +143,46 @@
       </div>
       <div class="info-enemy">Enemy</div>
     </div>
+    <ADialog v-model="combatStore.combatState.result.isOver" :persistent="true">
+      <div v-if="combatStore.combatState.result.isWon">
+        <div>You Won!</div>
+        <div>
+          You gained {{ combatStore.combatState.rewards.meleeExp }} melee
+          experience
+        </div>
+        <div>
+          You gained {{ combatStore.combatState.rewards.rangedExp }} ranged
+          experience
+        </div>
+        <div>
+          You gained {{ combatStore.combatState.rewards.magicExp }} magic
+          experience
+        </div>
+
+        <AButton @click="playerStore.gameState = GameState.Normal"
+          >Continue</AButton
+        >
+      </div>
+      <div v-else>
+        <div>Ýou Lost!</div>
+
+        <AButton @click="playerStore.gameState = GameState.Normal"
+          >Continue</AButton
+        >
+      </div>
+    </ADialog>
   </div>
 </template>
 <script lang="ts" setup>
-import { EffectType, type Ability } from "~/game/abilities";
+import { EffectType, SkillId, abilities, type Ability } from "~/game/abilities";
 import { usePlayerStore } from "@/stores/player";
 import { useSkillStore } from "@/stores/skill";
+import { useCombatStore } from "@/stores/combat";
 import { useEvent } from "@/composables/keyEvent";
-import { useDeepCloneArray } from "@/composables/deepClone";
 
 const playerStore = usePlayerStore();
 const skillStore = useSkillStore();
+const combatStore = useCombatStore();
 
 enum PlayerView {
   Equipment = "Equipment",
@@ -150,39 +192,16 @@ enum PlayerView {
 }
 
 const selectedPlayerView = ref(PlayerView.Abilities);
-const selectedAbility = ref<Ability | undefined>(undefined);
+const selectedAbility = ref<Ability>(skillStore.activeAbilities[0]);
 
-const combatState = ref({
-  playerGroup: useDeepCloneArray(playerStore.playerGroup),
-  enemyGroup: [
-    { currentHealth: 10, maxHealth: 10 },
-    { currentHealth: 10, maxHealth: 10 },
-  ],
-  playerGroupTurn: true,
-  currentTurn: {
-    unitIndex: 0,
-    currentActionPoints: 3,
-    maxActionPoints: 3,
-  },
-});
-
-function useAbility(target: Unit) {
-  if (!combatState.value.currentTurn) {
+function useAbility(ability: Ability, user: Unit, target: Unit) {
+  if (!ability?.effects || !combatStore.combatState) {
     return;
   }
-  if (!selectedAbility.value?.effects) {
+  if (!ability.cost || !(user.currentActionPoints >= ability.cost)) {
     return;
   }
-  if (
-    !selectedAbility.value.cost ||
-    !(
-      combatState.value.currentTurn.currentActionPoints >=
-      selectedAbility.value.cost
-    )
-  ) {
-    return;
-  }
-  const effects = selectedAbility.value.effects;
+  const effects = ability.effects;
 
   for (const effect of effects) {
     if (effect.effectType === EffectType.Damage) {
@@ -194,22 +213,84 @@ function useAbility(target: Unit) {
     }
   }
 
-  combatState.value.currentTurn.currentActionPoints -=
-    selectedAbility.value.cost;
+  if (user.isPlayer && ability.xp) {
+    if (ability.skillId === SkillId.Melee) {
+      combatStore.combatState.rewards.meleeExp += ability.xp;
+    }
+    if (ability.skillId === SkillId.Ranged) {
+      combatStore.combatState.rewards.rangedExp += ability.xp;
+    }
+    if (ability.skillId === SkillId.Magic) {
+      combatStore.combatState.rewards.magicExp += ability.xp;
+    }
+  }
+
+  handleUnitDeath();
+  handleCombatOver();
+
+  user.currentActionPoints -= ability.cost;
+}
+
+function handleCombatOver() {
+  // Check if combat is over
+
+  if (!combatStore.combatState) {
+    return;
+  }
+
+  const playerGroupHealth = combatStore.combatState.enemyGroup.reduce(
+    (acc, curr) => curr.currentHealth + acc,
+    0
+  );
+
+  const enemyGroupHealth = combatStore.combatState.playerGroup.reduce(
+    (acc, curr) => curr.currentHealth + acc,
+    0
+  );
+
+  // Handle winner player
+  if (playerGroupHealth <= 0) {
+    combatStore.combatState.result.isOver = true;
+    combatStore.combatState.result.isWon = true;
+  }
+
+  // Handle winner enemy
+  if (enemyGroupHealth <= 0) {
+    combatStore.combatState.result.isOver = true;
+    combatStore.combatState.result.isWon = false;
+  }
+}
+
+function handleUnitDeath() {
+  // If enemy add drops to combat rewards
 }
 
 function resetCurrentTurn(playerGroupTurn: boolean, nextIndex: number = 0) {
-  combatState.value.currentTurn = {
+  if (!combatStore.combatState) {
+    throw new Error("Can't find combat state");
+  }
+
+  combatStore.combatState.currentTurn = {
     unitIndex: nextIndex,
-    currentActionPoints: 3,
-    maxActionPoints: 3,
   };
-  combatState.value.playerGroupTurn = playerGroupTurn;
+
+  combatStore.combatState.enemyGroup.forEach((unit) => {
+    unit.currentActionPoints = unit.maxActionPoints;
+  });
+  combatStore.combatState.playerGroup.forEach((unit) => {
+    unit.currentActionPoints = unit.maxActionPoints;
+  });
+
+  combatStore.combatState.playerGroupTurn = playerGroupTurn;
 }
 
 function endTurn() {
-  const nextIndex = combatState.value.currentTurn.unitIndex + 1;
-  if (nextIndex >= combatState.value.playerGroup.length) {
+  if (!combatStore.combatState) {
+    throw new Error("Can't find combat state");
+  }
+
+  const nextIndex = combatStore.combatState.currentTurn.unitIndex + 1;
+  if (nextIndex >= combatStore.combatState.playerGroup.length) {
     console.log("Go to enemy turn");
     resetCurrentTurn(false);
     handleEnemyGroupTurn();
@@ -220,15 +301,26 @@ function endTurn() {
 }
 
 async function handleEnemyGroupTurn() {
+  // process? simulate? run? etc instead of handle
+  if (!combatStore.combatState) {
+    throw new Error("Can't find combat state");
+  }
+
   console.log("Enemy turn");
 
-  for (const enemy of combatState.value.enemyGroup) {
-    if (enemy.currentHealth < 1) {
+  for (const enemy of combatStore.combatState.enemyGroup) {
+    if (enemy.currentHealth < 1 || enemy.abilities.length < 1) {
       continue;
     }
-    combatState.value.playerGroup[0].currentHealth -= 1;
+
+    useAbility(
+      abilities[enemy.abilities[0]],
+      enemy,
+      combatStore.combatState.playerGroup[0]
+    );
+
     await wait(500);
-    combatState.value.currentTurn.unitIndex += 1;
+    combatStore.combatState.currentTurn.unitIndex += 1;
   }
   resetCurrentTurn(true);
 }
@@ -242,10 +334,12 @@ onMounted(() => {
 </script>
 <style lang="scss" scoped>
 .combat-container {
+  max-height: 100vh;
   height: 100%;
   width: 100%;
   display: grid;
   grid-template-rows: 1fr 3fr;
+  overflow: hidden;
 }
 
 .combat-visual {
@@ -253,21 +347,8 @@ onMounted(() => {
   width: 100%;
   display: flex;
   flex-direction: row;
-  padding: 1rem;
-  .unit-card {
-    align-self: center;
-    border: 1px solid var(--elevation2);
-    height: 200px;
-    width: 150px;
-    cursor: pointer;
-    &:hover {
-      border: 1px solid var(--error);
-    }
-  }
-  .unit-img {
-    height: 100%;
-    width: 100%;
-    object-fit: contain;
+  .unit-header {
+    height: 50px;
   }
 }
 
@@ -302,6 +383,11 @@ onMounted(() => {
   flex-direction: column;
   gap: 1rem;
 }
+.extra-info {
+  display: flex;
+  max-height: 500px;
+  overflow-y: scroll;
+}
 
 .activeTab {
   border: 2px var(--elevation4) solid;
@@ -316,5 +402,14 @@ onMounted(() => {
 .middle-ap {
   display: flex;
   justify-content: center;
+}
+.turn-indicator {
+  height: 100%;
+  width: 100%;
+}
+.turn-img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
 }
 </style>

@@ -21,9 +21,7 @@
         @new-current-action="newCurrentAction"
       />
       <div v-if="locationStore.currentLocationId === LocationId.Arena">
-        <AButton @click="playerStore.gameState = GameState.Combat"
-          >Test Combat</AButton
-        >
+        <AButton @click="startRandomCombat">Random Encounter</AButton>
       </div>
       <CardNpc
         v-for="npcId in locationStore.currentLocation.npcs"
@@ -38,10 +36,11 @@
 import { useLocationStore } from "@/stores/location";
 import { LocationId } from "~/game/locations";
 import type { ResourceSpotId } from "~/game/spots";
-import { usePlayerStore, GameState } from "@/stores/player";
+import { useCombatStore } from "@/stores/combat";
+import { encounters } from "~/game/encounters";
 
 const locationStore = useLocationStore();
-const playerStore = usePlayerStore();
+const combatStore = useCombatStore();
 
 defineEmits(["back"]);
 
@@ -49,6 +48,16 @@ const currentActionSpotId = ref<ResourceSpotId | undefined>(undefined);
 
 function newCurrentAction(id: ResourceSpotId) {
   currentActionSpotId.value = id;
+}
+
+function startRandomCombat() {
+  const encountersArray = Object.values(encounters);
+  const randomEncounterIndex = randomIntFromInterval(
+    0,
+    encountersArray.length - 1
+  );
+
+  combatStore.startCombat(encountersArray[randomEncounterIndex]);
 }
 </script>
 

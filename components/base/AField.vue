@@ -3,7 +3,7 @@
     <input
       v-model="value"
       class="input"
-      type="text"
+      :type="props.type"
       :placeholder="props.label"
       :disabled="props.disabled"
       :style="style"
@@ -33,6 +33,10 @@ const props = defineProps({
   rules: {
     type: Array,
     default: null,
+  },
+  type: {
+    type: String,
+    default: "text",
   },
 });
 
