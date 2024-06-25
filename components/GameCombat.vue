@@ -159,9 +159,7 @@
           experience
         </div>
 
-        <AButton @click="playerStore.gameState = GameState.Normal"
-          >Continue</AButton
-        >
+        <AButton @click="combatStore.returnFromCombat">Continue</AButton>
       </div>
       <div v-else>
         <div>Ýou Lost!</div>

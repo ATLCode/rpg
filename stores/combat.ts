@@ -4,6 +4,7 @@ import {
   type Unit,
   type InventoryItem,
 } from "@/stores/player";
+import { SkillId } from "~/game/abilities";
 import type { Encounter } from "~/game/encounters";
 
 export type CombatState = {
@@ -27,6 +28,7 @@ export type CombatState = {
 
 export const useCombatStore = defineStore("combat", () => {
   const playerStore = usePlayerStore();
+  const skillStore = useSkillStore();
 
   const combatState = ref<CombatState | null>();
 
@@ -58,6 +60,19 @@ export const useCombatStore = defineStore("combat", () => {
   }
 
   function returnFromCombat() {
+    if (!combatState.value) {
+      return;
+    }
+    // Get exp
+    skillStore.giveSkillExp(SkillId.Melee, combatState.value.rewards.meleeExp);
+    skillStore.giveSkillExp(
+      SkillId.Ranged,
+      combatState.value.rewards.rangedExp
+    );
+    skillStore.giveSkillExp(SkillId.Magic, combatState.value.rewards.magicExp);
+    // Get drops
+    // Change Game State
+    playerStore.gameState = GameState.Normal;
     // Return from combat
     returnInfo.value = null;
   }
