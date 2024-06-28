@@ -72,6 +72,16 @@ export const encounters: Record<EncounterId, Encounter> = {
         currentHealth: 10,
         maxHealth: 10,
         abilities: [AbilityId.BasicPunch],
+        drops: [
+          {
+            id: ItemId.WoodenSword,
+            weight: 300,
+          },
+          {
+            id: ItemId.IronSword,
+            weight: 100,
+          },
+        ],
       },
     ],
   },

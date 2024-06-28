@@ -158,6 +158,7 @@
           You gained {{ combatStore.combatState.rewards.magicExp }} magic
           experience
         </div>
+        <div>You will get {{ combatStore.combatState.rewards.drops }}</div>
 
         <AButton @click="combatStore.returnFromCombat">Continue</AButton>
       </div>
