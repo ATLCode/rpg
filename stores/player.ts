@@ -1,6 +1,7 @@
 import type { AbilityId } from "~/game/abilities";
 import { EquipSlot, ItemId, type Item } from "~/game/items";
 import { items } from "~/game/items";
+export type WeightedItem = WeightedObject<ItemId>;
 
 export enum GameState {
   Normal = "Normal",
@@ -24,6 +25,7 @@ export type Unit = {
   currentHealth: number;
   maxHealth: number;
   abilities: AbilityId[];
+  drops?: WeightedItem[];
   // resistances
 };
 

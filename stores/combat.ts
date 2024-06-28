@@ -1,11 +1,7 @@
-import {
-  usePlayerStore,
-  GameState,
-  type Unit,
-  type InventoryItem,
-} from "@/stores/player";
+import { usePlayerStore, GameState, type Unit } from "@/stores/player";
 import { SkillId } from "~/game/abilities";
 import type { Encounter } from "~/game/encounters";
+import type { ItemId } from "~/game/items";
 
 export type CombatState = {
   playerGroup: Unit[];
@@ -18,7 +14,7 @@ export type CombatState = {
     meleeExp: number;
     rangedExp: number;
     magicExp: number;
-    drops: InventoryItem[];
+    drops: ItemId[];
   };
   result: {
     isOver: boolean;

@@ -177,6 +177,7 @@ import { usePlayerStore } from "@/stores/player";
 import { useSkillStore } from "@/stores/skill";
 import { useCombatStore } from "@/stores/combat";
 import { useEvent } from "@/composables/keyEvent";
+import { chooseRandomWeightedObject } from "~/utils/weight-calculation";
 
 const playerStore = usePlayerStore();
 const skillStore = useSkillStore();
@@ -192,6 +193,17 @@ enum PlayerView {
 const selectedPlayerView = ref(PlayerView.Abilities);
 const selectedAbility = ref<Ability>(skillStore.activeAbilities[0]);
 
+const isPlayerTurn = computed(() => {
+  if (
+    combatStore.combatState?.playerGroupTurn &&
+    combatStore.combatState.currentTurn.unitIndex === 0
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+});
+
 function useAbility(ability: Ability, user: Unit, target: Unit) {
   if (!ability?.effects || !combatStore.combatState) {
     return;
@@ -199,6 +211,7 @@ function useAbility(ability: Ability, user: Unit, target: Unit) {
   if (!ability.cost || !(user.currentActionPoints >= ability.cost)) {
     return;
   }
+
   const effects = ability.effects;
 
   for (const effect of effects) {
@@ -223,10 +236,17 @@ function useAbility(ability: Ability, user: Unit, target: Unit) {
     }
   }
 
-  handleUnitDeath();
+  if (target.currentHealth <= 0) {
+    target.currentHealth = 0;
+  }
+
+  handleUnitDeath(target);
   handleCombatOver();
 
   user.currentActionPoints -= ability.cost;
+  if (user.currentActionPoints === 0 && isPlayerTurn.value) {
+    endTurn();
+  }
 }
 
 function handleCombatOver() {
@@ -259,8 +279,14 @@ function handleCombatOver() {
   }
 }
 
-function handleUnitDeath() {
+function handleUnitDeath(unit: Unit) {
+  console.log("handling death");
   // If enemy add drops to combat rewards
+  if (unit.drops && unit.currentHealth === 0) {
+    const drop = chooseRandomWeightedObject(unit.drops);
+    console.log(drop);
+    combatStore.combatState?.rewards.drops.push(drop);
+  }
 }
 
 function resetCurrentTurn(playerGroupTurn: boolean, nextIndex: number = 0) {

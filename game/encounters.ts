@@ -4,7 +4,10 @@ Encounter types:
 -Scenario and Multiple choice question ("You see X thing, what do you do? 2-5 options or something?", How to resolve?)
 */
 import { AbilityId } from "./abilities";
+import { ItemId } from "./items";
 import type { Unit } from "~/stores/player";
+
+export type WeightedItem = WeightedObject<ItemId>;
 
 export type Encounter = {
   enemyGroup: Unit[];
@@ -27,6 +30,16 @@ export const encounters: Record<EncounterId, Encounter> = {
         currentHealth: 10,
         maxHealth: 10,
         abilities: [AbilityId.BasicKick],
+        drops: [
+          {
+            id: ItemId.WoodenSword,
+            weight: 300,
+          },
+          {
+            id: ItemId.IronSword,
+            weight: 100,
+          },
+        ],
       },
       {
         name: "Guard 2",
@@ -36,6 +49,16 @@ export const encounters: Record<EncounterId, Encounter> = {
         currentHealth: 10,
         maxHealth: 10,
         abilities: [AbilityId.BasicPunch],
+        drops: [
+          {
+            id: ItemId.WoodenSword,
+            weight: 300,
+          },
+          {
+            id: ItemId.IronSword,
+            weight: 100,
+          },
+        ],
       },
     ],
   },
