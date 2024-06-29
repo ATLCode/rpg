@@ -66,7 +66,7 @@ export const useCombatStore = defineStore("combat", () => {
     if (!combatState.value) {
       return;
     }
-    // Get exp
+    // Get exps
     skillStore.giveSkillExp(SkillId.Melee, combatState.value.rewards.meleeExp);
     skillStore.giveSkillExp(
       SkillId.Ranged,
@@ -76,6 +76,13 @@ export const useCombatStore = defineStore("combat", () => {
     // Get drops
     for (const selectedDrop of combatState.value.rewards.selectedDrops) {
       playerStore.addItemToInventory(selectedDrop.itemId);
+    }
+    // Lose energy
+    const energyLoss = 30;
+    if (playerStore.energy < 30) {
+      playerStore.energy = 0;
+    } else {
+      playerStore.energy -= energyLoss;
     }
     // Change Game State
     playerStore.gameState = GameState.Normal;

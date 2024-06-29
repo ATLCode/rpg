@@ -1,5 +1,10 @@
 <template>
   <div class="gamebar-container">
+    <div class="resources">
+      <div>Day: {{ playerStore.day }}</div>
+      <div>Energy: {{ playerStore.energy }}</div>
+    </div>
+
     <div class="bar-header">
       <h1 v-if="playerStore.gameState === GameState.Normal">
         {{ locationStore.currentArea.name }}
@@ -46,6 +51,13 @@ async function toMenu() {
   justify-content: center;
   align-items: center;
 }
+.resources {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 500;
+}
+
 .options {
   position: absolute;
   top: 0.5rem;

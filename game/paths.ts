@@ -8,6 +8,7 @@ export type Path = {
   reqItem: null;
   reqQuest: null;
   travelTime: number; // Seconds
+  energy: number;
 };
 
 export enum PathId {
@@ -23,5 +24,6 @@ export const paths: Record<PathId, Path> = {
     reqItem: null,
     reqQuest: null,
     travelTime: 1,
+    energy: 30,
   },
 };

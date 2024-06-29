@@ -16,15 +16,23 @@
         :current-action-spot-id="currentActionSpotId"
         @new-current-action="newCurrentAction"
       />
+      <CardSleepingSpot
+        v-for="spotId in sleepingSpots"
+        :key="spotId"
+        :spot-id="spotId"
+        :current-action-spot-id="currentActionSpotId"
+        @new-current-action="newCurrentAction"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { RefiningSpotId } from "@/game/spots";
+import { RefiningSpotId, SleepingSpotId } from "@/game/spots";
 defineEmits(["close"]);
 
 const refiningSpots = ref<RefiningSpotId[]>([RefiningSpotId.Campfire]);
+const sleepingSpots = ref<SleepingSpotId[]>([SleepingSpotId.Bedroll]);
 
 const currentActionSpotId = ref<RefiningSpotId | undefined>(undefined);
 function newCurrentAction(id: RefiningSpotId) {

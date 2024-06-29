@@ -1,4 +1,5 @@
 import { defaults } from "~/game/defaults";
+import { useNotificationStore, NotificationType } from "@/stores/notification";
 import {
   locations,
   type Location,
@@ -12,6 +13,7 @@ import { usePlayerStore, GameState } from "@/stores/player";
 
 export const useLocationStore = defineStore("location", () => {
   const playerStore = usePlayerStore();
+  const notificationStore = useNotificationStore();
 
   const currentLocationId = ref<LocationId>(defaults.startingLocationId);
 
@@ -89,19 +91,35 @@ export const useLocationStore = defineStore("location", () => {
   }
 
   function travelPath(path: Path | null) {
-    if (!path) {
-      throw new Error("Path not selected");
-    }
-    const targetLocations = path.locations.filter(
-      (endPoint) => endPoint !== currentLocationId.value
-    );
+    try {
+      if (!path) {
+        throw new Error("Path not selected");
+      }
+      const targetLocations = path.locations.filter(
+        (endPoint) => endPoint !== currentLocationId.value
+      );
 
-    if (targetLocations.length === 1) {
-      targetLocationId.value = targetLocations[0];
-      activePath.value = path;
-      playerStore.gameState = GameState.Travel;
-    } else {
-      console.log("Something went wrong");
+      if (targetLocations.length === 1) {
+        playerStore.useEnergy(path.energy);
+        targetLocationId.value = targetLocations[0];
+        activePath.value = path;
+        playerStore.gameState = GameState.Travel;
+      } else {
+        console.log("Something went wrong");
+      }
+    } catch (error) {
+      let message = "Unknown Error";
+
+      if (error instanceof Error) message = error.message;
+
+      notificationStore.showNotification(
+        NotificationType.Game,
+        message,
+        false,
+        1000
+      );
+
+      console.log(message);
     }
   }
 

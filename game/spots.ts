@@ -11,19 +11,20 @@ export type SpotResource = {
   skillId: SkillId;
   products?: WeightedItem[];
   interval: number;
+  energy: number;
 };
 export type SpotRefining = {
   name: string;
   img: string;
   skillId: SkillId;
   interval: number;
+  energy: number;
 };
 export type SpotSleeping = {
   name: string;
   img: string;
-  skillId: SkillId;
-  products?: WeightedItem[];
   interval: number;
+  energyRestore: number;
 };
 
 export enum ResourceSpotId {
@@ -34,7 +35,9 @@ export enum ResourceSpotId {
 export enum RefiningSpotId {
   Campfire = "Campfire",
 }
-export enum SleepingSpotId {}
+export enum SleepingSpotId {
+  Bedroll = "Bedroll",
+}
 
 export const resourceSpots: Record<ResourceSpotId, SpotResource> = {
   [ResourceSpotId.IronOre]: {
@@ -42,6 +45,7 @@ export const resourceSpots: Record<ResourceSpotId, SpotResource> = {
     img: "",
     skillId: SkillId.Ranged,
     interval: 1,
+    energy: 10,
   },
   [ResourceSpotId.SmallFishingSpot]: {
     name: "Small Fishing Spot",
@@ -70,6 +74,7 @@ export const resourceSpots: Record<ResourceSpotId, SpotResource> = {
       },
     ],
     interval: 3,
+    energy: 10,
   },
   [ResourceSpotId.OakTree]: {
     name: "Oak Tree",
@@ -77,6 +82,7 @@ export const resourceSpots: Record<ResourceSpotId, SpotResource> = {
     skillId: SkillId.Woodcutting,
     products: [{ id: ItemId.OakLog, weight: 100 }],
     interval: 3,
+    energy: 20,
   },
 };
 export const refiningSpots: Record<RefiningSpotId, SpotRefining> = {
@@ -85,5 +91,14 @@ export const refiningSpots: Record<RefiningSpotId, SpotRefining> = {
     img: "/sprites/campfire.png",
     skillId: SkillId.Cooking,
     interval: 3,
+    energy: 15,
+  },
+};
+export const sleepingSpots: Record<SleepingSpotId, SpotSleeping> = {
+  [SleepingSpotId.Bedroll]: {
+    name: "Bedroll",
+    img: "/sprites/campfire.png",
+    interval: 3,
+    energyRestore: 100,
   },
 };

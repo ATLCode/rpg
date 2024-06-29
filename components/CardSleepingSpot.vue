@@ -9,7 +9,6 @@
         <h4>{{ spot.name }}</h4>
       </div>
     </div>
-    <div>{{ skillStore.skills[spot.skillId].name }}</div>
     <div class="spot-img">
       <img :src="spot.img" alt="image" />
     </div>
@@ -19,19 +18,15 @@
 
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import { chooseRandomWeightedObject } from "~/utils/weight-calculation";
 import { useNotificationStore, NotificationType } from "@/stores/notification";
-import { ResourceSpotId, resourceSpots } from "@/game/spots";
-import { useSkillStore } from "@/stores/skill";
+import { SleepingSpotId, sleepingSpots } from "@/game/spots";
 import { usePlayerStore } from "@/stores/player";
-import { items } from "~/game/items";
-const skillStore = useSkillStore();
 const playerStore = usePlayerStore();
 const notificationStore = useNotificationStore();
 
 const props = defineProps({
   spotId: {
-    type: String as PropType<ResourceSpotId>,
+    type: String as PropType<SleepingSpotId>,
     required: true,
   },
   currentActionSpotId: {
@@ -43,7 +38,7 @@ const props = defineProps({
 const emit = defineEmits(["newCurrentAction"]);
 
 const spot = computed(() => {
-  return resourceSpots[props.spotId];
+  return sleepingSpots[props.spotId];
 });
 
 const totalSeconds = ref(spot.value.interval);
@@ -103,9 +98,9 @@ const finishedInterval = computed(() => {
 watch(finishedInterval, () => {
   try {
     if (finishedInterval.value === true) {
-      playerStore.useEnergy(spot.value.energy);
-      getResource();
-      progress.value = 0;
+      playerStore.energy = spot.value.energyRestore;
+      playerStore.day += 1;
+      stopAction();
     }
   } catch (error) {
     let message = "Unknown Error";
@@ -124,24 +119,6 @@ watch(finishedInterval, () => {
     console.log(message);
   }
 });
-
-// Refactor xp to separate function if going with ability idea for everything
-
-function getResource() {
-  console.log("Getting resource");
-  if (spot.value.products) {
-    const chosenItemId = chooseRandomWeightedObject(spot.value.products);
-    const itemXp = items[chosenItemId].xp;
-    try {
-      playerStore.addItemToInventory(chosenItemId);
-    } catch (error) {
-      console.log("Inventory is full");
-    }
-    if (itemXp) {
-      skillStore.giveSkillExp(spot.value.skillId, itemXp);
-    }
-  }
-}
 </script>
 
 <style lang="scss" scoped>
