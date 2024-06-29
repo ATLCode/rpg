@@ -35,6 +35,8 @@ export const usePlayerStore = defineStore("player", () => {
   const characterName = ref("");
 
   const gameState = ref<GameState>(GameState.Normal);
+  const day = ref(1);
+  const energy = ref(100);
 
   const playerUnit = ref<Unit>({
     isPlayer: true,
@@ -174,9 +176,18 @@ export const usePlayerStore = defineStore("player", () => {
     return count;
   }
 
+  function useEnergy(amount: number) {
+    if (energy.value < amount) {
+      throw new Error("Not enough energy for the action");
+    }
+    energy.value -= amount;
+  }
+
   return {
     characterName,
     gameState,
+    day,
+    energy,
     gear,
     inventory,
     playerUnit,
@@ -188,5 +199,6 @@ export const usePlayerStore = defineStore("player", () => {
     removeItemsFromInventory,
     removeSpecificItemFromInventory,
     itemCountInInventory,
+    useEnergy,
   };
 });

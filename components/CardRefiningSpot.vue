@@ -64,12 +64,14 @@
 import type { PropType } from "vue";
 import { RefiningSpotId, refiningSpots } from "@/game/spots";
 import { abilities, type Ability } from "@/game/abilities";
+import { useNotificationStore, NotificationType } from "@/stores/notification";
 import { items } from "@/game/items";
 import { useSkillStore } from "@/stores/skill";
 import { usePlayerStore } from "@/stores/player";
 
 const skillStore = useSkillStore();
 const playerStore = usePlayerStore();
+const notificationStore = useNotificationStore();
 
 const props = defineProps({
   spotId: {
@@ -144,6 +146,7 @@ function selectRecipe(ability: Ability) {
 }
 
 function startAction() {
+  console.log("Starting action");
   if (isDisabled.value) {
     return;
   }
@@ -176,14 +179,32 @@ const finishedInterval = computed(() => {
 });
 
 watch(finishedInterval, () => {
-  if (finishedInterval.value === true) {
-    takeIngredients();
-    getProduct();
-    giveExperience();
-    progress.value = 0;
-    if (isDisabled.value) {
-      stopAction();
+  try {
+    if (finishedInterval.value === true) {
+      playerStore.useEnergy(spot.value.energy);
+      takeIngredients();
+      getProduct();
+      giveExperience();
+      progress.value = 0;
+      if (isDisabled.value) {
+        stopAction();
+      }
     }
+  } catch (error) {
+    let message = "Unknown Error";
+
+    if (error instanceof Error) message = error.message;
+
+    notificationStore.showNotification(
+      NotificationType.Game,
+      message,
+      false,
+      1000
+    );
+
+    stopAction();
+
+    console.log(message);
   }
 });
 

@@ -77,6 +77,13 @@ export const useCombatStore = defineStore("combat", () => {
     for (const selectedDrop of combatState.value.rewards.selectedDrops) {
       playerStore.addItemToInventory(selectedDrop.itemId);
     }
+    // Lose energy
+    const energyLoss = 30;
+    if (playerStore.energy < 30) {
+      playerStore.energy = 0;
+    } else {
+      playerStore.energy -= energyLoss;
+    }
     // Change Game State
     playerStore.gameState = GameState.Normal;
     // Return from combat

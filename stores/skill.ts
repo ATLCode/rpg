@@ -70,7 +70,6 @@ export const useSkillStore = defineStore("skill", () => {
   );
 
   function giveSkillExp(skillId: SkillId, amount: number) {
-    console.log("Test");
     const skill = skills[skillId];
     skill.currentExp += amount;
 
