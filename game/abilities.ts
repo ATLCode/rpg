@@ -1,5 +1,4 @@
 import { ItemId } from "@/game/items";
-import { SkillId } from "~/stores/skill";
 
 export enum DamageType {
   Blunt = "Blunt",
@@ -19,17 +18,38 @@ export type Effect = {
   damageType?: DamageType;
 };
 
+export enum SkillId {
+  Fishing = "Fishing",
+  Woodcutting = "Woodcutting",
+  Cooking = "Cooking",
+  Melee = "Melee",
+  Ranged = "Ranged",
+  Magic = "Magic",
+}
+
+export enum AbilityId {
+  CutOak = "CutOak",
+  FishPanfish = "FishPanfish",
+  FishBluegill = "FishBluegill",
+  CookPanfish = "CookPanfish",
+  CookBluegill = "CookBluegill",
+  BasicPunch = "BasicPunch",
+  BasicKick = "BasicKick",
+}
+
 export type Ability = {
+  id: AbilityId;
   name: string;
   skillId: SkillId;
   levelReq: number;
-  isCombat: boolean;
+  isActive: boolean;
   isAutomatic: boolean;
   effects?: Effect[];
   itemPropertyReq?: number[];
   xp?: number;
   product?: ItemId;
   ingredients?: ItemId[];
+  cost?: number;
 };
 
 /*
@@ -39,26 +59,37 @@ isAutomatic (You get this ability as you level up)
 isCombat (Shows up during combat)
 */
 
-export enum AbilityId {
-  FishBluegill = "Fishbluegill",
-  CookPanfish = "CookPanfish",
-  CookBluegill = "CookBluegill",
-  BasicBunch = "BasicPunch",
-}
-
 export const abilities: Record<AbilityId, Ability> = {
+  [AbilityId.CutOak]: {
+    id: AbilityId.CutOak,
+    name: "Cut Oak",
+    skillId: SkillId.Fishing,
+    levelReq: 1,
+    isActive: false,
+    isAutomatic: true,
+  },
+  [AbilityId.FishPanfish]: {
+    id: AbilityId.FishPanfish,
+    name: "Fish Panfish",
+    skillId: SkillId.Fishing,
+    levelReq: 1,
+    isActive: false,
+    isAutomatic: true,
+  },
   [AbilityId.FishBluegill]: {
+    id: AbilityId.FishBluegill,
     name: "Fish Bluegill",
     skillId: SkillId.Fishing,
     levelReq: 5,
-    isCombat: false,
+    isActive: false,
     isAutomatic: true,
   },
-  [AbilityId.BasicBunch]: {
+  [AbilityId.BasicPunch]: {
+    id: AbilityId.BasicPunch,
     name: "Basic Punch",
-    skillId: SkillId.OneHanded,
+    skillId: SkillId.Melee,
     levelReq: 1,
-    isCombat: true,
+    isActive: true,
     isAutomatic: true,
     effects: [
       {
@@ -67,25 +98,46 @@ export const abilities: Record<AbilityId, Ability> = {
         damageType: DamageType.Blunt,
       },
     ],
+    cost: 2,
+    xp: 5,
+  },
+  [AbilityId.BasicKick]: {
+    id: AbilityId.BasicKick,
+    name: "Basic Kick",
+    skillId: SkillId.Melee,
+    levelReq: 1,
+    isActive: true,
+    isAutomatic: true,
+    effects: [
+      {
+        effectType: EffectType.Damage,
+        value: 5,
+        damageType: DamageType.Blunt,
+      },
+    ],
+    cost: 3,
+    xp: 10,
+  },
+  [AbilityId.CookPanfish]: {
+    id: AbilityId.CookPanfish,
+    name: "Cook Panfish",
+    skillId: SkillId.Cooking,
+    xp: 10,
+    ingredients: [ItemId.RawPanfish],
+    product: ItemId.CookedPanfish,
+    levelReq: 1,
+    isActive: false,
+    isAutomatic: true,
   },
   [AbilityId.CookBluegill]: {
+    id: AbilityId.CookBluegill,
     name: "Cook Bluegill",
     skillId: SkillId.Cooking,
     xp: 10,
     ingredients: [ItemId.RawBluegill],
     product: ItemId.CookedBluegill,
     levelReq: 5,
-    isCombat: false,
-    isAutomatic: true,
-  },
-  [AbilityId.CookPanfish]: {
-    name: "Cook Panfish",
-    skillId: SkillId.Cooking,
-    xp: 10,
-    ingredients: [ItemId.RawPanfish],
-    product: ItemId.CookedPanfish,
-    levelReq: 5,
-    isCombat: false,
+    isActive: false,
     isAutomatic: true,
   },
 };

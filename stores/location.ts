@@ -5,7 +5,7 @@ import {
   LocationType,
   LocationId,
 } from "~/game/locations";
-import type { SpotResource, SpotCooking, SpotSleeping } from "@/game/spots";
+import type { SpotResource, SpotRefining, SpotSleeping } from "@/game/spots";
 import { resourceSpots } from "@/game/spots";
 import { paths, type Path } from "~/game/paths";
 import { usePlayerStore, GameState } from "@/stores/player";
@@ -47,13 +47,13 @@ export const useLocationStore = defineStore("location", () => {
 
   type Camp = {
     resourceSpots: SpotResource[];
-    cookingSpots: SpotCooking[];
+    refiningSpots: SpotRefining[];
     sleepingSpots: SpotSleeping[];
   };
 
   const camp = ref<Camp>({
     resourceSpots: [],
-    cookingSpots: [],
+    refiningSpots: [],
     sleepingSpots: [],
   });
 
@@ -161,7 +161,7 @@ export const useLocationStore = defineStore("location", () => {
     currentLocationId.value = defaults.startingLocationId;
     camp.value = {
       resourceSpots: [],
-      cookingSpots: [],
+      refiningSpots: [],
       sleepingSpots: [],
     };
   }

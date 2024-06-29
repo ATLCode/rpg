@@ -1,14 +1,7 @@
 import { useNotificationStore, NotificationType } from "@/stores/notification";
 import { type Ability } from "~/game/abilities";
-
-export enum SkillId {
-  Fishing = "Fishing",
-  Woodcutting = "Woodcutting",
-  Cooking = "Cooking",
-  OneHanded = "OneHanded",
-  Archery = "Archery",
-  Elemental = "Elemental",
-}
+import { defaults } from "~/game/defaults";
+import { SkillId } from "~/game/abilities";
 
 export const useSkillStore = defineStore("skill", () => {
   type Skill = {
@@ -38,20 +31,20 @@ export const useSkillStore = defineStore("skill", () => {
       abilities: [],
     },
 
-    [SkillId.OneHanded]: {
-      name: "One Handed",
+    [SkillId.Melee]: {
+      name: "Melee",
       currentExp: 1,
       currentLevel: 1,
       abilities: [],
     },
-    [SkillId.Archery]: {
-      name: "Archery",
+    [SkillId.Ranged]: {
+      name: "Ranged",
       currentExp: 1,
       currentLevel: 1,
       abilities: [],
     },
-    [SkillId.Elemental]: {
-      name: "Elemental",
+    [SkillId.Magic]: {
+      name: "Magic",
       currentExp: 1,
       currentLevel: 1,
       abilities: [],
@@ -70,7 +63,11 @@ export const useSkillStore = defineStore("skill", () => {
     10: 450,
   };
 
-  const abilities = ref<Ability[]>([]);
+  const abilities = ref<Ability[]>(defaults.startingAbilities);
+
+  const activeAbilities = computed(() =>
+    abilities.value.filter((ability) => ability.isActive)
+  );
 
   function giveSkillExp(skillId: SkillId, amount: number) {
     console.log("Test");
@@ -120,5 +117,5 @@ export const useSkillStore = defineStore("skill", () => {
     console.log(skillId);
   }
 
-  return { skills, giveSkillExp, levelTresholds, abilities };
+  return { skills, giveSkillExp, levelTresholds, abilities, activeAbilities };
 });

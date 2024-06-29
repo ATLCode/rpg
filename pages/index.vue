@@ -20,12 +20,12 @@
       <div class="login-form">
         <div v-show="isRegister" class="signup">
           <AField v-model="email" label="Email" />
-          <AField v-model="password" label="Password" />
+          <AField v-model="password" label="Password" type="password" />
           <AButton @click="signUp">Register</AButton>
         </div>
         <div v-show="!isRegister" class="signin">
           <AField v-model="email" label="Email" />
-          <AField v-model="password" label="Password" />
+          <AField v-model="password" label="Password" type="password" />
           <AButton @click="signIn">Login</AButton>
         </div>
       </div>

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="value" class="dialog-mask" @click="value = !value">
+  <div v-if="value" class="dialog-mask" @click="handleOutsideClick">
     <div class="dialog-content" :style="style" @click.stop>
       <slot></slot>
     </div>
@@ -19,6 +19,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  persistent: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const style = reactive({
@@ -34,6 +38,13 @@ onMounted(() => {
 });
 
 const value = defineModel<boolean>();
+
+function handleOutsideClick() {
+  if (props.persistent) {
+    return;
+  }
+  value.value = !value;
+}
 </script>
 <style lang="scss" scoped>
 .dialog-mask {
