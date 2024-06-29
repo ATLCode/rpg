@@ -58,7 +58,7 @@ export const useCombatStore = defineStore("combat", () => {
       },
     };
 
-    // change game state
+    // Change game state
     playerStore.gameState = GameState.Combat;
   }
 
