@@ -66,7 +66,7 @@ export const useCombatStore = defineStore("combat", () => {
     if (!combatState.value) {
       return;
     }
-    // Get exp
+    // Get exps
     skillStore.giveSkillExp(SkillId.Melee, combatState.value.rewards.meleeExp);
     skillStore.giveSkillExp(
       SkillId.Ranged,
