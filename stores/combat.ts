@@ -3,6 +3,11 @@ import { SkillId } from "~/game/abilities";
 import type { Encounter } from "~/game/encounters";
 import type { ItemId } from "~/game/items";
 
+export type Drop = {
+  id: string;
+  itemId: ItemId;
+};
+
 export type CombatState = {
   playerGroup: Unit[];
   enemyGroup: Unit[];
@@ -14,7 +19,8 @@ export type CombatState = {
     meleeExp: number;
     rangedExp: number;
     magicExp: number;
-    drops: ItemId[];
+    drops: Drop[];
+    selectedDrops: Drop[];
   };
   result: {
     isOver: boolean;
@@ -44,6 +50,7 @@ export const useCombatStore = defineStore("combat", () => {
         rangedExp: 0,
         magicExp: 0,
         drops: [],
+        selectedDrops: [],
       },
       result: {
         isOver: false,
@@ -67,6 +74,9 @@ export const useCombatStore = defineStore("combat", () => {
     );
     skillStore.giveSkillExp(SkillId.Magic, combatState.value.rewards.magicExp);
     // Get drops
+    for (const selectedDrop of combatState.value.rewards.selectedDrops) {
+      playerStore.addItemToInventory(selectedDrop.itemId);
+    }
     // Change Game State
     playerStore.gameState = GameState.Normal;
     // Return from combat

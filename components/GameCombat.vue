@@ -158,7 +158,28 @@
           You gained {{ combatStore.combatState.rewards.magicExp }} magic
           experience
         </div>
-        <div>You will get {{ combatStore.combatState.rewards.drops }}</div>
+        <div>
+          You will get
+          {{ combatStore.combatState.rewards.drops }} selected
+          {{ combatStore.combatState.rewards.selectedDrops }}
+        </div>
+        <div class="drops-container">
+          <div
+            v-for="(drop, index) in combatStore.combatState.rewards.drops"
+            :key="index"
+          >
+            <div>{{ drop.itemId }}</div>
+            <!--
+            Need to fix ACheckbox to make below input to work
+                <ACheckbox v-model="combatStore.combatState.rewards.selectedDrops" :value="drop"></ACheckbox>
+            -->
+            <input
+              v-model="combatStore.combatState.rewards.selectedDrops"
+              type="checkbox"
+              :value="drop"
+            />
+          </div>
+        </div>
 
         <AButton @click="combatStore.returnFromCombat">Continue</AButton>
       </div>
@@ -173,6 +194,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { ulid } from "ulid";
 import { EffectType, SkillId, abilities, type Ability } from "~/game/abilities";
 import { usePlayerStore } from "@/stores/player";
 import { useSkillStore } from "@/stores/skill";
@@ -271,6 +293,8 @@ function handleCombatOver() {
   if (playerGroupHealth <= 0) {
     combatStore.combatState.result.isOver = true;
     combatStore.combatState.result.isWon = true;
+    combatStore.combatState.rewards.selectedDrops =
+      combatStore.combatState.rewards.drops;
   }
 
   // Handle winner enemy
@@ -286,7 +310,10 @@ function handleUnitDeath(unit: Unit) {
   if (unit.drops && unit.currentHealth === 0) {
     const drop = chooseRandomWeightedObject(unit.drops);
     console.log(drop);
-    combatStore.combatState?.rewards.drops.push(drop);
+    combatStore.combatState?.rewards.drops.push({
+      id: ulid(),
+      itemId: drop,
+    });
   }
 }
 
