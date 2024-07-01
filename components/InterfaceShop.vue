@@ -1,7 +1,8 @@
 <template>
   <div class="shop-container">
     <div class="player-side">
-      <GameMenuInventory />
+      <h1>Inventory</h1>
+      <GameInventory />
     </div>
     <div class="middle">
       <div class="shop-info">
@@ -51,6 +52,10 @@ const props = defineProps({
 .player-side {
   height: 100%;
   width: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  text-align: center;
+  justify-content: center;
 }
 .middle {
   height: 100%;
@@ -80,6 +85,7 @@ const props = defineProps({
 }
 .shop-stock {
   display: flex;
+  gap: 10px;
 }
 .shop-item-container {
   height: 50px;

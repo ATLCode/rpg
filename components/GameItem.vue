@@ -1,5 +1,13 @@
 <template>
-  <div v-if="props.inventoryItem" class="item-container">
+  <div v-if="props.emptySlot" class="item-container"></div>
+  <div
+    v-if="props.inventoryItem"
+    class="item-container"
+    @contextmenu.prevent="showItemActionsMenu($event, props.inventoryItem)"
+  >
+    <div>
+      {{ props.inventoryItem.currentStackSize }}
+    </div>
     <div class="item-img">
       <img
         :src="items[props.inventoryItem.itemId].img"
@@ -7,32 +15,72 @@
         alt=""
       />
     </div>
-    <div>{{ props.inventoryItem.currentStackSize }}</div>
   </div>
   <div v-if="props.shopItem" class="item-container">
+    <div v-if="props.shopItem.currentStackSize > 1">
+      {{ props.shopItem.currentStackSize }}
+    </div>
     <div class="item-img">
       <img :src="items[props.shopItem.itemId].img" class="item-icon" alt="" />
     </div>
-    <div>{{ props.shopItem.currentStackSize }}</div>
+    <div class="item-price">price</div>
   </div>
+
+  <div
+    v-if="showItemActions"
+    class="overlay"
+    @click="closeItemActionsMenu"
+  ></div>
+  <ContextMenuItemActions
+    v-if="showItemActions"
+    :x="menuX"
+    :y="menuY"
+    :selected-item="selectedItem"
+    :mode="ContextMode.Inventory"
+    @close="showItemActions = false"
+  />
 </template>
 
 <script lang="ts" setup>
 import { items } from "~/game/items";
 import type { ShopItem } from "~/game/npcs";
+import { ContextMode } from "~/game/items";
 
 const props = defineProps({
   inventoryItem: {
-    type: Object as PropType<InventoryItem>,
+    type: Object as PropType<InventoryItem> | null | undefined,
     required: false,
-    default: null,
+    default: undefined,
   },
   shopItem: {
     type: Object as PropType<ShopItem>,
     required: false,
-    default: null,
+    default: undefined,
+  },
+  emptySlot: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
 });
+
+// https://medium.com/@sj.anyway/custom-right-click-context-menu-in-vue3-b323a3913684
+
+const selectedItem = ref<InventoryItem | null>(null);
+const showItemActions = ref(false);
+const menuX = ref(0);
+const menuY = ref(0);
+
+function showItemActionsMenu(event: any, inventoryItem: InventoryItem) {
+  selectedItem.value = inventoryItem;
+  event.preventDefault();
+  showItemActions.value = true;
+  menuX.value = event.clientX;
+  menuY.value = event.clientY;
+}
+function closeItemActionsMenu() {
+  showItemActions.value = false;
+}
 </script>
 
 <style lang="scss" scoped>
@@ -54,5 +102,25 @@ const props = defineProps({
 .item-icon {
   max-height: 48px;
   max-width: 48px;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: 49;
+}
+
+.overlay::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.overlay:hover {
+  cursor: pointer;
 }
 </style>
