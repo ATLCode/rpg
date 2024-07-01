@@ -11,7 +11,7 @@ export enum GameState {
 
 export type InventoryItem = {
   inventoryIndex: number;
-  id: ItemId;
+  itemId: ItemId;
   item: Item;
   currentStackSize: number;
 };
@@ -78,12 +78,12 @@ export const usePlayerStore = defineStore("player", () => {
   function addItemToInventory(itemId: ItemId) {
     const item = items[itemId];
     let added = false;
-    if (item.stackSize > 1) {
+    if (item.maxStackSize > 1) {
       inventory.value = inventory.value.map((inventoryItem) => {
         if (
           inventoryItem &&
-          inventoryItem.id === itemId &&
-          item.stackSize > inventoryItem.currentStackSize &&
+          inventoryItem.itemId === itemId &&
+          item.maxStackSize > inventoryItem.currentStackSize &&
           !added
         ) {
           inventoryItem.currentStackSize += 1;
@@ -97,7 +97,7 @@ export const usePlayerStore = defineStore("player", () => {
       if (!inventoryItem && !added) {
         inventoryItem = {
           inventoryIndex: index,
-          id: itemId,
+          itemId,
           item,
           currentStackSize: 1,
         };
@@ -125,7 +125,7 @@ export const usePlayerStore = defineStore("player", () => {
     for (let i = 0; i < inventory.value.length; i++) {
       const invItem = inventory.value[i];
 
-      if (invItem?.id === itemId) {
+      if (invItem?.itemId === itemId) {
         if (invItem.currentStackSize > itemsToRemove) {
           invItem.currentStackSize = invItem.currentStackSize - itemsToRemove;
           return;
@@ -150,7 +150,7 @@ export const usePlayerStore = defineStore("player", () => {
     removeSpecificItemFromInventory(inventoryItem);
 
     if (equippedBefore) {
-      addItemToInventory(equippedBefore.id);
+      addItemToInventory(equippedBefore.itemId);
     }
   }
 
@@ -161,7 +161,7 @@ export const usePlayerStore = defineStore("player", () => {
       throw new Error("This item doesn't have equip slot");
     }
 
-    addItemToInventory(inventoryItem.id);
+    addItemToInventory(inventoryItem.itemId);
     gear.value[equipSlot] = null;
   }
 
@@ -169,7 +169,7 @@ export const usePlayerStore = defineStore("player", () => {
     let count = 0;
     for (let i = 0; i < inventory.value.length; i++) {
       const invItem = inventory.value[i];
-      if (invItem?.id === itemId) {
+      if (invItem?.itemId === itemId) {
         count += invItem.currentStackSize;
       }
     }

@@ -8,7 +8,7 @@
         class="inv-slot"
       >
         <div
-          v-if="inventoryItem && inventoryItem?.id !== null"
+          v-if="inventoryItem && inventoryItem?.itemId !== null"
           class="item-slot"
           @contextmenu.prevent="showItemActionsMenu($event, inventoryItem)"
         >

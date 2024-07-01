@@ -3,18 +3,7 @@
     <div class="player-side">
       <GameMenuInventory />
     </div>
-    <div class="middle"><AButton @click="emit('close')">Exit</AButton></div>
-    <div class="shop-side">
-      <div class="shop-stock">
-        <div
-          v-for="item in props.npc.shop!.stock"
-          :key="item.itemId"
-          class="shop-item-container"
-        >
-          <div>{{ item.itemId }}</div>
-          <div>{{ item.currentStackSize }}</div>
-        </div>
-      </div>
+    <div class="middle">
       <div class="shop-info">
         <div>
           <h1>{{ props.npc.name }}'s Shop</h1>
@@ -22,7 +11,18 @@
         <div class="img-container">
           <img :src="npc.img" class="npc-img" alt="" />
         </div>
-        <div>Money:{{ props.npc.shop!.currentMoney }}</div>
+        <div>Gold:{{ props.npc.shop!.currentMoney }}</div>
+      </div>
+      <AButton @click="emit('close')">Exit</AButton>
+    </div>
+    <div class="shop-side">
+      <h1>Stock</h1>
+      <div class="shop-stock">
+        <GameItem
+          v-for="(item, index) in props.npc.shop!.stock"
+          :key="index"
+          :shop-item="item"
+        />
       </div>
     </div>
   </div>
@@ -55,12 +55,18 @@ const props = defineProps({
 .middle {
   height: 100%;
   padding: 0rem 1rem;
+  display: flex;
+  flex-direction: column;
 }
 .shop-side {
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-rows: auto 1fr;
+  text-align: center;
+}
+.shop-info {
+  text-align: center;
 }
 
 .img-container {
@@ -73,6 +79,7 @@ const props = defineProps({
   object-fit: contain;
 }
 .shop-stock {
+  display: flex;
 }
 .shop-item-container {
   height: 50px;
