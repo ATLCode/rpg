@@ -3,6 +3,7 @@
     <div class="slot-head">
       <GameItem
         v-if="playerStore.gear[EquipSlot.Head]"
+        :gear-item="playerStore.gear[EquipSlot.Head]?.item.img"
         @contextmenu.prevent="showItemActionsMenu($event, EquipSlot.Head)"
       />
       <GameItem v-else :empty-slot-gear="'Head'" />
@@ -10,6 +11,7 @@
     <div class="slot-neck">
       <GameItem
         v-if="playerStore.gear[EquipSlot.Neck]"
+        :gear-item="playerStore.gear[EquipSlot.Neck]?.item.img"
         @contextmenu.prevent="showItemActionsMenu($event, EquipSlot.Neck)"
       />
       <GameItem v-else :empty-slot-gear="'Neck'" />
@@ -17,6 +19,7 @@
     <div class="slot-torso">
       <GameItem
         v-if="playerStore.gear[EquipSlot.Torso]"
+        :gear-item="playerStore.gear[EquipSlot.Torso]?.item.img"
         @contextmenu.prevent="showItemActionsMenu($event, EquipSlot.Torso)"
       />
       <GameItem v-else :empty-slot-gear="'Torso'" />
@@ -24,6 +27,7 @@
     <div class="slot-legs">
       <GameItem
         v-if="playerStore.gear[EquipSlot.Legs]"
+        :gear-item="playerStore.gear[EquipSlot.Legs]?.item.img"
         @contextmenu.prevent="showItemActionsMenu($event, EquipSlot.Legs)"
       />
       <GameItem v-else :empty-slot-gear="'Legs'" />
@@ -31,6 +35,7 @@
     <div class="slot-feet">
       <GameItem
         v-if="playerStore.gear[EquipSlot.Feet]"
+        :gear-item="playerStore.gear[EquipSlot.Feet]?.item.img"
         @contextmenu.prevent="showItemActionsMenu($event, EquipSlot.Feet)"
       />
       <GameItem v-else :empty-slot-gear="'Feet'" />
@@ -38,6 +43,7 @@
     <div class="slot-mainhand">
       <GameItem
         v-if="playerStore.gear[EquipSlot.MainHand]"
+        :gear-item="playerStore.gear[EquipSlot.MainHand]?.item.img"
         @contextmenu.prevent="showItemActionsMenu($event, EquipSlot.MainHand)"
       />
       <GameItem v-else :empty-slot-gear="'Mainhand'" />
@@ -45,6 +51,7 @@
     <div class="slot-offhand">
       <GameItem
         v-if="playerStore.gear[EquipSlot.OffHand]"
+        :gear-item="playerStore.gear[EquipSlot.OffHand]?.item.img"
         @contextmenu.prevent="showItemActionsMenu($event, EquipSlot.OffHand)"
       />
       <GameItem v-else :empty-slot-gear="'Offhand'" />
@@ -52,6 +59,7 @@
     <div class="slot-back">
       <GameItem
         v-if="playerStore.gear[EquipSlot.Back]"
+        :gear-item="playerStore.gear[EquipSlot.Back]?.item.img"
         @contextmenu.prevent="showItemActionsMenu($event, EquipSlot.Back)"
       />
       <GameItem v-else :empty-slot-gear="'Back'" />
@@ -59,6 +67,7 @@
     <div class="slot-ammo">
       <GameItem
         v-if="playerStore.gear[EquipSlot.Ammo]"
+        :gear-item="playerStore.gear[EquipSlot.Ammo]?.item.img"
         @contextmenu.prevent="showItemActionsMenu($event, EquipSlot.Ammo)"
       />
       <GameItem v-else :empty-slot-gear="'Ammo'" />
@@ -66,6 +75,7 @@
     <div class="slot-hands">
       <GameItem
         v-if="playerStore.gear[EquipSlot.Hands]"
+        :gear-item="playerStore.gear[EquipSlot.Hands]?.item.img"
         @contextmenu.prevent="showItemActionsMenu($event, EquipSlot.Hands)"
       />
       <GameItem v-else :empty-slot-gear="'Hands'" />
@@ -73,6 +83,7 @@
     <div class="slot-fingers">
       <GameItem
         v-if="playerStore.gear[EquipSlot.Fingers]"
+        :gear-item="playerStore.gear[EquipSlot.Fingers]?.item.img"
         @contextmenu.prevent="showItemActionsMenu($event, EquipSlot.Fingers)"
       />
       <GameItem v-else :empty-slot-gear="'Fingers'" />

@@ -28,6 +28,11 @@
     </div>
     <div class="item-price">price</div>
   </div>
+  <div v-if="props.gearItem" class="item-container gear">
+    <div class="item-img">
+      <img :src="gearItem" class="item-icon" alt="" />
+    </div>
+  </div>
 
   <div
     v-if="showItemActions"
@@ -71,9 +76,9 @@ const props = defineProps({
     default: undefined,
   },
   gearItem: {
-    type: Boolean,
+    type: String,
     required: false,
-    default: false,
+    default: undefined,
   },
 });
 
@@ -104,6 +109,11 @@ function closeItemActionsMenu() {
   border-radius: 10px;
   text-align: center;
   padding: 2px;
+}
+.gear {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .item-img {
   max-height: 48px;
