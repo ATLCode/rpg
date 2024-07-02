@@ -1,5 +1,8 @@
 <template>
   <div v-if="props.emptySlot" class="item-container"></div>
+  <div v-if="props.emptySlotGear" class="item-container">
+    {{ props.emptySlotGear }}
+  </div>
   <div
     v-if="props.inventoryItem"
     class="item-container"
@@ -58,6 +61,16 @@ const props = defineProps({
     default: undefined,
   },
   emptySlot: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  emptySlotGear: {
+    type: String,
+    required: false,
+    default: undefined,
+  },
+  gearItem: {
     type: Boolean,
     required: false,
     default: false,
