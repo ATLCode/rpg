@@ -21,7 +21,9 @@ import type { PropType } from "vue";
 import { useNotificationStore, NotificationType } from "@/stores/notification";
 import { SleepingSpotId, sleepingSpots } from "@/game/spots";
 import { usePlayerStore } from "@/stores/player";
+import { useWorldStore } from "@/stores/world";
 const playerStore = usePlayerStore();
+const worldStore = useWorldStore();
 const notificationStore = useNotificationStore();
 
 const props = defineProps({
@@ -99,7 +101,7 @@ watch(finishedInterval, () => {
   try {
     if (finishedInterval.value === true) {
       playerStore.energy = spot.value.energyRestore;
-      playerStore.day += 1;
+      worldStore.day += 1;
       stopAction();
     }
   } catch (error) {

@@ -20,6 +20,7 @@
       </div>
     </div>
     <div class="other-stuff">
+      {{ user.data.user?.email }}
       <AButton background-color="--error" @click="saveStore.logOut"
         >Log Out</AButton
       >
@@ -28,6 +29,9 @@
 </template>
 <script lang="ts" setup>
 import { useSaveStore } from "@/stores/save";
+
+const client = useSupabaseClient();
+const user = await client.auth.getUser();
 
 const saveStore = useSaveStore();
 saveStore.getUserSaves();

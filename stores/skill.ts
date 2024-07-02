@@ -3,14 +3,14 @@ import { type Ability } from "~/game/abilities";
 import { defaults } from "~/game/defaults";
 import { SkillId } from "~/game/abilities";
 
-export const useSkillStore = defineStore("skill", () => {
-  type Skill = {
-    name: string;
-    currentExp: number; // How we do leveling and xp limits?
-    currentLevel: number;
-    abilities: number[]; // Do we just have abilities completely separately?
-  };
+export type Skill = {
+  name: string;
+  currentExp: number; // How we do leveling and xp limits?
+  currentLevel: number;
+  abilities: number[]; // Do we just have abilities completely separately?
+};
 
+export const useSkillStore = defineStore("skill", () => {
   const skills: Record<SkillId, Skill> = {
     [SkillId.Fishing]: {
       name: "Fishing",

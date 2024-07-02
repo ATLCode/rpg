@@ -54,7 +54,7 @@ export type Item = {
   properties: ItemProperty[] | null;
   equipSlot: EquipSlot | null; // Enum, gear slot name or id
   weight: number;
-  stackSize: number;
+  maxStackSize: number;
   value: number;
   rarity: string; // Enum:
   img: string;
@@ -82,7 +82,7 @@ export const items: Record<ItemId, Item> = {
     properties: null,
     equipSlot: null,
     weight: 1,
-    stackSize: 10,
+    maxStackSize: 10,
     value: 1,
     rarity: ItemRarity.Normal,
     img: "/items/panfish.png",
@@ -95,7 +95,7 @@ export const items: Record<ItemId, Item> = {
     properties: null,
     equipSlot: null,
     weight: 1,
-    stackSize: 10,
+    maxStackSize: 10,
     value: 1,
     rarity: ItemRarity.Normal,
     img: "/items/bluegill.png",
@@ -108,7 +108,7 @@ export const items: Record<ItemId, Item> = {
     properties: [ItemProperty.Weapon, ItemProperty.OneHanded],
     equipSlot: EquipSlot.MainHand,
     weight: 1,
-    stackSize: 1,
+    maxStackSize: 1,
     value: 10,
     rarity: ItemRarity.Normal,
     img: "/items/sword_01.png",
@@ -120,7 +120,7 @@ export const items: Record<ItemId, Item> = {
     properties: null,
     equipSlot: EquipSlot.MainHand,
     weight: 1,
-    stackSize: 1,
+    maxStackSize: 1,
     value: 10,
     rarity: ItemRarity.Normal,
     img: "/items/sword_02.png",
@@ -132,7 +132,7 @@ export const items: Record<ItemId, Item> = {
     properties: null,
     equipSlot: EquipSlot.Feet,
     weight: 1,
-    stackSize: 1,
+    maxStackSize: 1,
     value: 10,
     rarity: ItemRarity.Normal,
     img: "/items/boots_01.png",
@@ -144,7 +144,7 @@ export const items: Record<ItemId, Item> = {
     properties: null,
     equipSlot: null,
     weight: 1,
-    stackSize: 10,
+    maxStackSize: 10,
     value: 1,
     rarity: ItemRarity.Normal,
     img: "/items/oak_log.png",
@@ -157,7 +157,7 @@ export const items: Record<ItemId, Item> = {
     properties: null,
     equipSlot: null,
     weight: 1,
-    stackSize: 10,
+    maxStackSize: 10,
     value: 1,
     rarity: ItemRarity.Normal,
     img: "/items/cooked_bluegill.png",
@@ -170,7 +170,7 @@ export const items: Record<ItemId, Item> = {
     properties: null,
     equipSlot: null,
     weight: 1,
-    stackSize: 10,
+    maxStackSize: 10,
     value: 1,
     rarity: ItemRarity.Normal,
     img: "/items/cooked_panfish.png",

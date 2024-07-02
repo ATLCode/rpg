@@ -1,11 +1,19 @@
 import { usePlayerStore, type Gear, type InventoryItem } from "./player";
+import type { Skill } from "./skill";
+import { useSkillStore } from "./skill";
+import { useNpcStore } from "./npc";
+import { useWorldStore } from "@/stores/world";
 import type { LocationId } from "~/game/locations";
-
 import { useLocationStore } from "@/stores/location";
+import type { Ability, SkillId } from "~/game/abilities";
+import type { Npc } from "~/game/npcs";
 
 export const useSaveStore = defineStore("save", () => {
   const playerStore = usePlayerStore();
   const locationStore = useLocationStore();
+  const skillStore = useSkillStore();
+  const npcStore = useNpcStore();
+  const worldStore = useWorldStore();
 
   const client = useSupabaseClient();
 
@@ -34,10 +42,15 @@ export const useSaveStore = defineStore("save", () => {
   */
 
   type SaveData = {
+    day: number;
+    energy: number;
     currentLocationId: LocationId;
     characterName: string;
     gear: Gear;
     inventory: (InventoryItem | null)[];
+    // skills: Record<SkillId, Skill>;
+    abilities: Ability[];
+    npcs: Npc[];
   };
 
   type Save = {
@@ -70,10 +83,15 @@ export const useSaveStore = defineStore("save", () => {
 
   function constructSaveData() {
     const save: SaveData = {
+      day: worldStore.day,
+      energy: playerStore.energy,
       currentLocationId: locationStore.currentLocationId,
       characterName: playerStore.characterName,
       gear: playerStore.gear,
       inventory: playerStore.inventory,
+      // skills: skillStore.skills,
+      abilities: skillStore.abilities,
+      npcs: npcStore.npcs,
     };
 
     // return Buffer.from(JSON.stringify(save)).toString("base64");
@@ -144,10 +162,15 @@ export const useSaveStore = defineStore("save", () => {
 
   function prepareSaveData(save: Save) {
     selectedSaveId.value = save.id;
+    playerStore.energy = save.data.energy;
+    worldStore.day = save.data.day;
     locationStore.currentLocationId = save.data.currentLocationId;
     playerStore.characterName = save.data.characterName;
     playerStore.gear = save.data.gear;
     playerStore.inventory = save.data.inventory;
+    skillStore.skills = save.data.skills;
+    skillStore.abilities = save.data.abilities;
+    npcStore.npcs = save.data.npcs;
   }
 
   async function deleteSave(saveId: number) {
