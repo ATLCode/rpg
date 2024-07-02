@@ -12,7 +12,10 @@
 </template>
 
 <script lang="ts" setup>
-import { NpcId, npcs } from "@/game/npcs";
+import { NpcId } from "@/game/npcs";
+import { useNpcStore } from "~/stores/npc";
+
+const npcStore = useNpcStore();
 
 const props = defineProps({
   npcId: {
@@ -22,7 +25,7 @@ const props = defineProps({
 });
 
 const npc = computed(() => {
-  return npcs[props.npcId];
+  return npcStore.npcs[props.npcId];
 });
 
 const showShop = ref(false);

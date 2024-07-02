@@ -33,7 +33,12 @@ export enum NpcAction {
   Shop = "Shop",
 }
 
+export enum NpcId {
+  Harold,
+}
+
 export type Npc = {
+  id: NpcId;
   name: string;
   title: string;
   img: string;
@@ -45,12 +50,9 @@ export type Npc = {
   shop?: Shop;
 };
 
-export enum NpcId {
-  Harold,
-}
-
 export const npcs: Record<NpcId, Npc> = {
   [NpcId.Harold]: {
+    id: NpcId.Harold,
     name: "Harold",
     title: "Innkeeper",
     img: "/npcs/11.png",

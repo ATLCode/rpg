@@ -35,7 +35,7 @@ export const usePlayerStore = defineStore("player", () => {
   const characterName = ref("");
 
   const gameState = ref<GameState>(GameState.Normal);
-  const day = ref(1);
+
   const energy = ref(100);
 
   const playerUnit = ref<Unit>({
@@ -186,7 +186,6 @@ export const usePlayerStore = defineStore("player", () => {
   return {
     characterName,
     gameState,
-    day,
     energy,
     gear,
     inventory,
