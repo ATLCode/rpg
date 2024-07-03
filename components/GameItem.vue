@@ -5,6 +5,8 @@
     v-if="props.inventoryItem"
     class="item-container"
     @contextmenu.prevent="showItemActionsMenu($event, props.inventoryItem)"
+    @mouseover="showItemInfo = true"
+    @mouseleave="showItemInfo = false"
   >
     <div>
       {{ props.inventoryItem.currentStackSize }}
@@ -47,7 +49,7 @@
 
   <div
     v-if="showItemActions"
-    class="overlay"
+    class="overlay-item"
     @click="closeItemActionsMenu"
   ></div>
   <ContextMenuItemActions
@@ -59,8 +61,8 @@
     @close="showItemActions = false"
   />
   <div
-    v-if="showItemActions"
-    class="overlay"
+    v-if="showGearActions"
+    class="overlay-gear"
     @click="closeGearActionsMenu"
   ></div>
   <ContextMenuItemActions
@@ -71,6 +73,7 @@
     :mode="ContextMode.Gear"
     @close="showGearActions = false"
   />
+  <ModalItemInfo v-show="showItemInfo" :selected-item="props.inventoryItem" />
 </template>
 
 <script lang="ts" setup>
@@ -94,16 +97,6 @@ const props = defineProps({
     required: false,
     default: false,
   },
-  emptySlotGear: {
-    type: String,
-    required: false,
-    default: undefined,
-  },
-  gearItem: {
-    type: String,
-    required: false,
-    default: undefined,
-  },
   equipSlot: {
     type: String as PropType<EquipSlot>,
     required: false,
@@ -112,6 +105,8 @@ const props = defineProps({
 });
 
 // https://medium.com/@sj.anyway/custom-right-click-context-menu-in-vue3-b323a3913684
+
+const showItemInfo = ref(false);
 
 const selectedItem = ref<InventoryItem | null>(null);
 const showItemActions = ref(false);
@@ -171,7 +166,16 @@ function closeGearActionsMenu() {
   max-height: 48px;
   max-width: 48px;
 }
-.overlay {
+.overlay-item {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: 49;
+}
+.overlay-gear {
   position: fixed;
   top: 0;
   left: 0;
@@ -181,14 +185,24 @@ function closeGearActionsMenu() {
   z-index: 49;
 }
 
-.overlay::before {
+.overlay-item::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.overlay-gear::before {
   content: "";
   position: absolute;
   width: 100%;
   height: 100%;
 }
 
-.overlay:hover {
+.overlay-item:hover {
+  cursor: pointer;
+}
+
+.overlay-gear:hover {
   cursor: pointer;
 }
 </style>
