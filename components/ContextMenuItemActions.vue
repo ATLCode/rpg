@@ -47,7 +47,7 @@ const visibleActions = computed(() => {
     // Drop is shown as option for item in gear, but is bugged, need for loop to remove more than 1 word from array
     // https://stackoverflow.com/questions/11752143/remove-several-words-from-an-array-javascript
     // Either this or handle drop from gear
-    return rawActions?.filter((action) => action !== ItemAction.Equip);
+    return rawActions?.filter((action) => action === ItemAction.Unequip);
   }
 });
 

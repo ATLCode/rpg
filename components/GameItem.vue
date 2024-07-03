@@ -1,8 +1,6 @@
 <template>
   <div v-if="props.emptySlot" class="item-container"></div>
-  <div v-if="props.emptySlotGear" class="item-container">
-    {{ props.emptySlotGear }}
-  </div>
+
   <div
     v-if="props.inventoryItem"
     class="item-container"
@@ -19,6 +17,7 @@
       />
     </div>
   </div>
+
   <div v-if="props.shopItem" class="item-container">
     <div v-if="props.shopItem.currentStackSize > 1">
       {{ props.shopItem.currentStackSize }}
@@ -28,10 +27,22 @@
     </div>
     <div class="item-price">price</div>
   </div>
-  <div v-if="props.gearItem" class="item-container gear">
-    <div class="item-img">
-      <img :src="gearItem" class="item-icon" alt="" />
+
+  <div v-if="props.equipSlot">
+    <div
+      v-if="playerStore.gear[props.equipSlot]"
+      class="item-container gear"
+      @contextmenu.prevent="showGearActionsMenu($event, props.equipSlot)"
+    >
+      <div class="item-img">
+        <img
+          :src="playerStore.gear[props.equipSlot]?.item.img"
+          class="item-icon"
+          alt=""
+        />
+      </div>
     </div>
+    <div v-else class="item-container">{{ props.equipSlot }}</div>
   </div>
 
   <div
@@ -47,12 +58,25 @@
     :mode="ContextMode.Inventory"
     @close="showItemActions = false"
   />
+  <div
+    v-if="showItemActions"
+    class="overlay"
+    @click="closeGearActionsMenu"
+  ></div>
+  <ContextMenuItemActions
+    v-if="showGearActions"
+    :x="menuX"
+    :y="menuY"
+    :selected-item="selectedItem"
+    :mode="ContextMode.Gear"
+    @close="showGearActions = false"
+  />
 </template>
 
 <script lang="ts" setup>
-import { items } from "~/game/items";
+import { usePlayerStore } from "@/stores/player";
+import { EquipSlot, items, ContextMode } from "~/game/items";
 import type { ShopItem } from "~/game/npcs";
-import { ContextMode } from "~/game/items";
 
 const props = defineProps({
   inventoryItem: {
@@ -80,24 +104,45 @@ const props = defineProps({
     required: false,
     default: undefined,
   },
+  equipSlot: {
+    type: String as PropType<EquipSlot>,
+    required: false,
+    default: undefined,
+  },
 });
 
 // https://medium.com/@sj.anyway/custom-right-click-context-menu-in-vue3-b323a3913684
 
 const selectedItem = ref<InventoryItem | null>(null);
 const showItemActions = ref(false);
+const showGearActions = ref(false);
 const menuX = ref(0);
 const menuY = ref(0);
 
+const playerStore = usePlayerStore();
+
 function showItemActionsMenu(event: any, inventoryItem: InventoryItem) {
   selectedItem.value = inventoryItem;
+
   event.preventDefault();
   showItemActions.value = true;
   menuX.value = event.clientX;
   menuY.value = event.clientY;
 }
+
+function showGearActionsMenu(event: any, equipSlot: EquipSlot) {
+  selectedItem.value = playerStore.gear[equipSlot];
+
+  event.preventDefault();
+  showGearActions.value = true;
+  menuX.value = event.clientX;
+  menuY.value = event.clientY;
+}
 function closeItemActionsMenu() {
   showItemActions.value = false;
+}
+function closeGearActionsMenu() {
+  showGearActions.value = false;
 }
 </script>
 
