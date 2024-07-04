@@ -76,6 +76,7 @@ export const usePlayerStore = defineStore("player", () => {
   }
 
   function addItemToInventory(itemId: ItemId) {
+    // Should we have optional parameter amount that defaults to 1, hard to code though
     const item = items[itemId];
     let added = false;
     if (item.maxStackSize > 1) {
@@ -183,6 +184,18 @@ export const usePlayerStore = defineStore("player", () => {
     energy.value -= amount;
   }
 
+  function buyItem() {}
+
+  function sellItem(item: InventoryItem) {
+    // How do we get npc/shop here, so we can reduce gold?
+    const value = item.item.value;
+    for (let i = 0; i < value; i++) {
+      addItemToInventory(ItemId.Gold);
+    }
+
+    removeSpecificItemFromInventory(item);
+  }
+
   return {
     characterName,
     gameState,
@@ -199,5 +212,7 @@ export const usePlayerStore = defineStore("player", () => {
     removeSpecificItemFromInventory,
     itemCountInInventory,
     useEnergy,
+    sellItem,
+    buyItem,
   };
 });

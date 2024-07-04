@@ -8,6 +8,7 @@ export enum ItemType {
   Container = "Container",
   Resource = "Resource",
   Ingredient = "Ingredient",
+  Currency = "Currency",
 }
 
 export enum ItemProperty {
@@ -27,6 +28,8 @@ export enum ItemAction {
   Unequip = "Unequip",
   Drop = "Drop",
   Eat = "Eat",
+  Buy = "Buy",
+  Sell = "Sell",
 }
 
 export enum EquipSlot {
@@ -44,8 +47,10 @@ export enum EquipSlot {
 }
 
 export enum ContextMode {
-  Inventory,
-  Gear,
+  Inventory = "Inventory",
+  Gear = "Gear",
+  Sell = "Sell",
+  Buy = "Buy",
 }
 
 export type Item = {
@@ -73,6 +78,7 @@ export enum ItemId {
   LeatherBoots = "LeatherBoots",
   CookedBluegill = "CookedBluegill",
   CookedPanfish = "CookedPanfish",
+  Gold = "Gold",
 }
 
 export const items: Record<ItemId, Item> = {
@@ -175,6 +181,18 @@ export const items: Record<ItemId, Item> = {
     rarity: ItemRarity.Normal,
     img: "/items/cooked_panfish.png",
     xp: 10,
+    actions: [ItemAction.Drop],
+  },
+  [ItemId.Gold]: {
+    name: "Gold",
+    type: ItemType.Currency,
+    properties: null,
+    equipSlot: null,
+    weight: 1,
+    maxStackSize: 1000000000,
+    value: 1,
+    rarity: ItemRarity.Normal,
+    img: "/items/cooked_panfish.png",
     actions: [ItemAction.Drop],
   },
 };

@@ -1,5 +1,6 @@
 <template>
   <div class="menu-container" :style="{ top: y + 'px', left: x + 'px' }">
+    <div>{{ modes }}</div>
     <div
       v-for="action in visibleActions"
       :key="action"
@@ -13,7 +14,7 @@
 <script lang="ts" setup>
 import type { PropType } from "vue";
 import { type InventoryItem, usePlayerStore } from "@/stores/player";
-import { ContextMode, ItemAction } from "@/game/items";
+import { ContextMode, ItemAction, ItemId } from "@/game/items";
 const playerStore = usePlayerStore();
 
 const props = defineProps({
@@ -29,8 +30,8 @@ const props = defineProps({
     type: Object as PropType<InventoryItem | null>,
     default: null,
   },
-  mode: {
-    type: Number as PropType<ContextMode>,
+  modes: {
+    type: Array as PropType<ContextMode[]>,
     required: true,
   },
 });
@@ -38,17 +39,39 @@ const props = defineProps({
 const emit = defineEmits(["close"]);
 
 const visibleActions = computed(() => {
-  const rawActions = props.selectedItem?.item.actions;
+  // const rawActions = props.selectedItem?.item.actions;
+  // Form raw actions
 
-  if (props.mode === ContextMode.Inventory) {
-    return rawActions?.filter((action) => action !== ItemAction.Unequip);
+  let rawActions = [ItemAction.Drop];
+  if (props.selectedItem?.item.equipSlot) {
+    rawActions.push(ItemAction.Equip);
+    rawActions.push(ItemAction.Unequip);
   }
-  if (props.mode === ContextMode.Gear) {
-    // Drop is shown as option for item in gear, but is bugged, need for loop to remove more than 1 word from array
-    // https://stackoverflow.com/questions/11752143/remove-several-words-from-an-array-javascript
-    // Either this or handle drop from gear
+
+  // Filters for contexxt modes
+  if (props.modes.includes(ContextMode.Inventory)) {
+    rawActions = rawActions?.filter((action) => action !== ItemAction.Unequip);
+  }
+  if (props.modes.includes(ContextMode.Gear)) {
     return rawActions?.filter((action) => action === ItemAction.Unequip);
   }
+  if (props.modes.includes(ContextMode.Sell)) {
+    if (
+      props.selectedItem?.item.value &&
+      props.selectedItem.itemId !== ItemId.Gold
+    ) {
+      rawActions.push(ItemAction.Sell);
+    }
+  }
+  if (props.modes.includes(ContextMode.Buy)) {
+    if (
+      props.selectedItem?.item.value &&
+      props.selectedItem.itemId !== ItemId.Gold
+    ) {
+      rawActions.push(ItemAction.Buy);
+    }
+  }
+  return rawActions;
 });
 
 function handleActionClick(action: ItemAction) {
@@ -71,6 +94,13 @@ function handleActionClick(action: ItemAction) {
   if (action === ItemAction.Unequip) {
     console.log("Unequipping");
     playerStore.unequipItem(props.selectedItem);
+  }
+  if (action === ItemAction.Buy) {
+    console.log("Buying");
+  }
+  if (action === ItemAction.Sell) {
+    console.log("Selling");
+    playerStore.sellItem(props.selectedItem);
   }
   emit("close");
 }

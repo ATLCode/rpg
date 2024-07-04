@@ -7,7 +7,6 @@
     </div>
     <AButton v-if="npc.shop" @click="showShop = true">Shop</AButton>
   </div>
-
   <InterfaceShop v-if="showShop" :npc="npc" @close="showShop = false" />
 </template>
 

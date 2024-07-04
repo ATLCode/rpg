@@ -35,6 +35,8 @@
       v-if="playerStore.gear[props.equipSlot]"
       class="item-container gear"
       @contextmenu.prevent="showGearActionsMenu($event, props.equipSlot)"
+      @mouseover="showGearInfo = true"
+      @mouseleave="showGearInfo = false"
     >
       <div class="item-img">
         <img
@@ -57,7 +59,11 @@
     :x="menuX"
     :y="menuY"
     :selected-item="selectedItem"
-    :mode="ContextMode.Inventory"
+    :modes="
+      extraContextModes
+        ? [ContextMode.Inventory].concat(extraContextModes)
+        : [ContextMode.Inventory]
+    "
     @close="showItemActions = false"
   />
   <div
@@ -70,10 +76,14 @@
     :x="menuX"
     :y="menuY"
     :selected-item="selectedItem"
-    :mode="ContextMode.Gear"
+    :modes="[ContextMode.Gear]"
     @close="showGearActions = false"
   />
   <ModalItemInfo v-show="showItemInfo" :selected-item="props.inventoryItem" />
+  <ModalItemInfo
+    v-show="showGearInfo"
+    :selected-item="playerStore.gear[props.equipSlot!]"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -102,11 +112,17 @@ const props = defineProps({
     required: false,
     default: undefined,
   },
+  extraContextModes: {
+    type: Array as PropType<ContextMode[]>,
+    required: false,
+    default: undefined,
+  },
 });
 
 // https://medium.com/@sj.anyway/custom-right-click-context-menu-in-vue3-b323a3913684
 
 const showItemInfo = ref(false);
+const showGearInfo = ref(false);
 
 const selectedItem = ref<InventoryItem | null>(null);
 const showItemActions = ref(false);
@@ -124,7 +140,14 @@ function showItemActionsMenu(event: any, inventoryItem: InventoryItem) {
   menuX.value = event.clientX;
   menuY.value = event.clientY;
 }
-
+/*
+function showItemBuyingMenu(event: any, itemId: ItemId) {
+  event.preventDefault();
+  showItemActions.value = true;
+  menuX.value = event.clientX;
+  menuY.value = event.clientY;
+}
+*/
 function showGearActionsMenu(event: any, equipSlot: EquipSlot) {
   selectedItem.value = playerStore.gear[equipSlot];
 

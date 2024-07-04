@@ -8,6 +8,7 @@
       <GameItem
         v-if="inventoryItem && inventoryItem?.itemId !== null"
         :inventory-item="inventoryItem!"
+        :extra-context-modes="props.shop ? [ContextMode.Sell] : undefined"
       />
       <GameItem v-else :empty-slot="true" />
     </div>
@@ -16,8 +17,17 @@
 
 <script lang="ts" setup>
 import { usePlayerStore } from "@/stores/player";
+import { ContextMode } from "~/game/items";
 
 const playerStore = usePlayerStore();
+
+const props = defineProps({
+  shop: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+});
 </script>
 
 <style lang="scss" scoped>

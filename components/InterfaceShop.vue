@@ -2,7 +2,7 @@
   <div class="shop-container">
     <div class="player-side">
       <h1>Inventory</h1>
-      <GameInventory />
+      <GameInventory :shop="true" />
     </div>
     <div class="middle">
       <div class="shop-info">
@@ -23,6 +23,7 @@
           v-for="(item, index) in props.npc.shop!.stock"
           :key="index"
           :shop-item="item"
+          :context-mode="ContextMode.Buy"
         />
       </div>
     </div>
@@ -30,6 +31,7 @@
 </template>
 
 <script lang="ts" setup>
+import { ContextMode } from "~/game/items";
 import type { Npc } from "~/game/npcs";
 
 const emit = defineEmits(["close"]);
