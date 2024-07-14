@@ -11,45 +11,7 @@ export type Skill = {
 };
 
 export const useSkillStore = defineStore("skill", () => {
-  const skills: Record<SkillId, Skill> = {
-    [SkillId.Fishing]: {
-      name: "Fishing",
-      currentExp: 1,
-      currentLevel: 1,
-      abilities: [],
-    },
-    [SkillId.Woodcutting]: {
-      name: "Woodcutting",
-      currentExp: 1,
-      currentLevel: 1,
-      abilities: [],
-    },
-    [SkillId.Cooking]: {
-      name: "Cooking",
-      currentExp: 1,
-      currentLevel: 1,
-      abilities: [],
-    },
-
-    [SkillId.Melee]: {
-      name: "Melee",
-      currentExp: 1,
-      currentLevel: 1,
-      abilities: [],
-    },
-    [SkillId.Ranged]: {
-      name: "Ranged",
-      currentExp: 1,
-      currentLevel: 1,
-      abilities: [],
-    },
-    [SkillId.Magic]: {
-      name: "Magic",
-      currentExp: 1,
-      currentLevel: 1,
-      abilities: [],
-    },
-  };
+  const skills = ref(defaults.startingSkills);
 
   const levelTresholds: Record<number, number> = {
     2: 50,
@@ -70,7 +32,7 @@ export const useSkillStore = defineStore("skill", () => {
   );
 
   function giveSkillExp(skillId: SkillId, amount: number) {
-    const skill = skills[skillId];
+    const skill = skills.value[skillId];
     skill.currentExp += amount;
 
     const notificationStore = useNotificationStore();
@@ -95,7 +57,7 @@ export const useSkillStore = defineStore("skill", () => {
   }
 
   function levelUp(skillId: SkillId) {
-    const skill = skills[skillId];
+    const skill = skills.value[skillId];
     skill.currentLevel += 1;
 
     console.log("New level is", skill.currentLevel, skill.name);
@@ -116,5 +78,17 @@ export const useSkillStore = defineStore("skill", () => {
     console.log(skillId);
   }
 
-  return { skills, giveSkillExp, levelTresholds, abilities, activeAbilities };
+  function $reset() {
+    skills.value = defaults.startingSkills;
+    abilities.value = defaults.startingAbilities;
+  }
+
+  return {
+    skills,
+    giveSkillExp,
+    levelTresholds,
+    abilities,
+    activeAbilities,
+    $reset,
+  };
 });

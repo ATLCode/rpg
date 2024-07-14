@@ -17,5 +17,9 @@ export const useWorldStore = defineStore("world", () => {
     // Give buffs based on food?
   }
 
-  return { day, viewLocations, viewPaths, sleep };
+  function $reset() {
+    day.value = defaults.startingDay;
+  }
+
+  return { day, viewLocations, viewPaths, sleep, $reset };
 });

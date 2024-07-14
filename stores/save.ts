@@ -3,6 +3,7 @@ import type { Skill } from "./skill";
 import { useSkillStore } from "./skill";
 import { useNpcStore } from "./npc";
 import { useWorldStore } from "@/stores/world";
+import { useNotificationStore } from "@/stores/notification";
 import type { LocationId } from "~/game/locations";
 import { useLocationStore } from "@/stores/location";
 import type { Ability, SkillId } from "~/game/abilities";
@@ -14,6 +15,7 @@ export const useSaveStore = defineStore("save", () => {
   const skillStore = useSkillStore();
   const npcStore = useNpcStore();
   const worldStore = useWorldStore();
+  const notificationStore = useNotificationStore();
 
   const client = useSupabaseClient();
 
@@ -48,7 +50,7 @@ export const useSaveStore = defineStore("save", () => {
     characterName: string;
     gear: Gear;
     inventory: (InventoryItem | null)[];
-    // skills: Record<SkillId, Skill>;
+    skills: Record<SkillId, Skill>;
     abilities: Ability[];
     npcs: Npc[];
   };
@@ -89,7 +91,7 @@ export const useSaveStore = defineStore("save", () => {
       characterName: playerStore.characterName,
       gear: playerStore.gear,
       inventory: playerStore.inventory,
-      // skills: skillStore.skills,
+      skills: skillStore.skills,
       abilities: skillStore.abilities,
       npcs: npcStore.npcs,
     };
@@ -108,6 +110,7 @@ export const useSaveStore = defineStore("save", () => {
   }
 
   async function updateSave() {
+    console.log(skillStore.skills);
     try {
       await $fetch("/api/saves/update", {
         method: "POST",
@@ -117,6 +120,12 @@ export const useSaveStore = defineStore("save", () => {
         },
       });
       getUserSaves();
+      notificationStore.showNotification(
+        NotificationType.Game,
+        "Save Successful",
+        false,
+        1000
+      );
     } catch (error) {
       // console.error(error);
     }
@@ -124,8 +133,10 @@ export const useSaveStore = defineStore("save", () => {
 
   async function createSave() {
     // How can we initially find out save slot of the save after creating it
+
     try {
       console.log("Creating Save");
+      clearSaveData();
       const saveData = constructSaveData();
       console.log(saveData);
 
@@ -163,11 +174,11 @@ export const useSaveStore = defineStore("save", () => {
   function prepareSaveData(save: Save) {
     selectedSaveId.value = save.id;
     playerStore.energy = save.data.energy;
-    worldStore.day = save.data.day;
-    locationStore.currentLocationId = save.data.currentLocationId;
     playerStore.characterName = save.data.characterName;
     playerStore.gear = save.data.gear;
     playerStore.inventory = save.data.inventory;
+    worldStore.day = save.data.day;
+    locationStore.currentLocationId = save.data.currentLocationId;
     skillStore.skills = save.data.skills;
     skillStore.abilities = save.data.abilities;
     npcStore.npcs = save.data.npcs;
@@ -185,6 +196,14 @@ export const useSaveStore = defineStore("save", () => {
     } catch (error) {
       // console.error(error);
     }
+  }
+
+  function clearSaveData() {
+    playerStore.$reset();
+    worldStore.$reset();
+    locationStore.$reset();
+    skillStore.$reset();
+    npcStore.$reset();
   }
 
   return {

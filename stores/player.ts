@@ -77,6 +77,7 @@ export const usePlayerStore = defineStore("player", () => {
 
   function addItemToInventory(itemId: ItemId) {
     // Should we have optional parameter amount that defaults to 1, hard to code though
+    // Parametri tai ei erroria
     const item = items[itemId];
     let added = false;
     if (item.maxStackSize > 1) {
@@ -196,6 +197,35 @@ export const usePlayerStore = defineStore("player", () => {
     removeSpecificItemFromInventory(item);
   }
 
+  function $reset() {
+    inventory.value = new Array(28).fill(null);
+    playerUnit.value = {
+      isPlayer: true,
+      name: characterName.value,
+      img: "/icons/21.png",
+      currentActionPoints: 3,
+      maxActionPoints: 3,
+      currentHealth: 10,
+      maxHealth: 10,
+      abilities: [],
+    };
+    gear.value = {
+      [EquipSlot.Head]: null,
+      [EquipSlot.Torso]: null,
+      [EquipSlot.Legs]: null,
+      [EquipSlot.Hands]: null,
+      [EquipSlot.Feet]: null,
+      [EquipSlot.MainHand]: null,
+      [EquipSlot.OffHand]: null,
+      [EquipSlot.Neck]: null,
+      [EquipSlot.Fingers]: null,
+      [EquipSlot.Back]: null,
+      [EquipSlot.Ammo]: null,
+    };
+    playerGroup.value = [playerUnit.value];
+    energy.value = 100;
+  }
+
   return {
     characterName,
     gameState,
@@ -214,5 +244,6 @@ export const usePlayerStore = defineStore("player", () => {
     useEnergy,
     sellItem,
     buyItem,
+    $reset,
   };
 });

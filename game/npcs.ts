@@ -1,17 +1,20 @@
 import { ItemId } from "./items";
 
-export type Answer = {
-  trigger: number;
+export type NpcResponse = {
+  // Requirements
+  trigger: number; // What are these? Maybe delete?
   text: string;
+  // PlayerOptions
 };
 
-export type Question = {
+export type PlayerOption = {
   id: number;
   isImmediate: boolean;
   isPersistent: boolean;
   triggers: number[];
   text: string;
-  answers: Answer[];
+  // Requirements (have done this quest, have this skill etc)
+  npcResponse: NpcResponse[];
 };
 
 export type ShopItem = {
@@ -45,7 +48,8 @@ export type Npc = {
   // unit
   actions: NpcAction[];
   dialog: {
-    questions: Question[];
+    // Greeting
+    playerOption: PlayerOption[];
   };
   shop?: Shop;
 };
@@ -58,14 +62,14 @@ export const npcs: Record<NpcId, Npc> = {
     img: "/npcs/11.png",
     actions: [NpcAction.Shop],
     dialog: {
-      questions: [
+      playerOption: [
         {
           id: 1,
           isImmediate: false,
           isPersistent: false,
           triggers: [],
           text: "What's your name?",
-          answers: [
+          npcResponse: [
             {
               trigger: 1,
               text: "My name is X",
