@@ -1,4 +1,4 @@
-import { usePlayerStore, type Gear, type InventoryItem } from "./player";
+import { usePlayerStore, type Gear } from "./player";
 import type { Skill } from "./skill";
 import { useSkillStore } from "./skill";
 import { useNpcStore } from "./npc";
@@ -8,6 +8,7 @@ import type { LocationId } from "~/game/locations";
 import { useLocationStore } from "@/stores/location";
 import type { Ability, SkillId } from "~/game/abilities";
 import type { Npc } from "~/game/npcs";
+import type { GameItem } from "~/types/item.types";
 
 export const useSaveStore = defineStore("save", () => {
   const playerStore = usePlayerStore();
@@ -49,7 +50,7 @@ export const useSaveStore = defineStore("save", () => {
     currentLocationId: LocationId;
     characterName: string;
     gear: Gear;
-    inventory: (InventoryItem | null)[];
+    inventory: (GameItem | null)[];
     skills: Record<SkillId, Skill>;
     abilities: Ability[];
     npcs: Npc[];

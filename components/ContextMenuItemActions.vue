@@ -13,8 +13,12 @@
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import { type InventoryItem, usePlayerStore } from "@/stores/player";
-import { ContextMode, ItemAction, ItemId } from "@/game/items";
+import {
+  ContextMode,
+  ItemAction,
+  ItemId,
+  type GameItem,
+} from "../types/item.types";
 const playerStore = usePlayerStore();
 
 const props = defineProps({
@@ -27,7 +31,7 @@ const props = defineProps({
     required: true,
   },
   selectedItem: {
-    type: Object as PropType<InventoryItem | null>,
+    type: Object as PropType<GameItem | null>,
     default: null,
   },
   modes: {

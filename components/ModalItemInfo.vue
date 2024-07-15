@@ -1,6 +1,8 @@
 <template>
   <div class="item-info-container">
     <div>Item Info:</div>
+    <div>Item type: {{ props.selectedItem?.type }}</div>
+    <div>Item index: {{ props.selectedItem?.index }}</div>
     <div>Name: {{ props.selectedItem?.item.name }}</div>
     <div>Actions: {{ props.selectedItem?.item.actions }}</div>
     <div>Properties: {{ props.selectedItem?.item.properties }}</div>
@@ -9,9 +11,11 @@
 </template>
 
 <script lang="ts" setup>
+import type { GameItem } from "~/types/item.types";
+
 const props = defineProps({
   selectedItem: {
-    type: Object as PropType<InventoryItem | null>,
+    type: Object as PropType<GameItem | null>,
     default: null,
   },
 });

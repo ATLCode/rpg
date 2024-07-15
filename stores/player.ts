@@ -1,5 +1,10 @@
+import {
+  EquipSlot,
+  ItemId,
+  type GameItem,
+  GameItemType,
+} from "../types/item.types";
 import type { AbilityId } from "~/game/abilities";
-import { EquipSlot, ItemId, type Item } from "~/game/items";
 import { items } from "~/game/items";
 export type WeightedItem = WeightedObject<ItemId>;
 
@@ -8,13 +13,6 @@ export enum GameState {
   Travel = "Travel",
   Combat = "Combat",
 }
-
-export type InventoryItem = {
-  inventoryIndex: number;
-  itemId: ItemId;
-  item: Item;
-  currentStackSize: number;
-};
 
 export type Unit = {
   isPlayer?: boolean;
@@ -29,7 +27,7 @@ export type Unit = {
   // resistances
 };
 
-export type Gear = Record<EquipSlot, InventoryItem | null>;
+export type Gear = Record<EquipSlot, GameItem | null>;
 
 export const usePlayerStore = defineStore("player", () => {
   const characterName = ref("");
@@ -65,7 +63,9 @@ export const usePlayerStore = defineStore("player", () => {
   });
 
   // Iventory as array of either item ids or nulls (or should there be item that's essentially empty?), this way we can handle moving items not next to eachother
-  const inventory = ref<(InventoryItem | null)[]>(new Array(28).fill(null));
+  const inventory = ref<(GameItem | null)[]>(new Array(28).fill(null));
+
+  const selectedItem = ref<GameItem | null>(null);
 
   function getItemById(itemId: ItemId) {
     const result = items[itemId];
@@ -98,7 +98,8 @@ export const usePlayerStore = defineStore("player", () => {
     inventory.value = inventory.value.map((inventoryItem, index) => {
       if (!inventoryItem && !added) {
         inventoryItem = {
-          inventoryIndex: index,
+          type: GameItemType.Inventory,
+          index,
           itemId,
           item,
           currentStackSize: 1,
@@ -113,8 +114,8 @@ export const usePlayerStore = defineStore("player", () => {
     }
   }
 
-  function removeSpecificItemFromInventory(item: InventoryItem) {
-    inventory.value[item.inventoryIndex] = null;
+  function removeSpecificItemFromInventory(item: GameItem) {
+    inventory.value[item.index] = null;
   }
 
   function removeItemsFromInventory(itemId: ItemId, amount: number = 1) {
@@ -139,7 +140,7 @@ export const usePlayerStore = defineStore("player", () => {
     }
   }
 
-  function equipItem(inventoryItem: InventoryItem) {
+  function equipItem(inventoryItem: GameItem) {
     const equipSlot = inventoryItem.item.equipSlot;
 
     if (!equipSlot) {
@@ -156,7 +157,7 @@ export const usePlayerStore = defineStore("player", () => {
     }
   }
 
-  function unequipItem(inventoryItem: InventoryItem) {
+  function unequipItem(inventoryItem: GameItem) {
     const equipSlot = inventoryItem.item.equipSlot;
 
     if (!equipSlot) {
@@ -185,16 +186,27 @@ export const usePlayerStore = defineStore("player", () => {
     energy.value -= amount;
   }
 
-  function buyItem() {}
+  function buyItem(amount: number) {
+    console.log(selectedItem.value);
+    console.log(amount);
+  }
 
-  function sellItem(item: InventoryItem) {
+  function sellItem() {
     // How do we get npc/shop here, so we can reduce gold?
-    const value = item.item.value;
+    if (
+      !selectedItem.value ||
+      !(selectedItem.value.type === GameItemType.Inventory)
+    ) {
+      console.log("Can't sell the selected item");
+      return;
+    }
+
+    const value = selectedItem.value.item.value;
     for (let i = 0; i < value; i++) {
       addItemToInventory(ItemId.Gold);
     }
 
-    removeSpecificItemFromInventory(item);
+    removeSpecificItemFromInventory(selectedItem.value);
   }
 
   function $reset() {
@@ -232,6 +244,7 @@ export const usePlayerStore = defineStore("player", () => {
     energy,
     gear,
     inventory,
+    selectedItem,
     playerUnit,
     playerGroup,
     getItemById,

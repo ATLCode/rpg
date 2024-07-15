@@ -1,7 +1,7 @@
+import type { ItemId } from "../types/item.types";
 import { usePlayerStore, GameState, type Unit } from "@/stores/player";
 import { SkillId } from "~/game/abilities";
 import type { Encounter } from "~/game/encounters";
-import type { ItemId } from "~/game/items";
 
 export type Drop = {
   id: string;

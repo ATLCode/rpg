@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts" setup>
-import { EquipSlot } from "~/game/items";
+import { EquipSlot } from "../types/item.types";
 
 // TODO Add pet / companion slots later
 // Will there be utility slot for torch etc?

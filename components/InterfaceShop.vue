@@ -14,16 +14,20 @@
         </div>
         <div>Gold:{{ props.npc.shop!.currentMoney }}</div>
       </div>
-      <AButton @click="emit('close')">Exit</AButton>
+      <SelectedItem :npc="props.npc" />
+      <ASpacer />
+      <AButton background-color="--error" @click="emit('close')">Exit</AButton>
     </div>
     <div class="shop-side">
       <h1>Stock</h1>
       <div class="shop-stock">
         <GameItem
-          v-for="(item, index) in props.npc.shop!.stock"
-          :key="index"
-          :shop-item="item"
+          v-for="item in props.npc.shop!.stock"
+          :key="item.index"
+          :game-item="item"
           :context-mode="ContextMode.Buy"
+          :selectable="true"
+          :selected-item="playerStore.selectedItem"
         />
       </div>
     </div>
@@ -31,8 +35,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ContextMode } from "~/game/items";
+import { ContextMode, type GameItem } from "../types/item.types";
 import type { Npc } from "~/game/npcs";
+import { usePlayerStore } from "@/stores/player";
+
+const playerStore = usePlayerStore();
 
 const emit = defineEmits(["close"]);
 
@@ -64,6 +71,7 @@ const props = defineProps({
   padding: 0rem 1rem;
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
 }
 .shop-side {
   height: 100%;
@@ -74,6 +82,9 @@ const props = defineProps({
 }
 .shop-info {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .img-container {
@@ -86,6 +97,8 @@ const props = defineProps({
   object-fit: contain;
 }
 .shop-stock {
+  height: 100%;
+  width: 100%;
   display: flex;
   gap: 10px;
 }

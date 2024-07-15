@@ -3,8 +3,8 @@ Encounter types:
 -Straight combat
 -Scenario and Multiple choice question ("You see X thing, what do you do? 2-5 options or something?", How to resolve?)
 */
+import { ItemId } from "../types/item.types";
 import { AbilityId } from "./abilities";
-import { ItemId } from "./items";
 import type { Unit } from "~/stores/player";
 
 export type WeightedItem = WeightedObject<ItemId>;

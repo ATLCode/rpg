@@ -1,4 +1,5 @@
-import { ItemId } from "./items";
+import { GameItemType, ItemId, type GameItem } from "../types/item.types";
+import { items } from "./items";
 
 export type NpcResponse = {
   // Requirements
@@ -28,7 +29,7 @@ export type ShopItem = {
 export type Shop = {
   currentMoney: number;
   maximumMoney: number;
-  stock: ShopItem[];
+  stock: GameItem[];
 };
 
 export enum NpcAction {
@@ -82,9 +83,19 @@ export const npcs: Record<NpcId, Npc> = {
       currentMoney: 500,
       maximumMoney: 1000,
       stock: [
-        { itemId: ItemId.IronSword, currentStackSize: 3, maximumStackSize: 3 },
         {
+          type: GameItemType.Shop,
+          index: 0,
+          itemId: ItemId.IronSword,
+          item: items[ItemId.IronSword],
+          currentStackSize: 3,
+          maximumStackSize: 3,
+        },
+        {
+          type: GameItemType.Shop,
+          index: 1,
           itemId: ItemId.WoodenSword,
+          item: items[ItemId.WoodenSword],
           currentStackSize: 5,
           maximumStackSize: 5,
         },

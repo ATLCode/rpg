@@ -1,4 +1,4 @@
-import { ItemId } from "./items";
+import { ItemId } from "../types/item.types";
 import { SkillId } from "~/game/abilities";
 
 export type WeightedItem = WeightedObject<ItemId>;
@@ -97,7 +97,7 @@ export const refiningSpots: Record<RefiningSpotId, SpotRefining> = {
 export const sleepingSpots: Record<SleepingSpotId, SpotSleeping> = {
   [SleepingSpotId.Bedroll]: {
     name: "Bedroll",
-    img: "/sprites/campfire.png",
+    img: "/sprites/bedroll.png",
     interval: 3,
     energyRestore: 100,
   },

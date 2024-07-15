@@ -7,8 +7,10 @@
     >
       <GameItem
         v-if="inventoryItem && inventoryItem?.itemId !== null"
-        :inventory-item="inventoryItem!"
+        :game-item="inventoryItem"
         :extra-context-modes="props.shop ? [ContextMode.Sell] : undefined"
+        :selectable="props.shop ? true : false"
+        :selected-item="playerStore.selectedItem!"
       />
       <GameItem v-else :empty-slot="true" />
     </div>
@@ -16,8 +18,8 @@
 </template>
 
 <script lang="ts" setup>
+import { ContextMode } from "../types/item.types";
 import { usePlayerStore } from "@/stores/player";
-import { ContextMode } from "~/game/items";
 
 const playerStore = usePlayerStore();
 
