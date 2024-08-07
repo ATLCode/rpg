@@ -1,100 +1,98 @@
 <template>
-  <div v-if="props.emptySlot" class="item-container"></div>
+  <div>
+    <div v-if="props.emptySlot" class="item-container"></div>
 
-  <div
-    v-if="props.gameItem?.type === GameItemType.Inventory"
-    class="item-container"
-    :class="{
-      selected: props.gameItem === props.selectedItem && props.selectable,
-    }"
-    @contextmenu.prevent="showItemActionsMenu($event, props.gameItem)"
-    @mouseover="showItemInfo = true"
-    @mouseleave="showItemInfo = false"
-    @click="selectItem"
-  >
-    <div>{{ props.gameItem.currentStackSize }}</div>
-
-    <div class="item-img">
-      <img :src="items[props.gameItem.itemId].img" class="item-icon" alt="" />
-    </div>
-  </div>
-
-  <div
-    v-if="props.gameItem?.type === GameItemType.Shop"
-    class="item-container"
-    :class="{
-      selected: props.gameItem === props.selectedItem && props.selectable,
-    }"
-    @mouseover="showItemInfo = true"
-    @mouseleave="showItemInfo = false"
-    @click="selectItem"
-  >
-    <div v-if="props.gameItem.currentStackSize > 1">
-      {{ props.gameItem.currentStackSize }}
-    </div>
-    <div class="item-img">
-      <img
-        :src="items[props.gameItem.itemId as keyof Record<ItemId, Item>].img"
-        class="item-icon"
-        alt=""
-      />
-    </div>
-  </div>
-
-  <div v-if="props.equipSlot">
     <div
-      v-if="playerStore.gear[props.equipSlot]"
-      class="item-container gear"
-      @contextmenu.prevent="showGearActionsMenu($event, props.equipSlot)"
-      @mouseover="showGearInfo = true"
-      @mouseleave="showGearInfo = false"
+      v-if="props.gameItem?.type === GameItemType.Inventory"
+      class="item-container"
+      :class="{
+        selected: props.gameItem === props.selectedItem && props.selectable,
+      }"
+      @contextmenu.prevent="showItemActionsMenu($event, props.gameItem)"
+      @mouseover="showItemInfo = true"
+      @mouseleave="showItemInfo = false"
+      @click="selectItem"
     >
+      <div>{{ props.gameItem.currentStackSize }}</div>
+
+      <div class="item-img">
+        <img :src="items[props.gameItem.itemId].img" class="item-icon" alt="" />
+      </div>
+    </div>
+
+    <div
+      v-if="props.gameItem?.type === GameItemType.Shop"
+      class="item-container"
+      :class="{
+        selected: props.gameItem === props.selectedItem && props.selectable,
+      }"
+      @mouseover="showItemInfo = true"
+      @mouseleave="showItemInfo = false"
+      @click="selectItem"
+    >
+      <div>
+        {{ props.gameItem.currentStackSize }}
+      </div>
       <div class="item-img">
         <img
-          :src="playerStore.gear[props.equipSlot]?.item.img"
+          :src="items[props.gameItem.itemId as keyof Record<ItemId, Item>].img"
           class="item-icon"
           alt=""
         />
       </div>
     </div>
-    <div v-else class="item-container">{{ props.equipSlot }}</div>
-  </div>
 
-  <div
-    v-if="showItemActions"
-    class="overlay-item"
-    @click="closeItemActionsMenu"
-  ></div>
-  <ContextMenuItemActions
-    v-if="showItemActions"
-    :x="menuX"
-    :y="menuY"
-    :selected-item="clickedItem"
-    :modes="
-      extraContextModes
-        ? [ContextMode.Inventory].concat(extraContextModes)
-        : [ContextMode.Inventory]
-    "
-    @close="showItemActions = false"
-  />
-  <div
-    v-if="showGearActions"
-    class="overlay-gear"
-    @click="closeGearActionsMenu"
-  ></div>
-  <ContextMenuItemActions
-    v-if="showGearActions"
-    :x="menuX"
-    :y="menuY"
-    :selected-item="clickedItem"
-    :modes="[ContextMode.Gear]"
-    @close="showGearActions = false"
-  />
-  <ModalItemInfo v-show="showItemInfo" :selected-item="props.gameItem" />
-  <ModalItemInfo
-    v-show="showGearInfo"
-    :selected-item="playerStore.gear[props.equipSlot!]"
-  />
+    <div v-if="props.equipSlot">
+      <div
+        v-if="playerStore.gear[props.equipSlot]"
+        class="item-container gear"
+        @contextmenu.prevent="showGearActionsMenu($event, props.equipSlot)"
+        @mouseover="showGearInfo = true"
+        @mouseleave="showGearInfo = false"
+      >
+        <div class="item-img">
+          <img
+            :src="playerStore.gear[props.equipSlot]?.item.img"
+            class="item-icon"
+            alt=""
+          />
+        </div>
+      </div>
+      <div v-else class="item-container">{{ props.equipSlot }}</div>
+    </div>
+
+    <div
+      v-if="showItemActions"
+      class="overlay-item"
+      @click="closeItemActionsMenu"
+    ></div>
+    <ContextMenuItemActions
+      v-if="showItemActions"
+      :x="menuX"
+      :y="menuY"
+      :selected-item="clickedItem"
+      :modes="[ContextMode.Inventory]"
+      @close="showItemActions = false"
+    />
+    <div
+      v-if="showGearActions"
+      class="overlay-gear"
+      @click="closeGearActionsMenu"
+    ></div>
+    <ContextMenuItemActions
+      v-if="showGearActions"
+      :x="menuX"
+      :y="menuY"
+      :selected-item="clickedItem"
+      :modes="[ContextMode.Gear]"
+      @close="showGearActions = false"
+    />
+    <ModalItemInfo v-show="showItemInfo" :selected-item="props.gameItem" />
+    <ModalItemInfo
+      v-show="showGearInfo"
+      :selected-item="playerStore.gear[props.equipSlot!]"
+    />
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -123,11 +121,6 @@ const props = defineProps({
   },
   equipSlot: {
     type: String as PropType<EquipSlot>,
-    required: false,
-    default: undefined,
-  },
-  extraContextModes: {
-    type: Array as PropType<ContextMode[]>,
     required: false,
     default: undefined,
   },

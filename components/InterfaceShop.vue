@@ -12,7 +12,15 @@
         <div class="img-container">
           <img :src="npc.img" class="npc-img" alt="" />
         </div>
-        <div>Gold:{{ props.npc.shop!.currentMoney }}</div>
+        <div class="gold-container">
+          <div>
+            <h2>{{ props.npc.shop!.currentMoney }}</h2>
+          </div>
+
+          <div class="item-img">
+            <img src="/items/coin_04d.png" class="item-icon" alt="" />
+          </div>
+        </div>
       </div>
       <SelectedItem :npc="props.npc" />
       <ASpacer />
@@ -25,9 +33,8 @@
           v-for="item in props.npc.shop!.stock"
           :key="item.index"
           :game-item="item"
-          :context-mode="ContextMode.Buy"
           :selectable="true"
-          :selected-item="playerStore.selectedItem"
+          :selected-item="playerStore.selectedItem!"
         />
       </div>
     </div>
@@ -35,7 +42,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ContextMode, type GameItem } from "../types/item.types";
 import type { Npc } from "~/game/npcs";
 import { usePlayerStore } from "@/stores/player";
 
@@ -97,8 +103,8 @@ const props = defineProps({
   object-fit: contain;
 }
 .shop-stock {
-  height: 100%;
-  width: 100%;
+  height: fit-content;
+  width: fit-content;
   display: flex;
   gap: 10px;
 }
@@ -109,5 +115,11 @@ const props = defineProps({
   flex-direction: column;
   border: 1px solid grey;
   padding: 0.5rem;
+}
+.gold-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 </style>

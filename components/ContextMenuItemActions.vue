@@ -13,12 +13,7 @@
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import {
-  ContextMode,
-  ItemAction,
-  ItemId,
-  type GameItem,
-} from "../types/item.types";
+import { ContextMode, ItemAction, type GameItem } from "../types/item.types";
 const playerStore = usePlayerStore();
 
 const props = defineProps({
@@ -59,22 +54,6 @@ const visibleActions = computed(() => {
   if (props.modes.includes(ContextMode.Gear)) {
     return rawActions?.filter((action) => action === ItemAction.Unequip);
   }
-  if (props.modes.includes(ContextMode.Sell)) {
-    if (
-      props.selectedItem?.item.value &&
-      props.selectedItem.itemId !== ItemId.Gold
-    ) {
-      rawActions.push(ItemAction.Sell);
-    }
-  }
-  if (props.modes.includes(ContextMode.Buy)) {
-    if (
-      props.selectedItem?.item.value &&
-      props.selectedItem.itemId !== ItemId.Gold
-    ) {
-      rawActions.push(ItemAction.Buy);
-    }
-  }
   return rawActions;
 });
 
@@ -98,13 +77,6 @@ function handleActionClick(action: ItemAction) {
   if (action === ItemAction.Unequip) {
     console.log("Unequipping");
     playerStore.unequipItem(props.selectedItem);
-  }
-  if (action === ItemAction.Buy) {
-    console.log("Buying");
-  }
-  if (action === ItemAction.Sell) {
-    console.log("Selling");
-    playerStore.sellItem(props.selectedItem);
   }
   emit("close");
 }

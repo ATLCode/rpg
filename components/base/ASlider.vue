@@ -25,6 +25,6 @@ const props = defineProps({
   },
 });
 
-const value = defineModel<number>();
+const value = defineModel<string>();
 </script>
 <style lang="scss" scoped></style>

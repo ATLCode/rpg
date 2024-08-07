@@ -49,8 +49,6 @@ export enum EquipSlot {
 export enum ContextMode {
   Inventory = "Inventory",
   Gear = "Gear",
-  Sell = "Sell",
-  Buy = "Buy",
 }
 
 export type Item = {
@@ -90,7 +88,7 @@ export type GameItem = {
   itemId: ItemId;
   item: Item;
   currentStackSize: number;
-  maximumStackSize?: number;
+  shopMaxStackSize?: number;
 };
 
 /*

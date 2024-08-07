@@ -89,7 +89,7 @@ export const npcs: Record<NpcId, Npc> = {
           itemId: ItemId.IronSword,
           item: items[ItemId.IronSword],
           currentStackSize: 3,
-          maximumStackSize: 3,
+          shopMaxStackSize: 3,
         },
         {
           type: GameItemType.Shop,
@@ -97,7 +97,7 @@ export const npcs: Record<NpcId, Npc> = {
           itemId: ItemId.WoodenSword,
           item: items[ItemId.WoodenSword],
           currentStackSize: 5,
-          maximumStackSize: 5,
+          shopMaxStackSize: 5,
         },
       ],
     },

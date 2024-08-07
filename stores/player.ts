@@ -6,6 +6,7 @@ import {
 } from "../types/item.types";
 import type { AbilityId } from "~/game/abilities";
 import { items } from "~/game/items";
+import { type Npc } from "~/game/npcs";
 export type WeightedItem = WeightedObject<ItemId>;
 
 export enum GameState {
@@ -75,43 +76,52 @@ export const usePlayerStore = defineStore("player", () => {
     return result;
   }
 
-  function addItemToInventory(itemId: ItemId) {
-    // Should we have optional parameter amount that defaults to 1, hard to code though
-    // Parametri tai ei erroria
-    const item = items[itemId];
-    let added = false;
-    if (item.maxStackSize > 1) {
-      inventory.value = inventory.value.map((inventoryItem) => {
-        if (
-          inventoryItem &&
-          inventoryItem.itemId === itemId &&
-          item.maxStackSize > inventoryItem.currentStackSize &&
-          !added
-        ) {
-          inventoryItem.currentStackSize += 1;
-          added = true;
+  function addItemToInventory(gameItem: GameItem, amount = 1) {
+    if (!hasInventorySpace(gameItem, amount)) {
+      throw new Error("No inv space");
+    }
+
+    let itemsToAdd = amount;
+
+    do {
+      const maxStackSize = gameItem.item.maxStackSize;
+      const invItems = inventory.value.filter(
+        (invItem) => invItem?.itemId === gameItem.itemId
+      );
+      const nonFullStack = invItems.find(
+        (item) => (item?.currentStackSize || 0) < maxStackSize
+      );
+      const currentStackSize = nonFullStack?.currentStackSize || 0;
+      const spaceLeftInStack = maxStackSize - currentStackSize;
+      if (nonFullStack && spaceLeftInStack >= itemsToAdd) {
+        nonFullStack.currentStackSize = currentStackSize + itemsToAdd;
+        itemsToAdd = 0;
+      } else {
+        const thereWillBeFullStack = itemsToAdd >= maxStackSize;
+        let nextStackSize = 0;
+        if (thereWillBeFullStack) {
+          nextStackSize = maxStackSize;
+        } else {
+          nextStackSize = itemsToAdd;
         }
-        return inventoryItem;
-      });
-    }
+        let added = false;
+        inventory.value = inventory.value.map((inventoryItem, index) => {
+          if (!inventoryItem && !added) {
+            inventoryItem = {
+              type: GameItemType.Inventory,
+              index,
+              itemId: gameItem.itemId,
+              item: gameItem.item,
+              currentStackSize: nextStackSize,
+            };
+            added = true;
+          }
+          return inventoryItem;
+        });
 
-    inventory.value = inventory.value.map((inventoryItem, index) => {
-      if (!inventoryItem && !added) {
-        inventoryItem = {
-          type: GameItemType.Inventory,
-          index,
-          itemId,
-          item,
-          currentStackSize: 1,
-        };
-        added = true;
+        itemsToAdd = itemsToAdd - nextStackSize;
       }
-      return inventoryItem;
-    });
-
-    if (!added) {
-      throw new Error("No space in inventory");
-    }
+    } while (itemsToAdd > 0);
   }
 
   function removeSpecificItemFromInventory(item: GameItem) {
@@ -153,7 +163,7 @@ export const usePlayerStore = defineStore("player", () => {
     removeSpecificItemFromInventory(inventoryItem);
 
     if (equippedBefore) {
-      addItemToInventory(equippedBefore.itemId);
+      addItemToInventory(equippedBefore);
     }
   }
 
@@ -164,7 +174,7 @@ export const usePlayerStore = defineStore("player", () => {
       throw new Error("This item doesn't have equip slot");
     }
 
-    addItemToInventory(inventoryItem.itemId);
+    addItemToInventory(inventoryItem);
     gear.value[equipSlot] = null;
   }
 
@@ -186,13 +196,50 @@ export const usePlayerStore = defineStore("player", () => {
     energy.value -= amount;
   }
 
-  function buyItem(amount: number) {
+  function buyItems(quantity: number, npc: Npc) {
     console.log(selectedItem.value);
-    console.log(amount);
+    console.log(quantity);
+    console.log(npc);
+    if (!selectedItem.value) {
+      console.log("Item doesn't have value");
+      return;
+    }
+
+    const shop = npc.shop;
+    if (!shop) {
+      console.log("Can't find the npc or npc doesn't have a shop");
+      return;
+    }
+    const stockItem = shop.stock.find(
+      (item) => item.itemId === selectedItem.value?.itemId
+    );
+    if (!stockItem) {
+      console.log("Can't find the stockItem");
+      return;
+    }
+
+    const totalCost = selectedItem.value.item.value * quantity;
+
+    if (!checkGold(totalCost) || !checkStock(quantity, stockItem)) {
+      console.log("You don't have enough gold or items in shop");
+      return;
+    }
+    // Remove gold from player inventory
+    removeItemsFromInventory(ItemId.Gold, totalCost);
+
+    // Remove item from shop stock
+
+    stockItem.currentStackSize -= quantity;
+
+    // Add gold to shop stock
+
+    shop.currentMoney += totalCost;
+
+    // Add item to inventory
+    addItemToInventory(selectedItem.value, quantity);
   }
 
-  function sellItem() {
-    // How do we get npc/shop here, so we can reduce gold?
+  function sellItems(quantity: number, npc: Npc) {
     if (
       !selectedItem.value ||
       !(selectedItem.value.type === GameItemType.Inventory)
@@ -200,13 +247,55 @@ export const usePlayerStore = defineStore("player", () => {
       console.log("Can't sell the selected item");
       return;
     }
-
-    const value = selectedItem.value.item.value;
-    for (let i = 0; i < value; i++) {
-      addItemToInventory(ItemId.Gold);
+    const shop = npc.shop;
+    if (!shop) {
+      console.log("Can't access the shop");
+      return;
     }
-
+    const totalValue = selectedItem.value.item.value * quantity;
+    // Remove item from player inventory, needs more work
     removeSpecificItemFromInventory(selectedItem.value);
+    // Remove gold from shop
+    shop.currentMoney -= totalValue;
+    // Add item to shop stock? Can you sell items not in stock?
+
+    // Add gold to inventory
+
+    for (let i = 0; i < totalValue; i++) {
+      addItemToInventory({
+        currentStackSize: 1,
+        index: 0,
+        item: items[ItemId.Gold],
+        itemId: ItemId.Gold,
+        type: GameItemType.Inventory,
+      });
+    }
+  }
+
+  function checkGold(price: number) {
+    const gold = inventory.value.find((item) => item?.itemId === ItemId.Gold);
+    return gold && gold?.currentStackSize >= price;
+  }
+
+  function checkStock(quantity: number, stockItem: GameItem) {
+    return stockItem.currentStackSize >= quantity;
+  }
+
+  function hasInventorySpace(item: GameItem, amount: number): boolean {
+    const maxStackSize = item.item.maxStackSize;
+    const invItems = inventory.value.filter(
+      (invItem) => invItem?.itemId === item.itemId
+    );
+    const nonFullStack = invItems.find(
+      (item) => (item?.currentStackSize || 0) < maxStackSize
+    );
+    const currentStackSize = nonFullStack?.currentStackSize || 0;
+    const emptySlots = inventory.value.filter((slot) => slot === null);
+    const emptySpace =
+      emptySlots.length * item.item.maxStackSize +
+      item.item.maxStackSize -
+      currentStackSize;
+    return amount <= emptySpace;
   }
 
   function $reset() {
@@ -255,8 +344,8 @@ export const usePlayerStore = defineStore("player", () => {
     removeSpecificItemFromInventory,
     itemCountInInventory,
     useEnergy,
-    sellItem,
-    buyItem,
+    sellItems,
+    buyItems,
     $reset,
   };
 });

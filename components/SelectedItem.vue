@@ -6,20 +6,20 @@
         <h3>{{ playerStore.selectedItem.type }}</h3>
       </div>
       <div>{{ playerStore.selectedItem.itemId }}</div>
-      <div>{{ amount }}</div>
+      <div>{{ quantity }}</div>
       <ASlider
-        v-model="amount"
-        :min="0"
-        :max="playerStore.selectedItem.maximumStackSize || 1"
+        v-model="quantity"
+        :min="Number(0)"
+        :max="Number(playerStore.selectedItem.maximumStackSize || 1)"
       />
       <AButton
         v-if="playerStore.selectedItem.type === GameItemType.Shop"
-        @click="playerStore.buyItem(amount)"
+        @click="playerStore.buyItems(Number(quantity), props.npc)"
         >Buy Item</AButton
       >
       <AButton
         v-if="playerStore.selectedItem.type === GameItemType.Inventory"
-        @click="playerStore.sellItem"
+        @click="playerStore.sellItems(Number(quantity), props.npc)"
         >Sell Item</AButton
       >
     </div>
@@ -40,7 +40,7 @@ const props = defineProps({
   },
 });
 
-const amount = ref(1);
+const quantity = ref<string>("1");
 </script>
 
 <style lang="scss" scoped>
