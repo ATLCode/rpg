@@ -1,79 +1,14 @@
-export enum ItemType {
-  Equipment = "Equipment",
-  Key = "Key",
-  Food = "Food",
-  Miscellaneous = "Miscellaneous",
-  Potion = "Potion",
-  Book = "Book",
-  Container = "Container",
-  Resource = "Resource",
-  Ingredient = "Ingredient",
-}
-
-export enum ItemProperty {
-  Weapon = "Weapon",
-  OneHanded = "One Handed",
-  TwoHanded = "Two Handed",
-  Tool = "Tool",
-}
-
-export enum ItemRarity {
-  Normal = "Normal",
-  Rare = "Rare",
-}
-
-export enum ItemAction {
-  Equip = "Equip",
-  Unequip = "Unequip",
-  Drop = "Drop",
-  Eat = "Eat",
-}
-
-export enum EquipSlot {
-  Head = "Head",
-  Torso = "Torso",
-  Legs = "Legs",
-  Hands = "Hands",
-  Feet = "Feet",
-  MainHand = "MainHand",
-  OffHand = "OffHand",
-  Neck = "Neck",
-  Fingers = "Fingers",
-  Back = "Back",
-  Ammo = "Ammo",
-}
-
-export enum ContextMode {
-  Inventory,
-  Gear,
-}
-
-export type Item = {
-  name: string;
-  type: ItemType;
-  properties: ItemProperty[] | null;
-  equipSlot: EquipSlot | null; // Enum, gear slot name or id
-  weight: number;
-  stackSize: number;
-  value: number;
-  rarity: string; // Enum:
-  img: string;
-  xp?: number;
-  actions?: ItemAction[];
-};
+import {
+  type Item,
+  ItemId,
+  EquipSlot,
+  ItemAction,
+  ItemRarity,
+  ItemProperty,
+  ItemType,
+} from "../types/item.types";
 
 // What if item would have craftable key which would include object with abilityRequirements, xp etc.
-
-export enum ItemId {
-  RawPanfish = "RawPanfish",
-  RawBluegill = "RawBluegill",
-  OakLog = "OakLog",
-  WoodenSword = "WoodenSword",
-  IronSword = "IronSword",
-  LeatherBoots = "LeatherBoots",
-  CookedBluegill = "CookedBluegill",
-  CookedPanfish = "CookedPanfish",
-}
 
 export const items: Record<ItemId, Item> = {
   [ItemId.RawPanfish]: {
@@ -82,7 +17,7 @@ export const items: Record<ItemId, Item> = {
     properties: null,
     equipSlot: null,
     weight: 1,
-    stackSize: 10,
+    maxStackSize: 10,
     value: 1,
     rarity: ItemRarity.Normal,
     img: "/items/panfish.png",
@@ -95,7 +30,7 @@ export const items: Record<ItemId, Item> = {
     properties: null,
     equipSlot: null,
     weight: 1,
-    stackSize: 10,
+    maxStackSize: 10,
     value: 1,
     rarity: ItemRarity.Normal,
     img: "/items/bluegill.png",
@@ -108,7 +43,7 @@ export const items: Record<ItemId, Item> = {
     properties: [ItemProperty.Weapon, ItemProperty.OneHanded],
     equipSlot: EquipSlot.MainHand,
     weight: 1,
-    stackSize: 1,
+    maxStackSize: 1,
     value: 10,
     rarity: ItemRarity.Normal,
     img: "/items/sword_01.png",
@@ -120,7 +55,7 @@ export const items: Record<ItemId, Item> = {
     properties: null,
     equipSlot: EquipSlot.MainHand,
     weight: 1,
-    stackSize: 1,
+    maxStackSize: 1,
     value: 10,
     rarity: ItemRarity.Normal,
     img: "/items/sword_02.png",
@@ -132,7 +67,7 @@ export const items: Record<ItemId, Item> = {
     properties: null,
     equipSlot: EquipSlot.Feet,
     weight: 1,
-    stackSize: 1,
+    maxStackSize: 1,
     value: 10,
     rarity: ItemRarity.Normal,
     img: "/items/boots_01.png",
@@ -144,7 +79,7 @@ export const items: Record<ItemId, Item> = {
     properties: null,
     equipSlot: null,
     weight: 1,
-    stackSize: 10,
+    maxStackSize: 10,
     value: 1,
     rarity: ItemRarity.Normal,
     img: "/items/oak_log.png",
@@ -157,7 +92,7 @@ export const items: Record<ItemId, Item> = {
     properties: null,
     equipSlot: null,
     weight: 1,
-    stackSize: 10,
+    maxStackSize: 10,
     value: 1,
     rarity: ItemRarity.Normal,
     img: "/items/cooked_bluegill.png",
@@ -170,11 +105,23 @@ export const items: Record<ItemId, Item> = {
     properties: null,
     equipSlot: null,
     weight: 1,
-    stackSize: 10,
+    maxStackSize: 10,
     value: 1,
     rarity: ItemRarity.Normal,
     img: "/items/cooked_panfish.png",
     xp: 10,
+    actions: [ItemAction.Drop],
+  },
+  [ItemId.Gold]: {
+    name: "Gold",
+    type: ItemType.Currency,
+    properties: null,
+    equipSlot: null,
+    weight: 1,
+    maxStackSize: 1000000000,
+    value: 1,
+    rarity: ItemRarity.Normal,
+    img: "/items/coin_01d.png",
     actions: [ItemAction.Drop],
   },
 };

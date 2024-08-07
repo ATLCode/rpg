@@ -1,15 +1,20 @@
 <template>
-  <div class="npc-container">
+  <div v-if="!showShop" class="npc-container">
     <div>{{ npc.name }}</div>
     <div>{{ npc.title }}</div>
     <div class="img-container">
       <img :src="npc.img" class="npc-img" alt="" />
     </div>
+    <AButton v-if="npc.shop" @click="showShop = true">Shop</AButton>
   </div>
+  <InterfaceShop v-if="showShop" :npc="npc" @close="showShop = false" />
 </template>
 
 <script lang="ts" setup>
-import { NpcId, npcs } from "@/game/npcs";
+import { NpcId } from "@/game/npcs";
+import { useNpcStore } from "~/stores/npc";
+
+const npcStore = useNpcStore();
 
 const props = defineProps({
   npcId: {
@@ -19,8 +24,10 @@ const props = defineProps({
 });
 
 const npc = computed(() => {
-  return npcs[props.npcId];
+  return npcStore.npcs[props.npcId];
 });
+
+const showShop = ref(false);
 </script>
 
 <style lang="scss" scoped>

@@ -49,6 +49,8 @@
 </template>
 
 <script lang="ts" setup>
+import { useEvent } from "@/composables/keyEvent";
+
 const props = defineProps({
   initialTab: {
     type: String,
@@ -56,9 +58,15 @@ const props = defineProps({
   },
 });
 
-defineEmits(["close"]);
+const emit = defineEmits(["close"]);
 
 const selectedTab = ref("inventory");
+
+useEvent("Escape", closeMenu);
+
+function closeMenu() {
+  emit("close");
+}
 
 // Created
 selectedTab.value = props.initialTab;

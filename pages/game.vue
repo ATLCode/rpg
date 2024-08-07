@@ -2,8 +2,8 @@
   <div class="game-container">
     <NavBar v-if="!(playerStore.gameState === GameState.Combat)" />
     <GameBar
-      class="game-bar"
       v-if="!(playerStore.gameState === GameState.Combat)"
+      class="game-bar"
     />
     <div class="game-content">
       <div v-if="playerStore.gameState === GameState.Normal" class="area">

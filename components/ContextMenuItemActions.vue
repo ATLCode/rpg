@@ -1,5 +1,6 @@
 <template>
   <div class="menu-container" :style="{ top: y + 'px', left: x + 'px' }">
+    <div>{{ modes }}</div>
     <div
       v-for="action in visibleActions"
       :key="action"
@@ -12,8 +13,7 @@
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import { type InventoryItem, usePlayerStore } from "@/stores/player";
-import { ContextMode, ItemAction } from "@/game/items";
+import { ContextMode, ItemAction, type GameItem } from "../types/item.types";
 const playerStore = usePlayerStore();
 
 const props = defineProps({
@@ -26,11 +26,11 @@ const props = defineProps({
     required: true,
   },
   selectedItem: {
-    type: Object as PropType<InventoryItem | null>,
+    type: Object as PropType<GameItem | null>,
     default: null,
   },
-  mode: {
-    type: Number as PropType<ContextMode>,
+  modes: {
+    type: Array as PropType<ContextMode[]>,
     required: true,
   },
 });
@@ -38,17 +38,23 @@ const props = defineProps({
 const emit = defineEmits(["close"]);
 
 const visibleActions = computed(() => {
-  const rawActions = props.selectedItem?.item.actions;
+  // const rawActions = props.selectedItem?.item.actions;
+  // Form raw actions
 
-  if (props.mode === ContextMode.Inventory) {
-    return rawActions?.filter((action) => action !== ItemAction.Unequip);
+  let rawActions = [ItemAction.Drop];
+  if (props.selectedItem?.item.equipSlot) {
+    rawActions.push(ItemAction.Equip);
+    rawActions.push(ItemAction.Unequip);
   }
-  if (props.mode === ContextMode.Gear) {
-    // Drop is shown as option for item in gear, but is bugged, need for loop to remove more than 1 word from array
-    // https://stackoverflow.com/questions/11752143/remove-several-words-from-an-array-javascript
-    // Either this or handle drop from gear
-    return rawActions?.filter((action) => action !== ItemAction.Equip);
+
+  // Filters for contexxt modes
+  if (props.modes.includes(ContextMode.Inventory)) {
+    rawActions = rawActions?.filter((action) => action !== ItemAction.Unequip);
   }
+  if (props.modes.includes(ContextMode.Gear)) {
+    return rawActions?.filter((action) => action === ItemAction.Unequip);
+  }
+  return rawActions;
 });
 
 function handleActionClick(action: ItemAction) {

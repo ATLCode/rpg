@@ -1,7 +1,7 @@
 <template>
   <div class="gamebar-container">
     <div class="resources">
-      <div>Day: {{ playerStore.day }}</div>
+      <div>Day: {{ worldStore.day }}</div>
       <div>Energy: {{ playerStore.energy }}</div>
     </div>
 
@@ -34,9 +34,13 @@
 import { useLocationStore } from "@/stores/location";
 import { usePlayerStore, GameState } from "@/stores/player";
 import { useSaveStore } from "@/stores/save";
+import { useWorldStore } from "@/stores/world";
 const locationStore = useLocationStore();
 const playerStore = usePlayerStore();
 const saveStore = useSaveStore();
+const worldStore = useWorldStore();
+
+console.log(worldStore.day);
 
 async function toMenu() {
   await saveStore.updateSave();

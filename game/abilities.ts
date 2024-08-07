@@ -1,4 +1,4 @@
-import { ItemId } from "@/game/items";
+import { ItemId } from "../types/item.types";
 
 export enum DamageType {
   Blunt = "Blunt",
