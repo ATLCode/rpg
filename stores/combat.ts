@@ -1,11 +1,11 @@
 import { usePlayerStore, GameState, type Unit } from "@/stores/player";
 import { SkillId } from "~/game/abilities";
 import type { Encounter } from "~/game/encounters";
-import type { ItemId } from "~/game/items";
+import type { GameItem } from "~/types/item.types";
 
 export type Drop = {
   id: string;
-  itemId: ItemId;
+  gameItem: GameItem;
 };
 
 export type CombatState = {
@@ -58,7 +58,7 @@ export const useCombatStore = defineStore("combat", () => {
       },
     };
 
-    // change game state
+    // Change game state
     playerStore.gameState = GameState.Combat;
   }
 
@@ -75,7 +75,7 @@ export const useCombatStore = defineStore("combat", () => {
     skillStore.giveSkillExp(SkillId.Magic, combatState.value.rewards.magicExp);
     // Get drops
     for (const selectedDrop of combatState.value.rewards.selectedDrops) {
-      playerStore.addItemToInventory(selectedDrop.itemId);
+      playerStore.addItemsToInventory(selectedDrop.gameItem);
     }
     // Lose energy
     const energyLoss = 30;

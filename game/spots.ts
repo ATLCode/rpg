@@ -1,7 +1,8 @@
-import { ItemId } from "./items";
+import { GameItemType, ItemId, type GameItem } from "../types/item.types";
+import { items } from "./items";
 import { SkillId } from "~/game/abilities";
 
-export type WeightedItem = WeightedObject<ItemId>;
+export type WeightedGameItem = WeightedObject<GameItem>;
 
 // Should itemId actually be abilityId here? So we pick ability to run that then gives the item, xp etc.
 
@@ -9,7 +10,7 @@ export type SpotResource = {
   name: string;
   img: string;
   skillId: SkillId;
-  products?: WeightedItem[];
+  products?: WeightedGameItem[];
   interval: number;
   energy: number;
 };
@@ -53,23 +54,53 @@ export const resourceSpots: Record<ResourceSpotId, SpotResource> = {
     skillId: SkillId.Fishing,
     products: [
       {
-        id: ItemId.RawPanfish,
+        id: {
+          type: GameItemType.Loot,
+          index: 0,
+          itemId: ItemId.RawPanfish,
+          item: items[ItemId.RawPanfish],
+          currentStackSize: 1,
+        },
         weight: 1000,
       },
       {
-        id: ItemId.RawBluegill,
+        id: {
+          type: GameItemType.Loot,
+          index: 0,
+          itemId: ItemId.RawBluegill,
+          item: items[ItemId.RawBluegill],
+          currentStackSize: 1,
+        },
         weight: 300,
       },
       {
-        id: ItemId.WoodenSword,
+        id: {
+          type: GameItemType.Loot,
+          index: 0,
+          itemId: ItemId.WoodenSword,
+          item: items[ItemId.WoodenSword],
+          currentStackSize: 1,
+        },
         weight: 100,
       },
       {
-        id: ItemId.IronSword,
+        id: {
+          type: GameItemType.Loot,
+          index: 0,
+          itemId: ItemId.IronSword,
+          item: items[ItemId.IronSword],
+          currentStackSize: 1,
+        },
         weight: 100,
       },
       {
-        id: ItemId.LeatherBoots,
+        id: {
+          type: GameItemType.Loot,
+          index: 0,
+          itemId: ItemId.LeatherBoots,
+          item: items[ItemId.LeatherBoots],
+          currentStackSize: 1,
+        },
         weight: 100,
       },
     ],
@@ -80,7 +111,18 @@ export const resourceSpots: Record<ResourceSpotId, SpotResource> = {
     name: "Oak Tree",
     img: "/sprites/spot_oak.png",
     skillId: SkillId.Woodcutting,
-    products: [{ id: ItemId.OakLog, weight: 100 }],
+    products: [
+      {
+        id: {
+          type: GameItemType.Loot,
+          index: 0,
+          itemId: ItemId.OakLog,
+          item: items[ItemId.OakLog],
+          currentStackSize: 1,
+        },
+        weight: 100,
+      },
+    ],
     interval: 3,
     energy: 20,
   },
@@ -97,7 +139,7 @@ export const refiningSpots: Record<RefiningSpotId, SpotRefining> = {
 export const sleepingSpots: Record<SleepingSpotId, SpotSleeping> = {
   [SleepingSpotId.Bedroll]: {
     name: "Bedroll",
-    img: "/sprites/campfire.png",
+    img: "/sprites/bedroll.png",
     interval: 3,
     energyRestore: 100,
   },

@@ -28,7 +28,7 @@
     <div class="spot-recipe">
       <div>Selected Recipe:</div>
       <div v-if="selectedRecipe">
-        {{ items[selectedRecipe.product!].name }} ({{ productsInInventory }})
+        {{ selectedRecipe.product?.item.name }} ({{ productsInInventory }})
       </div>
       <div v-if="!selectedRecipe">No recipe selected</div>
     </div>
@@ -55,7 +55,7 @@
       class="recipe"
       @click="selectRecipe(ability)"
     >
-      {{ items[ability.product!].name }}
+      {{ ability.product?.item.name }}
     </div>
   </ADialog>
 </template>
@@ -109,7 +109,9 @@ const ingredientsInInventory = computed(() => {
 });
 const productsInInventory = computed(() => {
   if (selectedRecipe.value?.product) {
-    return playerStore.itemCountInInventory(selectedRecipe.value?.product);
+    return playerStore.itemCountInInventory(
+      selectedRecipe.value?.product.itemId
+    );
   }
   return 0;
 });
@@ -218,7 +220,7 @@ function takeIngredients() {
 function getProduct() {
   console.log("Getting resource");
   if (selectedRecipe.value?.product) {
-    playerStore.addItemToInventory(selectedRecipe.value?.product);
+    playerStore.addItemsToInventory(selectedRecipe.value?.product);
   }
 }
 
