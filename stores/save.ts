@@ -9,6 +9,7 @@ import { useLocationStore } from "@/stores/location";
 import type { Ability, SkillId } from "~/game/abilities";
 import type { Npc } from "~/game/npcs";
 import type { GameItem } from "~/types/item.types";
+import type { Time } from "~/types/world.types";
 
 export const useSaveStore = defineStore("save", () => {
   const playerStore = usePlayerStore();
@@ -45,7 +46,7 @@ export const useSaveStore = defineStore("save", () => {
   */
 
   type SaveData = {
-    day: number;
+    time: Time;
     energy: number;
     currentLocationId: LocationId;
     characterName: string;
@@ -86,7 +87,7 @@ export const useSaveStore = defineStore("save", () => {
 
   function constructSaveData() {
     const save: SaveData = {
-      day: worldStore.day,
+      time: worldStore.time,
       energy: playerStore.energy,
       currentLocationId: locationStore.currentLocationId,
       characterName: playerStore.characterName,
@@ -178,7 +179,7 @@ export const useSaveStore = defineStore("save", () => {
     playerStore.characterName = save.data.characterName;
     playerStore.gear = save.data.gear;
     playerStore.inventory = save.data.inventory;
-    worldStore.day = save.data.day;
+    worldStore.time = save.data.time;
     locationStore.currentLocationId = save.data.currentLocationId;
     skillStore.skills = save.data.skills;
     skillStore.abilities = save.data.abilities;

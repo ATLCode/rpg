@@ -26,10 +26,21 @@ export type ShopItem = {
   // Could have priceAdjustment for specific shop essentially
 };
 
+export enum PriceModifierType {
+  ShopMargin = "ShopMargin",
+}
+
+export type PriceModifier = {
+  type: PriceModifierType;
+  pct: number;
+};
+
 export type Shop = {
   currentMoney: number;
   maximumMoney: number;
   stock: GameItem[];
+  taxes: PriceModifier[];
+  discounts: PriceModifier[];
 };
 
 export enum NpcAction {
@@ -54,6 +65,11 @@ export type Npc = {
   };
   shop?: Shop;
 };
+
+export enum TransactionType {
+  Buy = "Buy",
+  Sell = "Sell",
+}
 
 export const npcs: Record<NpcId, Npc> = {
   [NpcId.Harold]: {
@@ -82,6 +98,8 @@ export const npcs: Record<NpcId, Npc> = {
     shop: {
       currentMoney: 500,
       maximumMoney: 1000,
+      taxes: [{ type: PriceModifierType.ShopMargin, pct: 10 }],
+      discounts: [],
       stock: [
         {
           type: GameItemType.Shop,

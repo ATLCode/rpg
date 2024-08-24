@@ -80,6 +80,7 @@ export enum ItemId {
 export enum GameItemType {
   Inventory = "Inventory",
   Shop = "Shop",
+  Loot = "Loot",
 }
 
 export type GameItem = {

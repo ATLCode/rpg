@@ -6,8 +6,9 @@ import {
 } from "../types/item.types";
 import type { AbilityId } from "~/game/abilities";
 import { items } from "~/game/items";
-import { type Npc } from "~/game/npcs";
+import { TransactionType, type Npc, type Shop } from "~/game/npcs";
 export type WeightedItem = WeightedObject<ItemId>;
+export type WeightedLoot = WeightedObject<GameItem>;
 
 export enum GameState {
   Normal = "Normal",
@@ -24,7 +25,7 @@ export type Unit = {
   currentHealth: number;
   maxHealth: number;
   abilities: AbilityId[];
-  drops?: WeightedItem[];
+  drops?: WeightedLoot[];
   // resistances
 };
 
@@ -36,7 +37,7 @@ export const usePlayerStore = defineStore("player", () => {
   const gameState = ref<GameState>(GameState.Normal);
 
   const energy = ref(100);
-
+  /*
   const playerUnit = ref<Unit>({
     isPlayer: true,
     name: characterName.value,
@@ -47,7 +48,19 @@ export const usePlayerStore = defineStore("player", () => {
     maxHealth: 10,
     abilities: [],
   });
-  const playerGroup = ref<Unit[]>([playerUnit.value]);
+  */
+  const playerGroup = ref<Unit[]>([
+    {
+      isPlayer: true,
+      name: characterName.value,
+      img: "/icons/21.png",
+      currentActionPoints: 3,
+      maxActionPoints: 3,
+      currentHealth: 10,
+      maxHealth: 10,
+      abilities: [],
+    },
+  ]);
 
   const gear = ref<Gear>({
     [EquipSlot.Head]: null,
@@ -76,7 +89,7 @@ export const usePlayerStore = defineStore("player", () => {
     return result;
   }
 
-  function addItemToInventory(gameItem: GameItem, amount = 1) {
+  function addItemsToInventory(gameItem: GameItem, amount = 1) {
     if (!hasInventorySpace(gameItem, amount)) {
       throw new Error("No inv space");
     }
@@ -163,7 +176,7 @@ export const usePlayerStore = defineStore("player", () => {
     removeSpecificItemFromInventory(inventoryItem);
 
     if (equippedBefore) {
-      addItemToInventory(equippedBefore);
+      addItemsToInventory(equippedBefore);
     }
   }
 
@@ -174,7 +187,7 @@ export const usePlayerStore = defineStore("player", () => {
       throw new Error("This item doesn't have equip slot");
     }
 
-    addItemToInventory(inventoryItem);
+    addItemsToInventory(inventoryItem);
     gear.value[equipSlot] = null;
   }
 
@@ -218,7 +231,12 @@ export const usePlayerStore = defineStore("player", () => {
       return;
     }
 
-    const totalCost = selectedItem.value.item.value * quantity;
+    const price = calclulatePrice(
+      selectedItem.value,
+      shop,
+      TransactionType.Buy
+    );
+    const totalCost = price * quantity;
 
     if (!checkGold(totalCost) || !checkStock(quantity, stockItem)) {
       console.log("You don't have enough gold or items in shop");
@@ -236,7 +254,7 @@ export const usePlayerStore = defineStore("player", () => {
     shop.currentMoney += totalCost;
 
     // Add item to inventory
-    addItemToInventory(selectedItem.value, quantity);
+    addItemsToInventory(selectedItem.value, quantity);
   }
 
   function sellItems(quantity: number, npc: Npc) {
@@ -252,7 +270,13 @@ export const usePlayerStore = defineStore("player", () => {
       console.log("Can't access the shop");
       return;
     }
-    const totalValue = selectedItem.value.item.value * quantity;
+
+    const price = calclulatePrice(
+      selectedItem.value,
+      shop,
+      TransactionType.Sell
+    );
+    const totalValue = price * quantity;
     // Remove item from player inventory, needs more work
     removeSpecificItemFromInventory(selectedItem.value);
     // Remove gold from shop
@@ -261,14 +285,44 @@ export const usePlayerStore = defineStore("player", () => {
 
     // Add gold to inventory
 
-    for (let i = 0; i < totalValue; i++) {
-      addItemToInventory({
+    addItemsToInventory(
+      {
         currentStackSize: 1,
         index: 0,
         item: items[ItemId.Gold],
         itemId: ItemId.Gold,
         type: GameItemType.Inventory,
-      });
+      },
+      totalValue
+    );
+  }
+
+  function calclulatePrice(item: GameItem, shop: Shop, type: TransactionType) {
+    const value = item.item.value;
+
+    // Shop Modifiers
+
+    const shopTaxesPct = shop.taxes.reduce((acc, curr) => curr.pct + acc, 0);
+
+    const shopDiscountsPct = shop.discounts.reduce(
+      (acc, curr) => curr.pct + acc,
+      0
+    );
+
+    // General Modifiers (Speech skill later etc)
+
+    const generalTaxesPct = 0;
+    const generalDiscountsPct = 0;
+
+    const totalTaxes = shopTaxesPct + generalTaxesPct;
+    const totalDiscounts = shopDiscountsPct + generalDiscountsPct;
+    const totalModifierPct = totalTaxes - totalDiscounts;
+    const modifierAmount = value * (totalModifierPct / 100);
+
+    if (type === TransactionType.Buy) {
+      return value + modifierAmount;
+    } else {
+      return value - modifierAmount;
     }
   }
 
@@ -300,6 +354,7 @@ export const usePlayerStore = defineStore("player", () => {
 
   function $reset() {
     inventory.value = new Array(28).fill(null);
+    /*
     playerUnit.value = {
       isPlayer: true,
       name: characterName.value,
@@ -310,6 +365,7 @@ export const usePlayerStore = defineStore("player", () => {
       maxHealth: 10,
       abilities: [],
     };
+    */
     gear.value = {
       [EquipSlot.Head]: null,
       [EquipSlot.Torso]: null,
@@ -323,7 +379,18 @@ export const usePlayerStore = defineStore("player", () => {
       [EquipSlot.Back]: null,
       [EquipSlot.Ammo]: null,
     };
-    playerGroup.value = [playerUnit.value];
+    playerGroup.value = [
+      {
+        isPlayer: true,
+        name: characterName.value,
+        img: "/icons/21.png",
+        currentActionPoints: 3,
+        maxActionPoints: 3,
+        currentHealth: 10,
+        maxHealth: 10,
+        abilities: [],
+      },
+    ];
     energy.value = 100;
   }
 
@@ -334,10 +401,9 @@ export const usePlayerStore = defineStore("player", () => {
     gear,
     inventory,
     selectedItem,
-    playerUnit,
     playerGroup,
     getItemById,
-    addItemToInventory,
+    addItemsToInventory,
     equipItem,
     unequipItem,
     removeItemsFromInventory,
@@ -346,6 +412,7 @@ export const usePlayerStore = defineStore("player", () => {
     useEnergy,
     sellItems,
     buyItems,
+    calclulatePrice,
     $reset,
   };
 });

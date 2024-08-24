@@ -168,7 +168,7 @@
             v-for="(drop, index) in combatStore.combatState.rewards.drops"
             :key="index"
           >
-            <div>{{ drop.itemId }}</div>
+            <div>{{ drop.gameItem.itemId }}</div>
             <!--
             Need to fix ACheckbox to make below input to work
                 <ACheckbox v-model="combatStore.combatState.rewards.selectedDrops" :value="drop"></ACheckbox>
@@ -302,6 +302,9 @@ function handleCombatOver() {
     combatStore.combatState.result.isOver = true;
     combatStore.combatState.result.isWon = false;
   }
+
+  // General stuff
+  playerStore.playerGroup = combatStore.combatState.playerGroup;
 }
 
 function handleUnitDeath(unit: Unit) {
@@ -312,7 +315,7 @@ function handleUnitDeath(unit: Unit) {
     console.log(drop);
     combatStore.combatState?.rewards.drops.push({
       id: ulid(),
-      itemId: drop,
+      gameItem: drop,
     });
   }
 }

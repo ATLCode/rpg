@@ -7,10 +7,28 @@
       </div>
       <div>{{ playerStore.selectedItem.itemId }}</div>
       <div>{{ quantity }}</div>
+      <div v-if="playerStore.selectedItem.type === GameItemType.Shop">
+        {{
+          playerStore.calclulatePrice(
+            playerStore.selectedItem!,
+            props.npc.shop!,
+            TransactionType.Buy
+          )
+        }}
+      </div>
+      <div v-if="playerStore.selectedItem.type === GameItemType.Inventory">
+        {{
+          playerStore.calclulatePrice(
+            playerStore.selectedItem!,
+            props.npc.shop!,
+            TransactionType.Sell
+          )
+        }}
+      </div>
       <ASlider
         v-model="quantity"
         :min="Number(0)"
-        :max="Number(playerStore.selectedItem.maximumStackSize || 1)"
+        :max="Number(playerStore.selectedItem.shopMaxStackSize || 1)"
       />
       <AButton
         v-if="playerStore.selectedItem.type === GameItemType.Shop"
@@ -28,7 +46,7 @@
 
 <script lang="ts" setup>
 import { usePlayerStore } from "@/stores/player";
-import type { Npc } from "~/game/npcs";
+import { TransactionType, type Npc } from "~/game/npcs";
 import { GameItemType } from "~/types/item.types";
 
 const playerStore = usePlayerStore();

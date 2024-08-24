@@ -1,4 +1,5 @@
-import { ItemId } from "../types/item.types";
+import { GameItemType, ItemId, type GameItem } from "../types/item.types";
+import { items } from "./items";
 
 export enum DamageType {
   Blunt = "Blunt",
@@ -47,7 +48,7 @@ export type Ability = {
   effects?: Effect[];
   itemPropertyReq?: number[];
   xp?: number;
-  product?: ItemId;
+  product?: GameItem;
   ingredients?: ItemId[];
   cost?: number;
 };
@@ -124,7 +125,13 @@ export const abilities: Record<AbilityId, Ability> = {
     skillId: SkillId.Cooking,
     xp: 10,
     ingredients: [ItemId.RawPanfish],
-    product: ItemId.CookedPanfish,
+    product: {
+      type: GameItemType.Loot,
+      index: 0,
+      itemId: ItemId.CookedPanfish,
+      item: items[ItemId.CookedPanfish],
+      currentStackSize: 1,
+    },
     levelReq: 1,
     isActive: false,
     isAutomatic: true,
@@ -135,7 +142,13 @@ export const abilities: Record<AbilityId, Ability> = {
     skillId: SkillId.Cooking,
     xp: 10,
     ingredients: [ItemId.RawBluegill],
-    product: ItemId.CookedBluegill,
+    product: {
+      type: GameItemType.Loot,
+      index: 0,
+      itemId: ItemId.CookedBluegill,
+      item: items[ItemId.CookedBluegill],
+      currentStackSize: 1,
+    },
     levelReq: 5,
     isActive: false,
     isAutomatic: true,

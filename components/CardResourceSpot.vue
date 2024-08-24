@@ -24,7 +24,6 @@ import { useNotificationStore, NotificationType } from "@/stores/notification";
 import { ResourceSpotId, resourceSpots } from "@/game/spots";
 import { useSkillStore } from "@/stores/skill";
 import { usePlayerStore } from "@/stores/player";
-import { items } from "~/game/items";
 const skillStore = useSkillStore();
 const playerStore = usePlayerStore();
 const notificationStore = useNotificationStore();
@@ -130,10 +129,10 @@ watch(finishedInterval, () => {
 function getResource() {
   console.log("Getting resource");
   if (spot.value.products) {
-    const chosenItemId = chooseRandomWeightedObject(spot.value.products);
-    const itemXp = items[chosenItemId].xp;
+    const chosenGameItem = chooseRandomWeightedObject(spot.value.products);
+    const itemXp = chosenGameItem.item.xp;
     try {
-      playerStore.addItemToInventory(chosenItemId);
+      playerStore.addItemsToInventory(chosenGameItem);
     } catch (error) {
       console.log("Inventory is full");
     }

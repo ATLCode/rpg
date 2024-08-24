@@ -1,7 +1,11 @@
 <template>
   <div class="gamebar-container">
     <div class="resources">
-      <div>Day: {{ worldStore.day }}</div>
+      <div>
+        Day: {{ worldStore.time.day }}, Week: {{ worldStore.time.week }},
+        Season: {{ worldStore.time.season }}, Year:
+        {{ worldStore.time.year }} (Day Count: {{ worldStore.time.dayCount }})
+      </div>
       <div>Energy: {{ playerStore.energy }}</div>
     </div>
 
@@ -27,6 +31,7 @@
           <div @click="saveStore.logOut">Log Out</div>
         </template>
       </AMenu>
+      <AButton @click="worldStore.sleep(100)">Test</AButton>
     </div>
   </div>
 </template>
@@ -39,8 +44,6 @@ const locationStore = useLocationStore();
 const playerStore = usePlayerStore();
 const saveStore = useSaveStore();
 const worldStore = useWorldStore();
-
-console.log(worldStore.day);
 
 async function toMenu() {
   await saveStore.updateSave();

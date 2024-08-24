@@ -1,9 +1,10 @@
 import { SkillId, abilities, type Ability } from "./abilities";
 import { LocationId } from "./locations";
 import { npcs, type Npc } from "./npcs";
+import type { Time } from "~/types/world.types";
 
 type Defaults = {
-  startingDay: number;
+  startingTime: Time;
   startingLocationId: LocationId;
   startingAbilities: Ability[];
   startingSkills: Record<SkillId, Skill>;
@@ -11,7 +12,14 @@ type Defaults = {
 };
 
 export const defaults: Defaults = {
-  startingDay: 1,
+  startingTime: {
+    day: 1,
+    week: 1,
+    season: 1,
+    year: 1,
+    dayCount: 1,
+  },
+
   startingLocationId: LocationId.Town,
   startingAbilities: Object.values(abilities).filter(
     (ability) => ability.levelReq === 1
