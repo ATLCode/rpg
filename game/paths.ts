@@ -23,7 +23,7 @@ export const paths: Record<PathId, Path> = {
     reqSkills: null,
     reqItem: null,
     reqQuest: null,
-    travelTime: 1,
+    travelTime: 5,
     energy: 30,
   },
 };
