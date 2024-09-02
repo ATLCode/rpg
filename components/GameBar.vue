@@ -6,15 +6,15 @@
         Season: {{ worldStore.time.season }}, Year:
         {{ worldStore.time.year }} (Day Count: {{ worldStore.time.dayCount }})
       </div>
-      <div>Energy: {{ playerStore.energy }}</div>
+      <div>Energy: {{ playerStore.energy }} {{ locationStore.activePath }}</div>
     </div>
 
     <div class="bar-header">
-      <h1 v-if="playerStore.gameState === GameState.Normal">
+      <h1 v-if="gameStore.gameState === GameState.Normal">
         {{ locationStore.currentArea.name }}
       </h1>
-      <h1 v-if="playerStore.gameState === GameState.Travel">Traveling</h1>
-      <h1 v-if="playerStore.gameState === GameState.Combat">Combat</h1>
+      <h1 v-if="gameStore.gameState === GameState.Travel">Traveling</h1>
+      <h1 v-if="gameStore.gameState === GameState.Combat">Combat</h1>
     </div>
 
     <div class="options">
@@ -25,25 +25,27 @@
           >
         </template>
         <template #menu>
+          <div @click="worldStore.sleep(100)">Test Sleep</div>
           <div>Settings</div>
           <div @click="saveStore.updateSave()">Save</div>
           <div @click="toMenu()">Save and Menu</div>
           <div @click="saveStore.logOut">Log Out</div>
         </template>
       </AMenu>
-      <AButton @click="worldStore.sleep(100)">Test</AButton>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { useLocationStore } from "@/stores/location";
-import { usePlayerStore, GameState } from "@/stores/player";
+import { usePlayerStore } from "@/stores/player";
 import { useSaveStore } from "@/stores/save";
 import { useWorldStore } from "@/stores/world";
+import { useGameStore } from "@/stores/game";
 const locationStore = useLocationStore();
 const playerStore = usePlayerStore();
 const saveStore = useSaveStore();
 const worldStore = useWorldStore();
+const gameStore = useGameStore();
 
 async function toMenu() {
   await saveStore.updateSave();

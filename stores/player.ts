@@ -9,12 +9,6 @@ import type { AbilityId } from "~/game/abilities";
 import { items } from "~/game/items";
 import { TransactionType, type Npc, type Shop } from "~/game/npcs";
 
-export enum GameState {
-  Normal = "Normal",
-  Travel = "Travel",
-  Combat = "Combat",
-}
-
 export type Unit = {
   isPlayer?: boolean;
   name: string;
@@ -32,8 +26,6 @@ export type Gear = Record<EquipSlot, GameItem | null>;
 
 export const usePlayerStore = defineStore("player", () => {
   const characterName = ref("");
-
-  const gameState = ref<GameState>(GameState.Normal);
 
   const energy = ref(100);
   /*
@@ -395,7 +387,6 @@ export const usePlayerStore = defineStore("player", () => {
 
   return {
     characterName,
-    gameState,
     energy,
     gear,
     inventory,

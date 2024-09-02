@@ -9,14 +9,18 @@ import type { Unit } from "~/stores/player";
 export type Encounter = {
   enemyGroup: Unit[];
 };
-export type WeightedEncounter = WeightedObject<Encounter>;
-
 export enum EncounterId {
+  Empty = "Empty",
   Thief = "Thief",
   Guards = "Guards",
 }
 
+export type WeightedEncounter = WeightedObject<EncounterId>;
+
 export const encounters: Record<EncounterId, Encounter> = {
+  [EncounterId.Empty]: {
+    enemyGroup: [],
+  },
   [EncounterId.Guards]: {
     enemyGroup: [units.Guard, units.Guard],
   },

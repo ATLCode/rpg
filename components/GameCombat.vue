@@ -101,7 +101,7 @@
             class="tab-content"
           >
             <div
-              v-if="playerStore.gameState === GameState.Combat"
+              v-if="gameStore.gameState === GameState.Combat"
               class="abilities-container"
             >
               <CardAbility
@@ -137,9 +137,7 @@
           <div>End Turn</div>
           <div>(Space)</div>
         </AButton>
-        <AButton @click="playerStore.gameState = GameState.Normal"
-          >Flee</AButton
-        >
+        <AButton @click="gameStore.gameState = GameState.Normal">Flee</AButton>
       </div>
       <div class="info-enemy">Enemy</div>
     </div>
@@ -186,7 +184,7 @@
       <div v-else>
         <div>Ýou Lost!</div>
 
-        <AButton @click="playerStore.gameState = GameState.Normal"
+        <AButton @click="gameStore.gameState = GameState.Normal"
           >Continue</AButton
         >
       </div>
@@ -199,12 +197,14 @@ import { EffectType, SkillId, abilities, type Ability } from "~/game/abilities";
 import { usePlayerStore } from "@/stores/player";
 import { useSkillStore } from "@/stores/skill";
 import { useCombatStore } from "@/stores/combat";
+import { useGameStore } from "@/stores/game";
 import { useEvent } from "@/composables/keyEvent";
 import { chooseRandomWeightedObject } from "~/utils/weight-calculation";
 
 const playerStore = usePlayerStore();
 const skillStore = useSkillStore();
 const combatStore = useCombatStore();
+const gameStore = useGameStore();
 
 enum PlayerView {
   Equipment = "Equipment",

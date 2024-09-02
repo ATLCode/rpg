@@ -28,6 +28,7 @@
         :lat-lng="[marker.y, marker.x]"
         @click="clickMarker(marker.locationId)"
       >
+        <l-icon icon-url="/icons/marker.png" :icon-size="[40, 40]"></l-icon>
         <l-popup v-if="locationStore.currentArea.type === LocationType.World">
           {{ locations[marker.locationId].name }}
           <div v-if="marker.locationId === locationStore.currentLocationId">
@@ -64,7 +65,7 @@
 
       <l-marker
         :lat-lng="[
-          locationStore.playerCoordinates.y - 20,
+          locationStore.playerCoordinates.y - 25,
           locationStore.playerCoordinates.x,
         ]"
       >
