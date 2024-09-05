@@ -1,5 +1,7 @@
 import { defaults } from "~/game/defaults";
 import { useNotificationStore, NotificationType } from "@/stores/notification";
+import { usePlayerStore } from "@/stores/player";
+import { useGameStore } from "@/stores/game";
 import {
   locations,
   type Location,
@@ -9,11 +11,13 @@ import {
 import type { SpotResource, SpotRefining, SpotSleeping } from "@/game/spots";
 import { resourceSpots } from "@/game/spots";
 import { paths, type Path } from "~/game/paths";
-import { usePlayerStore, GameState } from "@/stores/player";
 
 export const useLocationStore = defineStore("location", () => {
   const playerStore = usePlayerStore();
   const notificationStore = useNotificationStore();
+  const gameStore = useGameStore();
+
+  // LOCATIONS & AREAS
 
   const currentLocationId = ref<LocationId>(defaults.startingLocationId);
 
@@ -79,6 +83,7 @@ export const useLocationStore = defineStore("location", () => {
 
   const targetLocationId = ref<LocationId | null>(null);
   const activePath = ref<Path | null>(null);
+  const encountersChecked = ref(0);
 
   const selectedPath = ref<Path | null>(null);
   function selectPath(locationId: number) {
@@ -103,7 +108,7 @@ export const useLocationStore = defineStore("location", () => {
         playerStore.useEnergy(path.energy);
         targetLocationId.value = targetLocations[0];
         activePath.value = path;
-        playerStore.gameState = GameState.Travel;
+        gameStore.gameState = GameState.Travel;
       } else {
         console.log("Something went wrong");
       }
@@ -198,6 +203,7 @@ export const useLocationStore = defineStore("location", () => {
     changeSelectedLocation,
     targetLocationId,
     activePath,
+    encountersChecked,
     selectedPath,
     selectPath,
     travelPath,

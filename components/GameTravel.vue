@@ -9,10 +9,14 @@
 
 <script lang="ts" setup>
 import { useLocationStore } from "@/stores/location";
-import { usePlayerStore, GameState } from "@/stores/player";
+import { useEncounterStore } from "~/stores/encounter";
+import { useGameStore } from "@/stores/game";
 import { locations } from "~/game/locations";
+import { EncounterId } from "@/game/encounters";
+
 const locationStore = useLocationStore();
-const playerStore = usePlayerStore();
+const gameStore = useGameStore();
+const encounterStore = useEncounterStore();
 
 onMounted(() => {
   if (!locationStore.activePath || !locationStore.targetLocationId) {
@@ -20,11 +24,16 @@ onMounted(() => {
     return;
   }
   totalSeconds.value = locationStore.activePath.travelTime;
+  if (encounterStore.encounterReturnState) {
+    progress.value = encounterStore.encounterReturnState.progress;
+    encounterStore.$reset();
+  }
   startTravel();
 });
 
 const progress = ref(0);
 const totalSeconds = ref(0);
+const selectedEncounterId = ref<EncounterId | null>(null);
 
 const travelInterval = ref<ReturnType<typeof setTimeout> | undefined>(
   undefined
@@ -39,11 +48,45 @@ const finishedInterval = computed(() => {
 
 function startTravel() {
   travelInterval.value = setInterval(() => {
-    addTime(1);
+    progressTravel(1);
   }, 1000);
 }
 
-function addTime(num: number) {
+function checkEncounter() {
+  selectedEncounterId.value = chooseRandomWeightedObject(
+    locationStore.activePath!.encounters
+  );
+  console.log(selectedEncounterId.value);
+
+  if (selectedEncounterId.value === EncounterId.Empty) {
+    console.log("No encounter");
+    locationStore.encountersChecked = locationStore.encountersChecked + 1;
+  } else {
+    console.log("Starting Encounter");
+    console.log(progress.value);
+    locationStore.encountersChecked = locationStore.encountersChecked + 1;
+    const returnState = {
+      gameState: GameState.Travel,
+      progress: progress.value,
+    };
+    encounterStore.startEncounter(selectedEncounterId.value, returnState);
+    clearInterval(travelInterval.value);
+    gameStore.gameState = GameState.Encounter;
+  }
+}
+
+function progressTravel(num: number) {
+  console.log("progressing travel");
+
+  const halfWwayPoint = totalSeconds.value / 2 - 1;
+  if (
+    locationStore.encountersChecked <
+      locationStore.activePath!.encounterChecks &&
+    progress.value > halfWwayPoint
+  ) {
+    checkEncounter();
+  }
+  // Add Time
   progress.value = progress.value + num;
 }
 
@@ -55,8 +98,12 @@ watch(finishedInterval, () => {
 });
 
 function endTravel() {
+  clearInterval(travelInterval.value);
   locationStore.currentLocationId = locationStore.targetLocationId!;
-  playerStore.gameState = GameState.Normal;
+  locationStore.activePath = null;
+  locationStore.encountersChecked = 0;
+  progress.value = 0;
+  gameStore.gameState = GameState.Normal;
 }
 </script>
 

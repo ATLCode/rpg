@@ -92,6 +92,9 @@ export type GameItem = {
   shopMaxStackSize?: number;
 };
 
+export type WeightedItem = WeightedObject<ItemId>;
+export type WeightedLoot = WeightedObject<GameItem>;
+
 /*
 Old type for inventory item, now combined with shopItem type to GameItem
 

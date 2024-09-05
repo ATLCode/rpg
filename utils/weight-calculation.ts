@@ -1,5 +1,5 @@
 export type WeightedObject<T> = {
-  id: T;
+  object: T;
   weight: number;
 };
 
@@ -19,7 +19,7 @@ export function chooseRandomWeightedObject<T>(
     if (weightToCheck < magicNumber) {
       continue;
     }
-    foundItem = object.id;
+    foundItem = object.object;
     break;
   }
   if (foundItem === null) {

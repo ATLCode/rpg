@@ -1,20 +1,13 @@
 import {
   EquipSlot,
   ItemId,
-  type GameItem,
   GameItemType,
+  type GameItem,
+  type WeightedLoot,
 } from "../types/item.types";
 import type { AbilityId } from "~/game/abilities";
 import { items } from "~/game/items";
 import { TransactionType, type Npc, type Shop } from "~/game/npcs";
-export type WeightedItem = WeightedObject<ItemId>;
-export type WeightedLoot = WeightedObject<GameItem>;
-
-export enum GameState {
-  Normal = "Normal",
-  Travel = "Travel",
-  Combat = "Combat",
-}
 
 export type Unit = {
   isPlayer?: boolean;
@@ -33,8 +26,6 @@ export type Gear = Record<EquipSlot, GameItem | null>;
 
 export const usePlayerStore = defineStore("player", () => {
   const characterName = ref("");
-
-  const gameState = ref<GameState>(GameState.Normal);
 
   const energy = ref(100);
   /*
@@ -396,7 +387,6 @@ export const usePlayerStore = defineStore("player", () => {
 
   return {
     characterName,
-    gameState,
     energy,
     gear,
     inventory,
