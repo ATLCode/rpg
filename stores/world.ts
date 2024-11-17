@@ -9,37 +9,13 @@ export const useWorldStore = defineStore("world", () => {
 
   const time = ref<Time>(defaults.startingTime);
 
-  /*
-  TIME
-
-  Same as seconds-minutes-hours-days
-  We do days-weeks-seasons-years
-
-  Maybe have a running dayCount as well?
-
-  Starting time object something like:
-  {
-  day: 1
-  week: 1
-  seasons: 1
-  year: 1
-  }
-
-  const dayCap = 7
-  const weekCap = 4
-  const seasonCap = 4
-  
-  Years has no cap
-
-  */
-
   const viewLocations = ref([]);
   const viewPaths = ref([]);
 
   function sleep(energyRestore: number) {
     playerStore.energy = energyRestore;
 
-    restockShops();
+    // restockShops();
     // Heal Player based on food used and stuff
     // Give buffs based on food?
     addDayToTime();
@@ -67,6 +43,8 @@ export const useWorldStore = defineStore("world", () => {
       time.value.day = 1;
     }
     time.value.dayCount += 1;
+    time.value.hours = 8;
+    time.value.minutes = 0;
   }
 
   function restockShops() {
@@ -91,8 +69,75 @@ export const useWorldStore = defineStore("world", () => {
     });
   }
 
+  function showTime() {
+    let hoursOutput = time.value.hours.toString();
+    let minutesOutput = time.value.minutes.toString();
+    if (time.value.hours < 10) {
+      hoursOutput = "0" + time.value.hours;
+    }
+    if (time.value.minutes < 10) {
+      minutesOutput = "0" + time.value.minutes;
+    }
+
+    return `${hoursOutput}:${minutesOutput}`;
+  }
+
+  function addTime(minutes: number) {
+    /*
+    const hourInMin = 60;
+    const dayInMin = 1440;
+    const weekInMin = 10080;
+    const seasonInMin = weekInMin * 4;
+
+    const s = Math.floor(minutes / seasonInMin);
+    const w = Math.floor((minutes % seasonInMin) / weekInMin);
+    const d = Math.floor(((minutes % seasonInMin) % weekInMin) / dayInMin);
+    const h = Math.floor(
+      (((minutes % seasonInMin) % weekInMin) % dayInMin) / hourInMin
+    );
+    const m = Math.floor(
+      (((minutes % seasonInMin) % weekInMin) % dayInMin) % hourInMin
+    );
+
+    console.log("Minutes" + m);
+    console.log("Hours" + h);
+    console.log("Days" + d);
+    console.log("Weeks" + w);
+    console.log("Seasons" + s);
+    */
+
+    const minCap = 60;
+    const hourCap = 24;
+    const dayCap = 8;
+    const weekCap = 5;
+    const seasonCap = 5;
+
+    let leftoverMinutes = minutes + time.value.minutes;
+    while (leftoverMinutes >= minCap) {
+      leftoverMinutes -= minCap;
+      time.value.hours += 1;
+    }
+    time.value.minutes = leftoverMinutes;
+    while (time.value.hours >= hourCap) {
+      time.value.hours -= hourCap;
+      time.value.day += 1;
+    }
+    while (time.value.day >= dayCap) {
+      time.value.day -= dayCap - 1;
+      time.value.week += 1;
+    }
+    while (time.value.week >= weekCap) {
+      time.value.week -= weekCap - 1;
+      time.value.season += 1;
+    }
+    while (time.value.season >= seasonCap) {
+      time.value.season -= seasonCap - 1;
+      time.value.year += 1;
+    }
+  }
+
   function $reset() {
     time.value = defaults.startingTime;
   }
-  return { time, viewLocations, viewPaths, sleep, $reset };
+  return { time, viewLocations, viewPaths, sleep, showTime, addTime, $reset };
 });

@@ -1,9 +1,14 @@
 <template>
   <div class="travel-container">
     <div v-if="locationStore.targetLocationId" class="travel-text">
-      Traveling to {{ locations[locationStore.targetLocationId].name }}
+      Traveling to {{ worldLocations[locationStore.targetLocationId].name }}
     </div>
-    <AProgressLinear v-model="progress" :max="totalSeconds" />
+    <AProgressLinear
+      v-model="progress"
+      :max="travelLength"
+      height="2rem"
+      width="33vw"
+    />
   </div>
 </template>
 
@@ -11,19 +16,21 @@
 import { useLocationStore } from "@/stores/location";
 import { useEncounterStore } from "~/stores/encounter";
 import { useGameStore } from "@/stores/game";
-import { locations } from "~/game/locations";
+import { useWorldStore } from "@/stores/world";
+import { worldLocations } from "~/game/locations";
 import { EncounterId } from "@/game/encounters";
 
 const locationStore = useLocationStore();
 const gameStore = useGameStore();
 const encounterStore = useEncounterStore();
+const worldStore = useWorldStore();
 
 onMounted(() => {
   if (!locationStore.activePath || !locationStore.targetLocationId) {
     console.log("Can't find active path or target location");
     return;
   }
-  totalSeconds.value = locationStore.activePath.travelTime;
+  travelLength.value = locationStore.activePath.travelTime * 100;
   if (encounterStore.encounterReturnState) {
     progress.value = encounterStore.encounterReturnState.progress;
     encounterStore.$reset();
@@ -32,7 +39,7 @@ onMounted(() => {
 });
 
 const progress = ref(0);
-const totalSeconds = ref(0);
+const travelLength = ref(0);
 const selectedEncounterId = ref<EncounterId | null>(null);
 
 const travelInterval = ref<ReturnType<typeof setTimeout> | undefined>(
@@ -40,7 +47,7 @@ const travelInterval = ref<ReturnType<typeof setTimeout> | undefined>(
 );
 
 const finishedInterval = computed(() => {
-  if (progress.value >= totalSeconds.value) {
+  if (progress.value >= travelLength.value) {
     return true;
   }
   return false;
@@ -49,7 +56,7 @@ const finishedInterval = computed(() => {
 function startTravel() {
   travelInterval.value = setInterval(() => {
     progressTravel(1);
-  }, 1000);
+  }, 10);
 }
 
 function checkEncounter() {
@@ -78,7 +85,7 @@ function checkEncounter() {
 function progressTravel(num: number) {
   console.log("progressing travel");
 
-  const halfWwayPoint = totalSeconds.value / 2 - 1;
+  const halfWwayPoint = travelLength.value / 2;
   if (
     locationStore.encountersChecked <
       locationStore.activePath!.encounterChecks &&
@@ -99,10 +106,15 @@ watch(finishedInterval, () => {
 
 function endTravel() {
   clearInterval(travelInterval.value);
-  locationStore.currentLocationId = locationStore.targetLocationId!;
+  locationStore.playerLocation.worldLocation =
+    worldLocations[locationStore.targetLocationId!];
+  if (locationStore.activePath) {
+    worldStore.addTime(locationStore.activePath?.timeCost);
+  }
   locationStore.activePath = null;
   locationStore.encountersChecked = 0;
   progress.value = 0;
+
   gameStore.gameState = GameState.Normal;
 }
 </script>

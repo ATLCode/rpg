@@ -105,7 +105,7 @@
               class="abilities-container"
             >
               <CardAbility
-                v-for="ability in skillStore.activeAbilities"
+                v-for="ability in skillStore.combatAbilities"
                 :key="ability.name"
                 :ability="ability"
                 :selected-ability-id="selectedAbility?.id"
@@ -141,7 +141,7 @@
       </div>
       <div class="info-enemy">Enemy</div>
     </div>
-    <ADialog v-model="combatStore.combatState.result.isOver" :persistent="true">
+    <AModal v-model="combatStore.combatState.result.isOver" :persistent="true">
       <div v-if="combatStore.combatState.result.isWon">
         <div>You Won!</div>
         <div>
@@ -156,17 +156,15 @@
           You gained {{ combatStore.combatState.rewards.magicExp }} magic
           experience
         </div>
-        <div>
-          You will get
-          {{ combatStore.combatState.rewards.drops }} selected
-          {{ combatStore.combatState.rewards.selectedDrops }}
-        </div>
+        <div>You will get</div>
         <div class="drops-container">
           <div
             v-for="(drop, index) in combatStore.combatState.rewards.drops"
             :key="index"
           >
-            <div>{{ drop.gameItem.itemId }}</div>
+            <div>
+              {{ drop.gameItem.item.name }} - {{ drop.gameItem.itemId }}
+            </div>
             <!--
             Need to fix ACheckbox to make below input to work
                 <ACheckbox v-model="combatStore.combatState.rewards.selectedDrops" :value="drop"></ACheckbox>
@@ -188,18 +186,19 @@
           >Continue</AButton
         >
       </div>
-    </ADialog>
+    </AModal>
   </div>
 </template>
 <script lang="ts" setup>
 import { ulid } from "ulid";
-import { EffectType, SkillId, abilities, type Ability } from "~/game/abilities";
+import { abilities } from "~/game/abilities";
 import { usePlayerStore } from "@/stores/player";
 import { useSkillStore } from "@/stores/skill";
 import { useCombatStore } from "@/stores/combat";
 import { useGameStore } from "@/stores/game";
 import { useEvent } from "@/composables/keyEvent";
 import { chooseRandomWeightedObject } from "~/utils/weight-calculation";
+import { EffectType, SkillId, type Ability } from "~/types/ability.types";
 
 const playerStore = usePlayerStore();
 const skillStore = useSkillStore();
@@ -214,7 +213,7 @@ enum PlayerView {
 }
 
 const selectedPlayerView = ref(PlayerView.Abilities);
-const selectedAbility = ref<Ability>(skillStore.activeAbilities[0]);
+const selectedAbility = ref<Ability>(skillStore.combatAbilities[0]);
 
 const isPlayerTurn = computed(() => {
   if (
@@ -228,14 +227,17 @@ const isPlayerTurn = computed(() => {
 });
 
 function useAbility(ability: Ability, user: Unit, target: Unit) {
-  if (!ability?.effects || !combatStore.combatState) {
+  if (!ability?.combatDetails || !combatStore.combatState) {
     return;
   }
-  if (!ability.cost || !(user.currentActionPoints >= ability.cost)) {
+  if (
+    !ability.combatDetails.actionPointCost ||
+    !(user.currentActionPoints >= ability.combatDetails.actionPointCost)
+  ) {
     return;
   }
 
-  const effects = ability.effects;
+  const effects = ability.combatDetails.effects;
 
   for (const effect of effects) {
     if (effect.effectType === EffectType.Damage) {
@@ -266,7 +268,7 @@ function useAbility(ability: Ability, user: Unit, target: Unit) {
   handleUnitDeath(target);
   handleCombatOver();
 
-  user.currentActionPoints -= ability.cost;
+  user.currentActionPoints -= ability.combatDetails.actionPointCost;
   if (user.currentActionPoints === 0 && isPlayerTurn.value) {
     endTurn();
   }

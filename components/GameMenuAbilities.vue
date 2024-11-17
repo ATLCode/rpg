@@ -1,11 +1,15 @@
 <template>
   <div>
     <div
-      v-for="ability in skillStore.abilities"
+      v-for="ability in skillStore.playerAbilities"
       :key="ability.name"
       class="abilities-container"
     >
-      {{ ability.name }}
+      <div>{{ ability.levelReq }}</div>
+      -
+      <div>{{ ability.name }}</div>
+      -
+      <div>{{ ability.skillId }}</div>
     </div>
   </div>
 </template>

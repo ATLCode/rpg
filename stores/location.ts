@@ -1,113 +1,110 @@
 import { defaults } from "~/game/defaults";
 import { useNotificationStore, NotificationType } from "@/stores/notification";
 import { usePlayerStore } from "@/stores/player";
+import { useSpotStore } from "@/stores/spot";
 import { useGameStore } from "@/stores/game";
 import {
-  locations,
-  type Location,
-  LocationType,
-  LocationId,
+  WorldLocationId,
+  worldLocations,
+  areaLocations,
 } from "~/game/locations";
-import type { SpotResource, SpotRefining, SpotSleeping } from "@/game/spots";
-import { resourceSpots } from "@/game/spots";
 import { paths, type Path } from "~/game/paths";
+import type {
+  Camp,
+  PlayerLocation,
+  WorldLocation,
+} from "~/types/location.types";
 
 export const useLocationStore = defineStore("location", () => {
   const playerStore = usePlayerStore();
   const notificationStore = useNotificationStore();
   const gameStore = useGameStore();
+  const spotStore = useSpotStore();
 
   // LOCATIONS & AREAS
 
-  const currentLocationId = ref<LocationId>(defaults.startingLocationId);
-
-  const currentLocation = computed(() => {
-    return locations[currentLocationId.value];
-  });
-
-  const currentAreaId = computed(() => {
-    return currentLocation.value.parent;
-  });
-  const currentArea = computed(() => {
-    return locations[currentAreaId.value];
-  });
-
-  const currentLocations = ref<Record<LocationId, Location>>(findLocations());
-  const currentPaths = ref<Path[]>(findPaths());
-
-  const selectedLocationId = ref<LocationId>(currentLocationId.value);
-  const selectedLocation = computed(() => {
-    return locations[selectedLocationId.value];
-  });
-
-  function changeSelectedLocation(locationId: LocationId) {
-    selectedLocationId.value = locationId;
-  }
-
-  const playerCoordinates = computed(() => {
-    const currentMarker = currentArea.value.mapMarkers?.find(
-      (marker) => marker.locationId === currentLocationId.value
-    );
-    return { x: currentMarker!.x, y: currentMarker!.y };
-  });
-
-  type Camp = {
-    resourceSpots: SpotResource[];
-    refiningSpots: SpotRefining[];
-    sleepingSpots: SpotSleeping[];
+  const worldMap = {
+    mapImg: "/maps/TestMap.jpg",
   };
 
-  const camp = ref<Camp>({
-    resourceSpots: [],
-    refiningSpots: [],
-    sleepingSpots: [],
+  const playerLocation = ref<PlayerLocation>({
+    worldLocation: worldLocations[WorldLocationId.Town],
+    areaLocation: null,
+    subLocation: null,
   });
 
-  const currentResourceSpots = computed(() => {
-    if (currentLocation.value.resourceSpots?.length === 0) {
-      return;
+  const selectedLocation = ref<WorldLocation | null>(null);
+
+  const currentPaths = computed(() => {
+    return findPaths();
+  });
+
+  const selectedLocationInCurrentPaths = computed(() => {
+    if (!selectedLocation.value) {
+      return false;
     }
-    const spots: SpotResource[] = [];
-
-    currentLocation.value.resourceSpots?.forEach((spotId) => {
-      const spot = resourceSpots[spotId];
-      if (!spot) {
-        return;
-      }
-      spots.push(spot);
+    const reachableLocations: WorldLocationId[] = [];
+    currentPaths.value.forEach((path) => {
+      path.locations.forEach((location) => {
+        reachableLocations.push(location);
+      });
     });
-    return spots;
+    if (reachableLocations.includes(selectedLocation.value.id)) {
+      return true;
+    }
+    return false;
   });
+
+  const playerCoordinates = computed(() => {
+    if (playerLocation.value.subLocation) {
+      const currentAreaMarker = playerLocation.value.subLocation.coordinates;
+
+      return currentAreaMarker;
+    }
+    if (playerLocation.value.areaLocation) {
+      const currentAreaMarker = playerLocation.value.areaLocation.coordinates;
+
+      return currentAreaMarker;
+    } else {
+      const currentWorldMarker = playerLocation.value.worldLocation.coordinates;
+      return currentWorldMarker;
+    }
+  });
+
+  const camp = ref<Camp>(defaults.startingCamp);
 
   // TRAVELING & PATHS
 
-  const targetLocationId = ref<LocationId | null>(null);
+  const targetLocationId = ref<WorldLocationId | null>(null);
   const activePath = ref<Path | null>(null);
   const encountersChecked = ref(0);
 
   const selectedPath = ref<Path | null>(null);
-  function selectPath(locationId: number) {
+
+  function selectPath(locationId: WorldLocationId) {
+    console.log(locationId);
     const foundPath = currentPaths.value.find((path) => {
       return Object.values(path.locations).includes(locationId);
     });
+    console.log(foundPath);
     if (foundPath) {
       selectedPath.value = foundPath;
     }
   }
 
-  function travelPath(path: Path | null) {
+  function travelPath() {
     try {
-      if (!path) {
+      if (!selectedPath.value) {
         throw new Error("Path not selected");
       }
-      const targetLocations = path.locations.filter(
-        (endPoint) => endPoint !== currentLocationId.value
+      const targetLocations = selectedPath.value.locations.filter(
+        (endPoint) => endPoint !== playerLocation.value.worldLocation.id
       );
 
       if (targetLocations.length === 1) {
-        playerStore.useEnergy(path.energy);
+        playerStore.useEnergy(selectedPath.value.energyCost);
         targetLocationId.value = targetLocations[0];
-        activePath.value = path;
+        activePath.value = selectedPath.value;
         gameStore.gameState = GameState.Travel;
       } else {
         console.log("Something went wrong");
@@ -127,80 +124,45 @@ export const useLocationStore = defineStore("location", () => {
       console.log(message);
     }
   }
-
   function enterArea() {
-    console.log(currentLocation.value);
-    if (
-      currentLocation.value.type === LocationType.Container &&
-      currentLocation.value.child
-    ) {
-      goToLocation(currentLocation.value.child);
+    if (playerLocation.value) {
+      playerLocation.value.areaLocation =
+        areaLocations[playerLocation.value.worldLocation.child];
     } else {
-      return console.log("Can't enter into a location that is not container");
+      return console.log("Location doesn't have a child");
     }
   }
   function exitArea() {
-    console.log(selectedLocation.value);
-    if (
-      selectedLocation.value.type === LocationType.Exit &&
-      selectedLocation.value.parent
-    ) {
-      goToLocation(selectedLocation.value.parent);
-    } else {
-      return console.log(
-        "Can't enter into a location that is not container - exit"
-      );
-    }
+    playerLocation.value.areaLocation = null;
+    spotStore.$reset();
   }
-
-  function goToLocation(locationId: LocationId) {
-    currentLocationId.value = locationId;
-    currentLocations.value = findLocations();
-    currentPaths.value = findPaths();
+  function goToLocation(newLocation: PlayerLocation) {
+    console.log(newLocation);
+    playerLocation.value.worldLocation = newLocation.worldLocation;
+    playerLocation.value.areaLocation = newLocation.areaLocation;
+    playerLocation.value.subLocation = newLocation.subLocation;
   }
-
-  function findLocations(): Record<LocationId, Location> {
-    if (currentLocation.value.parent === LocationId.None) {
-      return {} as Record<LocationId, Location>;
-    }
-    return Object.fromEntries(
-      Object.entries(locations).filter(
-        ([_key, value]) => value.parent === currentLocation.value.parent
-      )
-    ) as Record<LocationId, Location>;
-  }
-
   function findPaths(): Path[] {
     const pathArray: Path[] = [];
     Object.values(paths).forEach((path) => {
-      if (path.locations.includes(currentLocationId.value)) {
+      if (path.locations.includes(playerLocation.value.worldLocation.id)) {
         pathArray.push(path);
       }
     });
+    console.log("Array" + JSON.stringify(pathArray));
     return pathArray;
   }
 
   function $reset() {
-    currentLocationId.value = defaults.startingLocationId;
-    camp.value = {
-      resourceSpots: [],
-      refiningSpots: [],
-      sleepingSpots: [],
-    };
+    playerLocation.value = defaults.startingLocation;
   }
 
   return {
-    currentLocationId,
-    currentLocation,
-    currentAreaId,
-    currentArea,
-    currentLocations,
-    currentPaths,
-    currentResourceSpots,
-    selectedLocationId,
+    playerLocation,
     selectedLocation,
+    selectedLocationInCurrentPaths,
+    currentPaths,
     playerCoordinates,
-    changeSelectedLocation,
     targetLocationId,
     activePath,
     encountersChecked,
@@ -211,6 +173,7 @@ export const useLocationStore = defineStore("location", () => {
     exitArea,
     goToLocation,
     camp,
+    worldMap,
     $reset,
   };
 });

@@ -1,13 +1,13 @@
 import { useNotificationStore, NotificationType } from "@/stores/notification";
-import { type Ability } from "~/game/abilities";
+import type { AbilityId } from "~/game/abilities";
 import { defaults } from "~/game/defaults";
-import { SkillId } from "~/game/abilities";
+import { AbilityType, type Ability, type SkillId } from "~/types/ability.types";
 
 export type Skill = {
   name: string;
   currentExp: number; // How we do leveling and xp limits?
   currentLevel: number;
-  abilities: number[]; // Do we just have abilities completely separately?
+  img: string;
 };
 
 export const useSkillStore = defineStore("skill", () => {
@@ -25,10 +25,20 @@ export const useSkillStore = defineStore("skill", () => {
     10: 450,
   };
 
-  const abilities = ref<Ability[]>(defaults.startingAbilities);
+  const playerAbilities = ref<Ability[]>(defaults.startingAbilities);
 
-  const activeAbilities = computed(() =>
-    abilities.value.filter((ability) => ability.isActive)
+  const playerAbilityIds = computed(() => {
+    const ids: AbilityId[] = [];
+    for (const item of playerAbilities.value) {
+      ids.push(item.id);
+    }
+    return ids;
+  });
+
+  const combatAbilities = computed(() =>
+    playerAbilities.value.filter(
+      (ability: Ability) => ability.abilityType === AbilityType.Combat
+    )
   );
 
   function giveSkillExp(skillId: SkillId, amount: number) {
@@ -80,15 +90,16 @@ export const useSkillStore = defineStore("skill", () => {
 
   function $reset() {
     skills.value = defaults.startingSkills;
-    abilities.value = defaults.startingAbilities;
+    playerAbilities.value = defaults.startingAbilities;
   }
 
   return {
     skills,
     giveSkillExp,
     levelTresholds,
-    abilities,
-    activeAbilities,
+    playerAbilities,
+    playerAbilityIds,
+    combatAbilities,
     $reset,
   };
 });

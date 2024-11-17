@@ -77,31 +77,40 @@ export enum ItemId {
   Gold = "Gold",
 }
 
-export enum GameItemType {
-  Inventory = "Inventory",
-  Shop = "Shop",
-  Loot = "Loot",
-}
+// Should I have utils function create game items for cases like products in abilities etc?
+// Game item and mainly inventory part feels wrong as well though, game item idea itself is good, but why it contains data about where in the inventory it is
 
 export type GameItem = {
-  type: GameItemType;
-  index: number;
   itemId: ItemId;
   item: Item;
   currentStackSize: number;
-  shopMaxStackSize?: number;
 };
 
 export type WeightedItem = WeightedObject<ItemId>;
 export type WeightedLoot = WeightedObject<GameItem>;
 
-/*
-Old type for inventory item, now combined with shopItem type to GameItem
-
-export type InventoryItem = {
-  inventoryIndex: number;
-  itemId: ItemId;
-  item: Item;
-  currentStackSize: number;
+export type stockSlot = {
+  gameItem: GameItem;
+  shopStackSize: number;
+  maxSize: number;
 };
-*/
+
+export enum PriceModifierType {
+  ShopMargin = "ShopMargin",
+}
+
+export type PriceModifier = {
+  type: PriceModifierType;
+  pct: number;
+};
+
+export enum ItemContainerId {
+  playerInventory = "PlayerInventory",
+}
+export type ItemContainer = {
+  id: ItemContainerId;
+  maxSize: number;
+  slots: (GameItem | null)[];
+};
+
+export type Gear = Record<EquipSlot, GameItem | null>;

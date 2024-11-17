@@ -1,18 +1,14 @@
 <template>
   <div class="game-container">
-    <NavBar v-if="!(gameStore.gameState === GameState.Combat)" />
-    <GameBar
+    <MenuSide v-if="!(gameStore.gameState === GameState.Combat)" />
+    <BarTop
       v-if="!(gameStore.gameState === GameState.Combat)"
       class="game-bar"
     />
     <div class="game-content">
       <div v-if="gameStore.gameState === GameState.Normal" class="area">
-        <AreaWorld
-          v-if="locationStore.currentArea.type === LocationType.World"
-        />
-        <AreaLocation
-          v-if="locationStore.currentArea.type === LocationType.Container"
-        />
+        <AreaLocation v-if="locationStore.playerLocation.areaLocation" />
+        <AreaWorld v-else />
       </div>
       <div v-if="gameStore.gameState === GameState.Travel" class="travel">
         <GameTravel />
@@ -29,7 +25,6 @@
 <script lang="ts" setup>
 import { useLocationStore } from "@/stores/location";
 import { useGameStore } from "@/stores/game";
-import { LocationType } from "~/game/locations";
 const locationStore = useLocationStore();
 const gameStore = useGameStore();
 

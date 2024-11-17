@@ -6,12 +6,16 @@
         Season: {{ worldStore.time.season }}, Year:
         {{ worldStore.time.year }} (Day Count: {{ worldStore.time.dayCount }})
       </div>
+      <div>{{ worldStore.showTime() }}</div>
       <div>Energy: {{ playerStore.energy }} {{ locationStore.activePath }}</div>
     </div>
 
     <div class="bar-header">
       <h1 v-if="gameStore.gameState === GameState.Normal">
-        {{ locationStore.currentArea.name }}
+        <div v-if="locationStore.playerLocation.areaLocation">
+          {{ locationStore.playerLocation.worldLocation.name }}
+        </div>
+        <div v-else>World Map</div>
       </h1>
       <h1 v-if="gameStore.gameState === GameState.Travel">Traveling</h1>
       <h1 v-if="gameStore.gameState === GameState.Combat">Combat</h1>
@@ -25,14 +29,16 @@
           >
         </template>
         <template #menu>
-          <div @click="worldStore.sleep(100)">Test Sleep</div>
+          <div @click="devToolsOpen = true">Dev Tools</div>
           <div>Settings</div>
-          <div @click="saveStore.updateSave()">Save</div>
           <div @click="toMenu()">Save and Menu</div>
           <div @click="saveStore.logOut">Log Out</div>
         </template>
       </AMenu>
     </div>
+    <AModal v-model="devToolsOpen" title="DevTools" closable>
+      <DevTools />
+    </AModal>
   </div>
 </template>
 <script lang="ts" setup>
@@ -46,6 +52,8 @@ const playerStore = usePlayerStore();
 const saveStore = useSaveStore();
 const worldStore = useWorldStore();
 const gameStore = useGameStore();
+
+const devToolsOpen = ref(false);
 
 async function toMenu() {
   await saveStore.updateSave();

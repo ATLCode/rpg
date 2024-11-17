@@ -1,15 +1,16 @@
-import { usePlayerStore, type Gear } from "./player";
 import type { Skill } from "./skill";
 import { useSkillStore } from "./skill";
 import { useNpcStore } from "./npc";
+import { usePlayerStore } from "./player";
 import { useWorldStore } from "@/stores/world";
 import { useNotificationStore } from "@/stores/notification";
-import type { LocationId } from "~/game/locations";
+import { useItemStore } from "@/stores/item";
 import { useLocationStore } from "@/stores/location";
-import type { Ability, SkillId } from "~/game/abilities";
 import type { Npc } from "~/game/npcs";
-import type { GameItem } from "~/types/item.types";
+import type { Gear, ItemContainer } from "~/types/item.types";
 import type { Time } from "~/types/world.types";
+import type { Ability, SkillId } from "~/types/ability.types";
+import type { PlayerLocation } from "~/types/location.types";
 
 export const useSaveStore = defineStore("save", () => {
   const playerStore = usePlayerStore();
@@ -18,6 +19,7 @@ export const useSaveStore = defineStore("save", () => {
   const npcStore = useNpcStore();
   const worldStore = useWorldStore();
   const notificationStore = useNotificationStore();
+  const itemStore = useItemStore();
 
   const client = useSupabaseClient();
 
@@ -48,10 +50,10 @@ export const useSaveStore = defineStore("save", () => {
   type SaveData = {
     time: Time;
     energy: number;
-    currentLocationId: LocationId;
+    playerLocation: PlayerLocation;
     characterName: string;
     gear: Gear;
-    inventory: (GameItem | null)[];
+    playerItemContainers: ItemContainer[];
     skills: Record<SkillId, Skill>;
     abilities: Ability[];
     npcs: Npc[];
@@ -89,12 +91,12 @@ export const useSaveStore = defineStore("save", () => {
     const save: SaveData = {
       time: worldStore.time,
       energy: playerStore.energy,
-      currentLocationId: locationStore.currentLocationId,
+      playerLocation: locationStore.playerLocation,
       characterName: playerStore.characterName,
-      gear: playerStore.gear,
-      inventory: playerStore.inventory,
+      gear: itemStore.gear,
+      playerItemContainers: itemStore.playerItemContainers,
       skills: skillStore.skills,
-      abilities: skillStore.abilities,
+      abilities: skillStore.playerAbilities,
       npcs: npcStore.npcs,
     };
 
@@ -105,7 +107,7 @@ export const useSaveStore = defineStore("save", () => {
   function deconstructSaveData(data: string): SaveData {
     // const saveData = JSON.parse(Buffer.from(data, "base64").toString("ascii"));
     const saveData = JSON.parse(decodeURIComponent(window.atob(data)));
-    if (!saveData.currentLocationId) {
+    if (!saveData.playerLocation) {
       console.log("Houston we have a problem");
     }
     return saveData;
@@ -177,12 +179,12 @@ export const useSaveStore = defineStore("save", () => {
     selectedSaveId.value = save.id;
     playerStore.energy = save.data.energy;
     playerStore.characterName = save.data.characterName;
-    playerStore.gear = save.data.gear;
-    playerStore.inventory = save.data.inventory;
+    itemStore.gear = save.data.gear;
+    itemStore.playerItemContainers = save.data.playerItemContainers;
     worldStore.time = save.data.time;
-    locationStore.currentLocationId = save.data.currentLocationId;
+    locationStore.playerLocation = save.data.playerLocation;
     skillStore.skills = save.data.skills;
-    skillStore.abilities = save.data.abilities;
+    skillStore.playerAbilities = save.data.abilities;
     npcStore.npcs = save.data.npcs;
   }
 

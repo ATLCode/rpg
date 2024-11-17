@@ -76,6 +76,7 @@ selectedTab.value = props.initialTab;
 .ui-container {
   height: 100%;
   .ui-tabs {
+    height: 64px;
     display: flex;
     flex-direction: row;
   }
@@ -83,12 +84,16 @@ selectedTab.value = props.initialTab;
     background-color: var(--elevation1) !important;
   }
   .ui-content {
-    height: 100%;
+    height: calc(100% - 64px);
     .inventory {
       height: 100%;
       width: 100%;
       display: grid;
       grid-template-columns: 1fr 1fr;
+    }
+    .skills {
+      height: 100%;
+      width: 100%;
     }
   }
 }

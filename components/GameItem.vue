@@ -3,7 +3,7 @@
     <div v-if="props.emptySlot" class="item-container"></div>
 
     <div
-      v-if="props.gameItem?.type === GameItemType.Inventory"
+      v-if="props.gameItem"
       class="item-container"
       :class="{
         selected: props.gameItem === props.selectedItem && props.selectable,
@@ -20,31 +20,9 @@
       </div>
     </div>
 
-    <div
-      v-if="props.gameItem?.type === GameItemType.Shop"
-      class="item-container"
-      :class="{
-        selected: props.gameItem === props.selectedItem && props.selectable,
-      }"
-      @mouseover="showItemInfo = true"
-      @mouseleave="showItemInfo = false"
-      @click="selectItem"
-    >
-      <div>
-        {{ props.gameItem.currentStackSize }}
-      </div>
-      <div class="item-img">
-        <img
-          :src="items[props.gameItem.itemId as keyof Record<ItemId, Item>].img"
-          class="item-icon"
-          alt=""
-        />
-      </div>
-    </div>
-
     <div v-if="props.equipSlot">
       <div
-        v-if="playerStore.gear[props.equipSlot]"
+        v-if="itemStore.gear[props.equipSlot]"
         class="item-container gear"
         @contextmenu.prevent="showGearActionsMenu($event, props.equipSlot)"
         @mouseover="showGearInfo = true"
@@ -52,7 +30,7 @@
       >
         <div class="item-img">
           <img
-            :src="playerStore.gear[props.equipSlot]?.item.img"
+            :src="itemStore.gear[props.equipSlot]?.item.img"
             class="item-icon"
             alt=""
           />
@@ -90,21 +68,14 @@
     <ModalItemInfo v-show="showItemInfo" :selected-item="props.gameItem" />
     <ModalItemInfo
       v-show="showGearInfo"
-      :selected-item="playerStore.gear[props.equipSlot!]"
+      :selected-item="itemStore.gear[props.equipSlot!]"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
-import {
-  EquipSlot,
-  ContextMode,
-  ItemId,
-  GameItemType,
-  type Item,
-  type GameItem,
-} from "../types/item.types";
-import { usePlayerStore } from "@/stores/player";
+import { EquipSlot, ContextMode, type GameItem } from "../types/item.types";
+import { useItemStore } from "@/stores/item";
 import { items } from "~/game/items";
 import type { ShopItem } from "~/game/npcs";
 
@@ -126,6 +97,11 @@ const props = defineProps({
   },
   gameItem: {
     type: Object as PropType<GameItem>,
+    required: false,
+    default: undefined,
+  },
+  gameItemindex: {
+    type: Number,
     required: false,
     default: undefined,
   },
@@ -152,7 +128,7 @@ const showGearActions = ref(false);
 const menuX = ref(0);
 const menuY = ref(0);
 
-const playerStore = usePlayerStore();
+const itemStore = useItemStore();
 
 function showItemActionsMenu(event: any, inventoryItem: GameItem) {
   clickedItem.value = inventoryItem;
@@ -171,7 +147,7 @@ function showItemBuyingMenu(event: any, itemId: ItemId) {
 }
 */
 function showGearActionsMenu(event: any, equipSlot: EquipSlot) {
-  clickedItem.value = playerStore.gear[equipSlot];
+  clickedItem.value = itemStore.gear[equipSlot];
 
   event.preventDefault();
   showGearActions.value = true;
@@ -188,14 +164,14 @@ function selectItem() {
   console.log("selecting item " + JSON.stringify(props.gameItem));
   console.log(props.selectable);
   if (props.selectable && props.gameItem) {
-    playerStore.selectedItem = props.gameItem;
+    itemStore.selectedItem = props.gameItem;
   }
 }
 </script>
 
 <style lang="scss" scoped>
 .item-container {
-  background-color: var(--elevation1);
+  background-color: var(--elevation2);
   width: 70px;
   height: 70px;
   border-radius: 10px;

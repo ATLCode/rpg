@@ -1,5 +1,6 @@
-import { GameItemType, ItemId, type GameItem } from "../types/item.types";
+import { ItemId, type stockSlot } from "../types/item.types";
 import { items } from "./items";
+import { shops } from "./shops";
 
 export type NpcResponse = {
   // Requirements
@@ -24,23 +25,6 @@ export type ShopItem = {
   maximumStackSize: number;
   // could potentially have restockAmount, depends how I code restocking
   // Could have priceAdjustment for specific shop essentially
-};
-
-export enum PriceModifierType {
-  ShopMargin = "ShopMargin",
-}
-
-export type PriceModifier = {
-  type: PriceModifierType;
-  pct: number;
-};
-
-export type Shop = {
-  currentMoney: number;
-  maximumMoney: number;
-  stock: GameItem[];
-  taxes: PriceModifier[];
-  discounts: PriceModifier[];
 };
 
 export enum NpcAction {
@@ -75,7 +59,7 @@ export const npcs: Record<NpcId, Npc> = {
   [NpcId.Harold]: {
     id: NpcId.Harold,
     name: "Harold",
-    title: "Innkeeper",
+    title: "Shopkeepper",
     img: "/npcs/11.png",
     actions: [NpcAction.Shop],
     dialog: {
@@ -95,29 +79,6 @@ export const npcs: Record<NpcId, Npc> = {
         },
       ],
     },
-    shop: {
-      currentMoney: 500,
-      maximumMoney: 1000,
-      taxes: [{ type: PriceModifierType.ShopMargin, pct: 10 }],
-      discounts: [],
-      stock: [
-        {
-          type: GameItemType.Shop,
-          index: 0,
-          itemId: ItemId.IronSword,
-          item: items[ItemId.IronSword],
-          currentStackSize: 3,
-          shopMaxStackSize: 3,
-        },
-        {
-          type: GameItemType.Shop,
-          index: 1,
-          itemId: ItemId.WoodenSword,
-          item: items[ItemId.WoodenSword],
-          currentStackSize: 5,
-          shopMaxStackSize: 5,
-        },
-      ],
-    },
+    shop: shops.HaroldsShop,
   },
 };

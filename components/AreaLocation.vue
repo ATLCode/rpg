@@ -1,49 +1,16 @@
 <template>
   <div class="area-container">
-    <div v-if="settingStore.showMap === false" class="location-info">
-      <div v-if="currentView === LocationType.Container" class="locations">
-        <h1>{{ locationStore.currentArea.name }}</h1>
-        <div
-          v-for="[locationId, location] in Object.entries(
-            locationStore.currentLocations
-          )"
-          :key="locationId"
-          class="location-card"
-          @click="openLocation(locationId as unknown as LocationId)"
-        >
-          <div class="location-icon"></div>
-          <div class="location-name">{{ location.name }}</div>
-        </div>
-      </div>
-      <LocationInterface
-        v-if="currentView === LocationType.Interface"
-        @back="currentView = LocationType.Container"
-      />
-      <LocationExit
-        v-if="currentView === LocationType.Exit"
-        @back="currentView = LocationType.Container"
-      />
-    </div>
-    <div v-else class="location-map">
-      <GameMap :location="locationStore.currentArea" />
+    <div class="location-map">
+      <MapSub v-if="locationStore.playerLocation.subLocation" />
+      <MapArea v-else />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { useLocationStore } from "@/stores/location";
-import { LocationId, LocationType } from "~/game/locations";
-import { useSettingStore } from "@/stores/setting";
 
 const locationStore = useLocationStore();
-const settingStore = useSettingStore();
-
-const currentView = ref<LocationType>(LocationType.Container);
-
-function openLocation(locationId: LocationId) {
-  locationStore.goToLocation(locationId);
-  currentView.value = locationStore.currentLocation.type;
-}
 </script>
 
 <style lang="scss" scoped>

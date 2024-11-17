@@ -1,32 +1,7 @@
-import { GameItemType, ItemId, type GameItem } from "../types/item.types";
+import { ItemId } from "../types/item.types";
+import { DamageType, EffectType } from "./effects";
 import { items } from "./items";
-
-export enum DamageType {
-  Blunt = "Blunt",
-  Slashing = "Slashing",
-  Piercing = "Piercing",
-}
-export enum EffectType {
-  Damage = "Damage",
-  Heal = "Heal",
-  Stun = "Stun",
-  Poison = "Poison",
-}
-
-export type Effect = {
-  effectType: EffectType;
-  value: number;
-  damageType?: DamageType;
-};
-
-export enum SkillId {
-  Fishing = "Fishing",
-  Woodcutting = "Woodcutting",
-  Cooking = "Cooking",
-  Melee = "Melee",
-  Ranged = "Ranged",
-  Magic = "Magic",
-}
+import { AbilityType, SkillId, type Ability } from "~/types/ability.types";
 
 export enum AbilityId {
   CutOak = "CutOak",
@@ -38,119 +13,132 @@ export enum AbilityId {
   BasicKick = "BasicKick",
 }
 
-export type Ability = {
-  id: AbilityId;
-  name: string;
-  skillId: SkillId;
-  levelReq: number;
-  isActive: boolean;
-  isAutomatic: boolean;
-  effects?: Effect[];
-  itemPropertyReq?: number[];
-  xp?: number;
-  product?: GameItem;
-  ingredients?: ItemId[];
-  cost?: number;
-};
-
-/*
-Should we do this with all skills? Like chopping X wood would be ability and so on?
-Abilities could have follwing keys:
-isAutomatic (You get this ability as you level up)
-isCombat (Shows up during combat)
-*/
-
 export const abilities: Record<AbilityId, Ability> = {
   [AbilityId.CutOak]: {
     id: AbilityId.CutOak,
+    abilityType: AbilityType.Gather,
     name: "Cut Oak",
-    skillId: SkillId.Fishing,
+    skillId: SkillId.Woodcutting,
     levelReq: 1,
-    isActive: false,
     isAutomatic: true,
+    xp: 3,
+    energyCost: 1,
+    gatherDetails: {
+      product: {
+        itemId: ItemId.OakLog,
+        item: items[ItemId.OakLog],
+        currentStackSize: 1,
+      },
+    },
   },
   [AbilityId.FishPanfish]: {
     id: AbilityId.FishPanfish,
+    abilityType: AbilityType.Gather,
     name: "Fish Panfish",
     skillId: SkillId.Fishing,
     levelReq: 1,
-    isActive: false,
     isAutomatic: true,
+    xp: 5,
+    energyCost: 1,
+    gatherDetails: {
+      product: {
+        itemId: ItemId.RawPanfish,
+        item: items[ItemId.RawPanfish],
+        currentStackSize: 1,
+      },
+    },
   },
   [AbilityId.FishBluegill]: {
     id: AbilityId.FishBluegill,
+    abilityType: AbilityType.Gather,
     name: "Fish Bluegill",
     skillId: SkillId.Fishing,
     levelReq: 5,
-    isActive: false,
     isAutomatic: true,
+    xp: 5,
+    energyCost: 1,
+    gatherDetails: {
+      product: {
+        itemId: ItemId.RawBluegill,
+        item: items[ItemId.RawBluegill],
+        currentStackSize: 1,
+      },
+    },
   },
   [AbilityId.BasicPunch]: {
     id: AbilityId.BasicPunch,
+    abilityType: AbilityType.Combat,
     name: "Basic Punch",
     skillId: SkillId.Melee,
     levelReq: 1,
-    isActive: true,
     isAutomatic: true,
-    effects: [
-      {
-        effectType: EffectType.Damage,
-        value: 1,
-        damageType: DamageType.Blunt,
-      },
-    ],
-    cost: 2,
     xp: 5,
+    energyCost: 0,
+    combatDetails: {
+      effects: [
+        {
+          effectType: EffectType.Damage,
+          value: 1,
+          damageType: DamageType.Blunt,
+        },
+      ],
+      actionPointCost: 2,
+    },
   },
   [AbilityId.BasicKick]: {
     id: AbilityId.BasicKick,
+    abilityType: AbilityType.Combat,
     name: "Basic Kick",
     skillId: SkillId.Melee,
     levelReq: 1,
-    isActive: true,
     isAutomatic: true,
-    effects: [
-      {
-        effectType: EffectType.Damage,
-        value: 5,
-        damageType: DamageType.Blunt,
-      },
-    ],
-    cost: 3,
-    xp: 10,
+    xp: 5,
+    energyCost: 0,
+    combatDetails: {
+      effects: [
+        {
+          effectType: EffectType.Damage,
+          value: 2,
+          damageType: DamageType.Blunt,
+        },
+      ],
+      actionPointCost: 2,
+    },
   },
   [AbilityId.CookPanfish]: {
     id: AbilityId.CookPanfish,
+    abilityType: AbilityType.Craft,
     name: "Cook Panfish",
     skillId: SkillId.Cooking,
-    xp: 10,
-    ingredients: [ItemId.RawPanfish],
-    product: {
-      type: GameItemType.Loot,
-      index: 0,
-      itemId: ItemId.CookedPanfish,
-      item: items[ItemId.CookedPanfish],
-      currentStackSize: 1,
-    },
     levelReq: 1,
-    isActive: false,
     isAutomatic: true,
+    xp: 10,
+    energyCost: 5,
+    craftingDetails: {
+      ingredients: [ItemId.RawPanfish],
+      product: {
+        itemId: ItemId.CookedPanfish,
+        item: items[ItemId.CookedPanfish],
+        currentStackSize: 1,
+      },
+    },
   },
   [AbilityId.CookBluegill]: {
-    id: AbilityId.CookBluegill,
-    name: "Cook Bluegill",
+    id: AbilityId.CookPanfish,
+    abilityType: AbilityType.Craft,
+    name: "Cook Panfish",
     skillId: SkillId.Cooking,
-    xp: 10,
-    ingredients: [ItemId.RawBluegill],
-    product: {
-      type: GameItemType.Loot,
-      index: 0,
-      itemId: ItemId.CookedBluegill,
-      item: items[ItemId.CookedBluegill],
-      currentStackSize: 1,
-    },
     levelReq: 5,
-    isActive: false,
     isAutomatic: true,
+    xp: 10,
+    energyCost: 5,
+    craftingDetails: {
+      ingredients: [ItemId.RawBluegill],
+      product: {
+        itemId: ItemId.CookedBluegill,
+        item: items[ItemId.CookedBluegill],
+        currentStackSize: 1,
+      },
+    },
   },
 };

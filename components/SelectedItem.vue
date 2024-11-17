@@ -47,7 +47,6 @@
 <script lang="ts" setup>
 import { usePlayerStore } from "@/stores/player";
 import { TransactionType, type Npc } from "~/game/npcs";
-import { GameItemType } from "~/types/item.types";
 
 const playerStore = usePlayerStore();
 

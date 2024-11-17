@@ -9,7 +9,7 @@
       >
       <h1>
         {{ locationStore.currentArea.name }} -
-        {{ locationStore.currentLocation.name }}
+        {{ locationStore.playerLocation.name }}
       </h1>
     </div>
 

@@ -1,6 +1,6 @@
 import { AbilityId } from "./abilities";
 import { items } from "./items";
-import { GameItemType, ItemId } from "~/types/item.types";
+import { ItemId } from "~/types/item.types";
 
 export enum UnitId {
   Thief = "Thief",
@@ -18,9 +18,7 @@ export const units: Record<UnitId, Unit> = {
     abilities: [AbilityId.BasicKick],
     drops: [
       {
-        id: {
-          type: GameItemType.Loot,
-          index: 0,
+        object: {
           itemId: ItemId.WoodenSword,
           item: items[ItemId.WoodenSword],
           currentStackSize: 1,
@@ -28,9 +26,7 @@ export const units: Record<UnitId, Unit> = {
         weight: 300,
       },
       {
-        id: {
-          type: GameItemType.Loot,
-          index: 0,
+        object: {
           itemId: ItemId.IronSword,
           item: items[ItemId.WoodenSword],
           currentStackSize: 1,
@@ -49,9 +45,7 @@ export const units: Record<UnitId, Unit> = {
     abilities: [AbilityId.BasicPunch],
     drops: [
       {
-        id: {
-          type: GameItemType.Loot,
-          index: 0,
+        object: {
           itemId: ItemId.WoodenSword,
           item: items[ItemId.WoodenSword],
           currentStackSize: 1,
@@ -59,11 +53,9 @@ export const units: Record<UnitId, Unit> = {
         weight: 300,
       },
       {
-        id: {
-          type: GameItemType.Loot,
-          index: 0,
+        object: {
           itemId: ItemId.IronSword,
-          item: items[ItemId.WoodenSword],
+          item: items[ItemId.IronSword],
           currentStackSize: 1,
         },
         weight: 100,

@@ -15,7 +15,7 @@ export default defineNuxtConfig({
     "@nuxtjs/supabase",
     "@pinia/nuxt",
     "@vueuse/nuxt",
-    "nuxt3-leaflet",
+    "@nuxtjs/leaflet",
   ],
   supabase: {
     // Options

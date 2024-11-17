@@ -1,15 +1,16 @@
 <template>
   <div class="inventory-container">
     <div
-      v-for="(inventoryItem, index) in playerStore.inventory"
+      v-for="(inventoryItem, index) in itemStore.playerInventory?.slots"
       :key="index"
       class="inv-slot"
     >
       <GameItem
         v-if="inventoryItem && inventoryItem?.itemId !== null"
         :game-item="inventoryItem"
+        :game-item-index="index"
         :selectable="props.shop ? true : false"
-        :selected-item="playerStore.selectedItem!"
+        :selected-item="itemStore.selectedItem!"
       />
       <GameItem v-else :empty-slot="true" />
     </div>
@@ -17,9 +18,9 @@
 </template>
 
 <script lang="ts" setup>
-import { usePlayerStore } from "@/stores/player";
+import { useItemStore } from "@/stores/item";
 
-const playerStore = usePlayerStore();
+const itemStore = useItemStore();
 
 const props = defineProps({
   shop: {

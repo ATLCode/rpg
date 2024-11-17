@@ -48,7 +48,7 @@
 
     <AProgressLinear v-model="progress" :max="totalSeconds" />
   </div>
-  <ADialog v-model="showRecipes">
+  <AModal v-model="showRecipes">
     <div
       v-for="ability in spotAbilities"
       :key="ability.name"
@@ -57,25 +57,28 @@
     >
       {{ ability.product?.item.name }}
     </div>
-  </ADialog>
+  </AModal>
 </template>
 
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import { RefiningSpotId, refiningSpots } from "@/game/spots";
-import { abilities, type Ability } from "@/game/abilities";
+import { abilities } from "@/game/abilities";
 import { useNotificationStore, NotificationType } from "@/stores/notification";
 import { items } from "@/game/items";
 import { useSkillStore } from "@/stores/skill";
 import { usePlayerStore } from "@/stores/player";
+import { useItemStore } from "@/stores/item";
+import type { Ability } from "~/types/ability.types";
+import { spots, type SpotId } from "~/game/spots";
 
 const skillStore = useSkillStore();
 const playerStore = usePlayerStore();
 const notificationStore = useNotificationStore();
+const itemStore = useItemStore();
 
 const props = defineProps({
   spotId: {
-    type: String as PropType<RefiningSpotId>,
+    type: String as PropType<SpotId>,
     required: true,
   },
   currentActionSpotId: {
@@ -87,7 +90,7 @@ const props = defineProps({
 const emit = defineEmits(["newCurrentAction"]);
 
 const spot = computed(() => {
-  return refiningSpots[props.spotId];
+  return spots[props.spotId];
 });
 
 const spotAbilities = computed(() => {
@@ -213,7 +216,7 @@ watch(finishedInterval, () => {
 function takeIngredients() {
   console.log("Take Ingredient");
   selectedRecipe.value?.ingredients?.forEach((itemId) => {
-    playerStore.removeItemsFromInventory(itemId);
+    playerStore.removeItemsFromInventoryById(itemId);
   });
 }
 

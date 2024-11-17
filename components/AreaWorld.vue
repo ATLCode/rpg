@@ -1,67 +1,12 @@
 <template>
   <div class="world-container">
-    <div v-if="settingStore.showMap === false" class="world-info">
-      <div class="locations">
-        <div
-          v-for="[locationId, location] in Object.entries(
-            locationStore.currentLocations
-          ) as unknown as [LocationId, Location][]"
-          :key="locationId"
-          class="location-card"
-          :class="{
-            active: locationId === locationStore.selectedLocationId,
-          }"
-          @click="locationStore.changeSelectedLocation(locationId)"
-        >
-          <div>{{ location.name }}</div>
-          <div
-            v-if="
-              (locationId as unknown as LocationId) ===
-              locationStore.currentLocationId
-            "
-          >
-            <img src="../assets/icons/helmet.svg" class="character" alt="" />
-          </div>
-        </div>
-      </div>
-      <div class="selected-location">
-        <EnterLocation
-          v-if="
-            locationStore.selectedLocationId === locationStore.currentLocationId
-          "
-        />
-        <PathInfo
-          v-if="
-            !(
-              locationStore.selectedLocationId ===
-              locationStore.currentLocationId
-            ) && locationStore.currentAreaId === LocationId.WorldMap
-          "
-          :path="selectedPath"
-        />
-      </div>
-    </div>
-    <div v-else class="world-map">
-      <GameMap :location="locationStore.currentArea" />
+    <div class="world-map">
+      <MapWorld />
     </div>
   </div>
 </template>
 
-<script lang="ts" setup>
-import { useLocationStore } from "@/stores/location";
-import { useSettingStore } from "@/stores/setting";
-import { LocationId, type Location } from "~/game/locations";
-const locationStore = useLocationStore();
-const settingStore = useSettingStore();
-
-const paths = locationStore.currentPaths;
-
-const selectedPath = computed(() => {
-  return paths.find((path) =>
-    path.locations.includes(locationStore.currentLocationId)
-  );
-});
-</script>
+<script lang="ts" setup></script>
 
 <style lang="scss" scoped>
 .world-container {

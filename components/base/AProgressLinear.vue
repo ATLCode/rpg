@@ -1,6 +1,11 @@
 <template>
   <div class="aprogress">
-    <progress :value="value" :max="props.max" class="progress"></progress>
+    <progress
+      :value="value"
+      :max="props.max"
+      :style="style"
+      class="progress"
+    ></progress>
   </div>
 </template>
 <script lang="ts" setup>
@@ -9,6 +14,11 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  width: {
+    type: String,
+    default: "100%",
+  },
+
   color: {
     type: String,
     default: "var(--success)",
@@ -24,6 +34,12 @@ const props = defineProps({
   },
 });
 
+const style = reactive({
+  color: props.color,
+  height: props.height,
+  width: props.width,
+});
+
 const value = defineModel<number>();
 </script>
 <style lang="scss" scoped>
@@ -32,7 +48,6 @@ const value = defineModel<number>();
 }
 
 progress {
-  height: 1.5rem;
   border-radius: 5px;
 }
 progress::-webkit-progress-bar {
