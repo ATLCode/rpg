@@ -9,6 +9,7 @@ export default defineNuxtConfig({
       enabled: true,
     },
   },
+
   modules: [
     "@nuxtjs/google-fonts",
     "@nuxtjs/eslint-module",
@@ -17,6 +18,7 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "@nuxtjs/leaflet",
   ],
+
   supabase: {
     // Options
     redirectOptions: {
@@ -25,10 +27,13 @@ export default defineNuxtConfig({
       exclude: [],
     },
   },
+
   vite: {},
+
   eslint: {
     lintOnStart: false,
   },
+
   css: ["~/assets/scss/main.scss", "~/assets/scss/colors.scss"],
 
   googleFonts: {
@@ -36,5 +41,7 @@ export default defineNuxtConfig({
       "Rubik Doodle Triangles": true,
     },
   },
+
   components: [{ path: "~/components/base" }, "~/components"],
+  compatibilityDate: "2024-11-23",
 });

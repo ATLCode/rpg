@@ -33,7 +33,7 @@ export enum NpcAction {
 }
 
 export enum NpcId {
-  Harold,
+  Harold = "Harold",
 }
 
 export type Npc = {

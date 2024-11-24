@@ -3,7 +3,10 @@ import { SpotId } from "./spots";
 import {
   ContainerType,
   LocationType,
+  PinType,
   type AreaLocation,
+  type Map,
+  type Pin,
   type SubLocation,
   type WorldLocation,
 } from "~/types/location.types";
@@ -191,3 +194,112 @@ export const subLocations: Record<SubLocationId, SubLocation> = {
     npcId: NpcId.Harold,
   },
 };
+
+export enum MapId {
+  World = "World",
+  Town = "Town",
+  Forest = "Forest",
+  Mountain = "Mountain",
+}
+
+export enum PinId {
+  Town = "Town",
+  TownEdge = "TownEdge",
+  Forest = "Forest",
+  ForestEdge = "ForestEdge",
+  Mountain = "Mountain",
+  MountainBottom = "MountainBottom",
+}
+
+export const maps: Record<MapId, Map> = {
+  [MapId.World]: {
+    id: MapId.World,
+    name: "World Map",
+    mapScale: "World",
+    img: "/maps/world.jpg",
+    pins: [PinId.Forest, PinId.Town, PinId.Mountain],
+    parent: null,
+  },
+  [MapId.Town]: {
+    id: MapId.Town,
+    name: "Town",
+    mapScale: "Area",
+    img: "/maps/town.jpeg",
+    pins: [PinId.TownEdge],
+    parent: MapId.World,
+  },
+  [MapId.Forest]: {
+    id: MapId.Forest,
+    name: "Forest",
+    mapScale: "Area",
+    img: "/maps/forest.jpg",
+    pins: [PinId.ForestEdge],
+    parent: MapId.World,
+  },
+  [MapId.Mountain]: {
+    id: MapId.Mountain,
+    name: "Mountain",
+    mapScale: "Area",
+    img: "/maps/mountain.jpg",
+    pins: [PinId.MountainBottom],
+    parent: MapId.World,
+  },
+};
+export const pins: Record<PinId, Pin> = {
+  [PinId.Town]: {
+    id: PinId.Town,
+    name: "Town",
+    type: PinType.Travel,
+    target: { mapId: MapId.Town, pinId: PinId.TownEdge },
+    icon: "/icons/pin_travel.png",
+    coordinates: { x: 1000, y: 830 },
+    isVisible: true,
+  },
+  [PinId.Forest]: {
+    id: PinId.Forest,
+    name: "Forest",
+    type: PinType.Travel,
+    target: { mapId: MapId.Forest, pinId: PinId.ForestEdge },
+    icon: "/icons/pin_travel.png",
+    coordinates: { x: 1030, y: 940 },
+    isVisible: true,
+  },
+  [PinId.Mountain]: {
+    id: PinId.Mountain,
+    name: "Mountain",
+    type: PinType.Travel,
+    target: { mapId: MapId.Mountain, pinId: PinId.MountainBottom },
+    icon: "/icons/pin_travel.png",
+    coordinates: { x: 1070, y: 1020 },
+    isVisible: true,
+  },
+  [PinId.TownEdge]: {
+    id: PinId.TownEdge,
+    name: "Town Edge",
+    type: PinType.Access,
+    target: { mapId: MapId.World, pinId: PinId.Town },
+    icon: "/icons/pin_exit.png",
+    coordinates: { x: 100, y: 200 },
+    isVisible: true,
+  },
+  [PinId.ForestEdge]: {
+    id: PinId.ForestEdge,
+    name: "Forest Edge",
+    type: PinType.Access,
+    target: { mapId: MapId.Town, pinId: PinId.TownEdge },
+    icon: "/icons/pin_exit.png",
+    coordinates: { x: 1070, y: 1020 },
+    isVisible: true,
+  },
+  [PinId.MountainBottom]: {
+    id: PinId.MountainBottom,
+    name: "Bottom of the Mountain",
+    type: PinType.Access,
+    target: { mapId: MapId.Town, pinId: PinId.TownEdge },
+    icon: "/icons/pin_exit.png",
+    coordinates: { x: 1070, y: 1020 },
+    isVisible: true,
+  },
+};
+
+// New stuff

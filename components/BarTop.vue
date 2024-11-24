@@ -8,14 +8,12 @@
       </div>
       <div>{{ worldStore.showTime() }}</div>
       <div>Energy: {{ playerStore.energy }} {{ locationStore.activePath }}</div>
+      <div>{{ locationStore.playerLocation.mapId }}</div>
     </div>
 
     <div class="bar-header">
       <h1 v-if="gameStore.gameState === GameState.Normal">
-        <div v-if="locationStore.playerLocation.areaLocation">
-          {{ locationStore.playerLocation.worldLocation.name }}
-        </div>
-        <div v-else>World Map</div>
+        {{ maps[locationStore.playerLocation.mapId].name }}
       </h1>
       <h1 v-if="gameStore.gameState === GameState.Travel">Traveling</h1>
       <h1 v-if="gameStore.gameState === GameState.Combat">Combat</h1>
@@ -47,6 +45,7 @@ import { usePlayerStore } from "@/stores/player";
 import { useSaveStore } from "@/stores/save";
 import { useWorldStore } from "@/stores/world";
 import { useGameStore } from "@/stores/game";
+import { maps } from "~/game/locations";
 const locationStore = useLocationStore();
 const playerStore = usePlayerStore();
 const saveStore = useSaveStore();

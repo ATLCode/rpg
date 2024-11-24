@@ -1,7 +1,7 @@
 <template>
   <div v-if="value" class="modal-mask" @click="handleOutsideClick">
     <div class="modal-content" :style="style" @click.stop>
-      <div v-if="props.title" class="modal-header">
+      <div v-if="props.title || props.closable" class="modal-header">
         <ASpacer />
         <div class="header-title">{{ props.title }}</div>
         <ASpacer />
@@ -65,12 +65,12 @@ const style = computed(() => {
   return {
     height: props.height,
     width: props.width,
+    position: props.position,
     top: props.offset[0],
     right: props.offset[1],
     bottom: props.offset[2],
     left: props.offset[3],
     margin: `${props.margin[0]} ${props.margin[1]} ${props.margin[2]} ${props.margin[3]}`,
-    position: props.position,
   };
 });
 

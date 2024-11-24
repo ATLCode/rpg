@@ -1,96 +1,58 @@
 import { defaults } from "~/game/defaults";
 import { useNotificationStore, NotificationType } from "@/stores/notification";
 import { usePlayerStore } from "@/stores/player";
-import { useSpotStore } from "@/stores/spot";
 import { useGameStore } from "@/stores/game";
-import {
-  WorldLocationId,
-  worldLocations,
-  areaLocations,
-} from "~/game/locations";
+import { MapId, PinId, pins } from "~/game/locations";
 import { paths, type Path } from "~/game/paths";
-import type {
-  Camp,
-  PlayerLocation,
-  WorldLocation,
-} from "~/types/location.types";
+import type { Camp, Location, Pin } from "~/types/location.types";
 
 export const useLocationStore = defineStore("location", () => {
   const playerStore = usePlayerStore();
   const notificationStore = useNotificationStore();
   const gameStore = useGameStore();
-  const spotStore = useSpotStore();
 
-  // LOCATIONS & AREAS
+  // LOCATIONS & PINS
 
-  const worldMap = {
-    mapImg: "/maps/TestMap.jpg",
-  };
+  const playerLocation = ref<Location>({
+    mapId: MapId.World,
+    pinId: PinId.Town,
+  }); // Why defaults.startingLocation doesn't work?
 
-  const playerLocation = ref<PlayerLocation>({
-    worldLocation: worldLocations[WorldLocationId.Town],
-    areaLocation: null,
-    subLocation: null,
-  });
-
-  const selectedLocation = ref<WorldLocation | null>(null);
-
-  const currentPaths = computed(() => {
-    return findPaths();
-  });
-
-  const selectedLocationInCurrentPaths = computed(() => {
-    if (!selectedLocation.value) {
-      return false;
-    }
-    const reachableLocations: WorldLocationId[] = [];
-    currentPaths.value.forEach((path) => {
-      path.locations.forEach((location) => {
-        reachableLocations.push(location);
-      });
-    });
-    if (reachableLocations.includes(selectedLocation.value.id)) {
-      return true;
-    }
-    return false;
-  });
-
-  const playerCoordinates = computed(() => {
-    if (playerLocation.value.subLocation) {
-      const currentAreaMarker = playerLocation.value.subLocation.coordinates;
-
-      return currentAreaMarker;
-    }
-    if (playerLocation.value.areaLocation) {
-      const currentAreaMarker = playerLocation.value.areaLocation.coordinates;
-
-      return currentAreaMarker;
-    } else {
-      const currentWorldMarker = playerLocation.value.worldLocation.coordinates;
-      return currentWorldMarker;
-    }
-  });
+  const selectedPin = ref<Pin | null>(pins[playerLocation.value.pinId]);
+  function selectPin(pin: Pin) {
+    selectedPin.value = pin;
+  }
 
   const camp = ref<Camp>(defaults.startingCamp);
 
   // TRAVELING & PATHS
 
-  const targetLocationId = ref<WorldLocationId | null>(null);
+  const targetLocationId = ref<PinId | null>(null);
   const activePath = ref<Path | null>(null);
   const encountersChecked = ref(0);
 
-  const selectedPath = ref<Path | null>(null);
-
-  function selectPath(locationId: WorldLocationId) {
-    console.log(locationId);
-    const foundPath = currentPaths.value.find((path) => {
-      return Object.values(path.locations).includes(locationId);
-    });
-    console.log(foundPath);
-    if (foundPath) {
-      selectedPath.value = foundPath;
+  const selectedPath = computed(() => {
+    const currentPin = selectedPin.value;
+    if (!currentPin || currentPin.id === playerLocation.value.pinId) {
+      return null;
+    } else {
+      const foundPath = currentPaths.value.find((path) => {
+        return Object.values(path.locations).includes(currentPin.id);
+      });
+      return foundPath;
     }
-  }
+  });
+
+  const currentPaths = computed(() => {
+    const pathArray: Path[] = [];
+    Object.values(paths).forEach((path) => {
+      if (path.locations.includes(playerLocation.value.pinId)) {
+        pathArray.push(path);
+      }
+    });
+    console.log("Array" + JSON.stringify(pathArray));
+    return pathArray;
+  });
 
   function travelPath() {
     try {
@@ -98,7 +60,7 @@ export const useLocationStore = defineStore("location", () => {
         throw new Error("Path not selected");
       }
       const targetLocations = selectedPath.value.locations.filter(
-        (endPoint) => endPoint !== playerLocation.value.worldLocation.id
+        (endPoint) => endPoint !== playerLocation.value.pinId
       );
 
       if (targetLocations.length === 1) {
@@ -124,33 +86,9 @@ export const useLocationStore = defineStore("location", () => {
       console.log(message);
     }
   }
-  function enterArea() {
-    if (playerLocation.value) {
-      playerLocation.value.areaLocation =
-        areaLocations[playerLocation.value.worldLocation.child];
-    } else {
-      return console.log("Location doesn't have a child");
-    }
-  }
-  function exitArea() {
-    playerLocation.value.areaLocation = null;
-    spotStore.$reset();
-  }
-  function goToLocation(newLocation: PlayerLocation) {
+  function goToLocation(newLocation: Location) {
     console.log(newLocation);
-    playerLocation.value.worldLocation = newLocation.worldLocation;
-    playerLocation.value.areaLocation = newLocation.areaLocation;
-    playerLocation.value.subLocation = newLocation.subLocation;
-  }
-  function findPaths(): Path[] {
-    const pathArray: Path[] = [];
-    Object.values(paths).forEach((path) => {
-      if (path.locations.includes(playerLocation.value.worldLocation.id)) {
-        pathArray.push(path);
-      }
-    });
-    console.log("Array" + JSON.stringify(pathArray));
-    return pathArray;
+    playerLocation.value = newLocation;
   }
 
   function $reset() {
@@ -159,21 +97,16 @@ export const useLocationStore = defineStore("location", () => {
 
   return {
     playerLocation,
-    selectedLocation,
-    selectedLocationInCurrentPaths,
     currentPaths,
-    playerCoordinates,
     targetLocationId,
     activePath,
     encountersChecked,
     selectedPath,
-    selectPath,
     travelPath,
-    enterArea,
-    exitArea,
     goToLocation,
     camp,
-    worldMap,
+    selectPin,
+    selectedPin,
     $reset,
   };
 });

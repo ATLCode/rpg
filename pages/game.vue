@@ -7,8 +7,7 @@
     />
     <div class="game-content">
       <div v-if="gameStore.gameState === GameState.Normal" class="area">
-        <AreaLocation v-if="locationStore.playerLocation.areaLocation" />
-        <AreaWorld v-else />
+        <MapGame />
       </div>
       <div v-if="gameStore.gameState === GameState.Travel" class="travel">
         <GameTravel />
@@ -23,9 +22,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { useLocationStore } from "@/stores/location";
 import { useGameStore } from "@/stores/game";
-const locationStore = useLocationStore();
 const gameStore = useGameStore();
 
 definePageMeta({ middleware: ["auth"], layout: "game" });

@@ -10,7 +10,7 @@ import type { Npc } from "~/game/npcs";
 import type { Gear, ItemContainer } from "~/types/item.types";
 import type { Time } from "~/types/world.types";
 import type { Ability, SkillId } from "~/types/ability.types";
-import type { PlayerLocation } from "~/types/location.types";
+import type { Location } from "~/types/location.types";
 
 export const useSaveStore = defineStore("save", () => {
   const playerStore = usePlayerStore();
@@ -50,7 +50,7 @@ export const useSaveStore = defineStore("save", () => {
   type SaveData = {
     time: Time;
     energy: number;
-    playerLocation: PlayerLocation;
+    playerLocation: Location;
     characterName: string;
     gear: Gear;
     playerItemContainers: ItemContainer[];
@@ -131,7 +131,7 @@ export const useSaveStore = defineStore("save", () => {
         1000
       );
     } catch (error) {
-      // console.error(error);
+      console.error(error);
     }
   }
 
@@ -198,7 +198,7 @@ export const useSaveStore = defineStore("save", () => {
       });
       getUserSaves();
     } catch (error) {
-      // console.error(error);
+      console.error(error);
     }
   }
 

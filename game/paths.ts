@@ -1,9 +1,9 @@
 import { EncounterId, type WeightedEncounter } from "./encounters";
-import { WorldLocationId } from "./locations";
+import { PinId } from "./locations";
 
 export type Path = {
   name: string;
-  locations: [WorldLocationId, WorldLocationId];
+  locations: [PinId, PinId];
   encounters: WeightedEncounter[];
   encounterChecks: number;
   reqSkills: null;
@@ -22,7 +22,7 @@ export enum PathId {
 export const paths: Record<PathId, Path> = {
   [PathId.ForestPath]: {
     name: "Forest Path",
-    locations: [WorldLocationId.Town, WorldLocationId.Forest],
+    locations: [PinId.Town, PinId.Forest],
     encounters: [
       { object: EncounterId.Empty, weight: 100 },
       { object: EncounterId.Thief, weight: 500 },
@@ -37,7 +37,7 @@ export const paths: Record<PathId, Path> = {
   },
   [PathId.MountainPath]: {
     name: "Mountain Path",
-    locations: [WorldLocationId.Mountain, WorldLocationId.Forest],
+    locations: [PinId.Forest, PinId.Mountain],
     encounters: [
       { object: EncounterId.Empty, weight: 100 },
       { object: EncounterId.Thief, weight: 500 },

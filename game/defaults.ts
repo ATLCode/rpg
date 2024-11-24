@@ -1,16 +1,16 @@
 import { abilities } from "./abilities";
 import { itemContainers } from "./items";
-import { WorldLocationId, worldLocations } from "./locations";
 import { npcs, type Npc } from "./npcs";
 import { shops, type Shop } from "./shops";
 import { SpotId } from "./spots";
-import type { Camp, PlayerLocation } from "~/types/location.types";
+import { MapId, PinId } from "./locations";
+import type { Camp, Location } from "~/types/location.types";
 import type { Time } from "~/types/world.types";
 import { SkillId, type Ability } from "~/types/ability.types";
 import { type ItemContainer } from "~/types/item.types";
 type Defaults = {
   startingTime: Time;
-  startingLocation: PlayerLocation;
+  startingLocation: Location;
   startingAbilities: Ability[];
   startingSkills: Record<SkillId, Skill>;
   startingNpcs: Npc[];
@@ -32,9 +32,8 @@ export const defaults: Defaults = {
   },
 
   startingLocation: {
-    worldLocation: worldLocations[WorldLocationId.Town],
-    areaLocation: null,
-    subLocation: null,
+    mapId: MapId.World,
+    pinId: PinId.Town,
   },
 
   startingNpcs: Object.values(npcs),

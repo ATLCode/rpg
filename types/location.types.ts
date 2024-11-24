@@ -1,5 +1,8 @@
+import type { WeightedEncounter } from "~/game/encounters";
 import type {
   AreaLocationId,
+  MapId,
+  PinId,
   SubLocationId,
   WorldLocationId,
 } from "~/game/locations";
@@ -80,8 +83,36 @@ export type WorldLocation = {
   locations: AreaLocationId[];
 };
 
-export type PlayerLocation = {
-  worldLocation: WorldLocation;
-  areaLocation: AreaLocation | null;
-  subLocation: SubLocation | null;
+export enum PinType {
+  Npc = "Npc",
+  Spot = "Spot",
+  Travel = "Travel", // All world map pinss
+  Access = "Access", // Entry or exit from area or small maps
+  Code = "Code", // From random stuff
+}
+
+export type Location = {
+  mapId: MapId;
+  pinId: PinId;
+};
+
+export type Map = {
+  id: MapId;
+  name: string;
+  mapScale: "World" | "Area" | "Small";
+  img: string;
+  pins: PinId[];
+  parent: MapId | null;
+  encounters?: WeightedEncounter[];
+  safetyLevel?: number | (() => number); // Dangerous area vs Dangerous building, like thieves den etc.
+};
+
+export type Pin = {
+  id: PinId;
+  name: string;
+  type: PinType;
+  target: Location | NpcId | SpotId; // NpcId? SpotId? TrueLocation for access? Circular dependency issue
+  icon: string;
+  coordinates: { x: number; y: number };
+  isVisible: boolean | (() => boolean); // Should this be optional and we assume true unless there is possibility it's false?
 };
