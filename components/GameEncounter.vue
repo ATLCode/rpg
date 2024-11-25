@@ -4,9 +4,6 @@
       <div>Encounter Debug</div>
 
       <div>Active path: {{ locationStore.activePath?.name }}</div>
-      <div>
-        Current Location: {{ locationStore.playerLocation.worldLocation.name }}
-      </div>
       <div>Current Encounter: {{ encounterStore.activeEncounter }}</div>
       <AButton @click="encounterStore.finishEncounter"
         >Complete Encounter</AButton

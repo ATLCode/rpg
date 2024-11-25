@@ -8,7 +8,7 @@
       </div>
       <div>{{ worldStore.showTime() }}</div>
       <div>Energy: {{ playerStore.energy }} {{ locationStore.activePath }}</div>
-      <div>{{ locationStore.playerLocation.mapId }}</div>
+      <div>{{ locationStore.playerLocation }}</div>
     </div>
 
     <div class="bar-header">

@@ -22,7 +22,7 @@
         :lat-lng="[pins[pinId].coordinates.y, pins[pinId].coordinates.x]"
         @click="clickPin(pins[pinId])"
       >
-        <l-icon :icon-url="pins[pinId].icon" :icon-size="[35, 35]"></l-icon>
+        <l-icon :icon-url="pins[pinId].icon" :icon-size="[40, 40]"></l-icon>
       </l-marker>
       <l-marker
         :lat-lng="[
@@ -35,6 +35,7 @@
     </LMap>
     <PinTravel v-model="pinTravelOpen" />
     <PinAccess v-model="pinAccessOpen" />
+    <PinSpot v-model="pinSpotOpen" />
   </div>
 </template>
 
@@ -46,10 +47,14 @@ import { PinType, type Pin } from "~/types/location.types";
 
 const locationStore = useLocationStore();
 
+// PINS
 const pinTravelOpen = ref(false);
 const pinAccessOpen = ref(false);
+const pinSpotOpen = ref(false);
 
 function clickPin(clickedPin: Pin) {
+  console.log(clickedPin.type);
+
   locationStore.selectPin(clickedPin);
   if (clickedPin.type === PinType.Travel) {
     pinTravelOpen.value = true;
@@ -57,8 +62,13 @@ function clickPin(clickedPin: Pin) {
   if (clickedPin.type === PinType.Access) {
     pinAccessOpen.value = true;
   }
+  if (clickedPin.type === PinType.Spot) {
+    pinSpotOpen.value = true;
+  }
+  console.log(pinSpotOpen);
 }
 
+// MAP SETTINGS
 const isLoaded = ref(true);
 const crs = CRS.Simple;
 const width = ref(4000);
@@ -79,7 +89,6 @@ const maxBounds = computed(() => [
 watch(
   () => locationStore.playerLocation.mapId,
   (newMapId) => {
-    console.log(newMapId);
     if (!newMapId) {
       return;
     }
@@ -88,7 +97,6 @@ watch(
 );
 
 function updateImageSize(imageUrl: string) {
-  console.log("Updating");
   if (!imageUrl) {
     return;
   }

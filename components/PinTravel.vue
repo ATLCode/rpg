@@ -19,7 +19,11 @@
         <AButton v-if="cardInfo.state === 'enter'" @click="enterArea"
           >Enter</AButton
         >
-        <AButton v-if="cardInfo.state === 'travel'">Travel</AButton>
+        <AButton
+          v-if="cardInfo.state === 'travel'"
+          @click="locationStore.travelPath"
+          >Travel</AButton
+        >
         <div v-if="cardInfo.state === 'neither'">
           You can't travel here from your current location
         </div>
@@ -65,30 +69,6 @@ function enterArea() {
 </script>
 
 <style lang="scss" scoped>
-/*
-.info-container {
-  z-index: 999;
-  position: absolute;
-  width: 500px;
-  min-height: 5rem;
-  background-color: var(--elevation1);
-  border: 1px solid var(--elevation2);
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin-inline: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.close {
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-  */
-
 .container {
   display: flex;
   flex-direction: column;

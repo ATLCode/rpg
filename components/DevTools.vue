@@ -9,23 +9,15 @@
 <script lang="ts" setup>
 import { useSaveStore } from "@/stores/save";
 import { useWorldStore } from "@/stores/world";
-import { useLocationStore } from "@/stores/location";
-import type { PlayerLocation } from "~/types/location.types";
+// import { useLocationStore } from "@/stores/location";
 // import { useItemStore } from "@/stores/item";
 
 const saveStore = useSaveStore();
 const worldStore = useWorldStore();
-const locationStore = useLocationStore();
+// const locationStore = useLocationStore();
 // const itemStore = useItemStore();
 
-function testFunction() {
-  const newLocation: PlayerLocation = {
-    worldLocation: locationStore.playerLocation.worldLocation,
-    areaLocation: locationStore.playerLocation.areaLocation,
-    subLocation: null,
-  };
-  locationStore.goToLocation(newLocation);
-}
+function testFunction() {}
 </script>
 
 <style lang="scss" scoped>

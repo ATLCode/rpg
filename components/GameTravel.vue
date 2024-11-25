@@ -1,7 +1,7 @@
 <template>
   <div class="travel-container">
     <div v-if="locationStore.targetLocationId" class="travel-text">
-      Traveling to {{ worldLocations[locationStore.targetLocationId].name }}
+      Traveling to {{ pins[locationStore.targetLocationId].name }}
     </div>
     <AProgressLinear
       v-model="progress"
@@ -17,7 +17,7 @@ import { useLocationStore } from "@/stores/location";
 import { useEncounterStore } from "~/stores/encounter";
 import { useGameStore } from "@/stores/game";
 import { useWorldStore } from "@/stores/world";
-import { worldLocations } from "~/game/locations";
+import { pins } from "~/game/locations";
 import { EncounterId } from "@/game/encounters";
 
 const locationStore = useLocationStore();
@@ -63,7 +63,6 @@ function checkEncounter() {
   selectedEncounterId.value = chooseRandomWeightedObject(
     locationStore.activePath!.encounters
   );
-  console.log(selectedEncounterId.value);
 
   if (selectedEncounterId.value === EncounterId.Empty) {
     console.log("No encounter");
@@ -106,12 +105,18 @@ watch(finishedInterval, () => {
 
 function endTravel() {
   clearInterval(travelInterval.value);
-  locationStore.playerLocation.worldLocation =
-    worldLocations[locationStore.targetLocationId!];
+  if (!locationStore.targetLocationId) {
+    throw new Error("No target location selected!");
+  }
+  locationStore.goToLocation({
+    mapId: locationStore.playerLocation.mapId,
+    pinId: locationStore.targetLocationId,
+  });
   if (locationStore.activePath) {
     worldStore.addTime(locationStore.activePath?.timeCost);
   }
   locationStore.activePath = null;
+  locationStore.targetLocationId = null;
   locationStore.encountersChecked = 0;
   progress.value = 0;
 

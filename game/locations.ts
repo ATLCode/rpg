@@ -209,6 +209,8 @@ export enum PinId {
   ForestEdge = "ForestEdge",
   Mountain = "Mountain",
   MountainBottom = "MountainBottom",
+  ForestWoodcutting = "ForestWoodcutting",
+  ForestFishing = "ForestFishing",
 }
 
 export const maps: Record<MapId, Map> = {
@@ -233,7 +235,7 @@ export const maps: Record<MapId, Map> = {
     name: "Forest",
     mapScale: "Area",
     img: "/maps/forest.jpg",
-    pins: [PinId.ForestEdge],
+    pins: [PinId.ForestEdge, PinId.ForestWoodcutting, PinId.ForestFishing],
     parent: MapId.World,
   },
   [MapId.Mountain]: {
@@ -286,20 +288,36 @@ export const pins: Record<PinId, Pin> = {
     id: PinId.ForestEdge,
     name: "Forest Edge",
     type: PinType.Access,
-    target: { mapId: MapId.Town, pinId: PinId.TownEdge },
+    target: { mapId: MapId.World, pinId: PinId.Forest },
     icon: "/icons/pin_exit.png",
-    coordinates: { x: 1070, y: 1020 },
+    coordinates: { x: 1650, y: 200 },
     isVisible: true,
   },
   [PinId.MountainBottom]: {
     id: PinId.MountainBottom,
     name: "Bottom of the Mountain",
     type: PinType.Access,
-    target: { mapId: MapId.Town, pinId: PinId.TownEdge },
+    target: { mapId: MapId.World, pinId: PinId.Mountain },
     icon: "/icons/pin_exit.png",
     coordinates: { x: 1070, y: 1020 },
     isVisible: true,
   },
+  [PinId.ForestWoodcutting]: {
+    id: PinId.ForestWoodcutting,
+    name: "Oak Tree",
+    type: PinType.Spot,
+    target: SpotId.OakTree,
+    icon: "/icons/spot_woodcutting.png",
+    coordinates: { x: 320, y: 420 },
+    isVisible: true,
+  },
+  [PinId.ForestFishing]: {
+    id: PinId.ForestFishing,
+    name: "Fishing Spot",
+    type: PinType.Spot,
+    target: SpotId.SmallFishingSpot,
+    icon: "/icons/spot_fishing.png",
+    coordinates: { x: 775, y: 1030 },
+    isVisible: true,
+  },
 };
-
-// New stuff
