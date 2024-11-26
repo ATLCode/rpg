@@ -28,7 +28,7 @@
     <GameMenu :initial-tab="openTab" @close="showMenu = false" />
   </AModal>
   <AModal v-model="showCamp" :fullscreen="true">
-    <LocationCamp @close="showCamp = false" />
+    <MapCamp @close="showCamp = false" />
   </AModal>
 </template>
 

@@ -1,34 +1,51 @@
 <template>
   <div v-if="spotStore.loading"></div>
-  <div v-else class="action-container">
-    <div class="spot-img">
+  <div v-else class="gather-container">
+    <div class="gather-header">
+      <ASpacer />
       <div>{{ spotStore.selectedSpot?.name }}</div>
       <ASpacer />
-      <img :src="spotStore.selectedSpot?.img" alt="image" />
+      <AButton variant="plain" padding="0rem" @click="$emit('close')"
+        >X</AButton
+      >
     </div>
-    <div v-if="false">{{ spotStore.selectedSpot }}</div>
-    <div class="center">
-      <div>
-        Action Text
-        {{
-          spotStore.currentActionProgress + " " + spotStore.currentActionLength
-        }}
+    <div class="gather-content">
+      <div class="spot-img">
+        <ASpacer />
+        <img :src="spotStore.selectedSpot?.img" alt="image" />
+        <ASpacer />
       </div>
-      <AProgressLinear
-        v-model="spotStore.currentActionProgress"
-        :max="spotStore.currentActionLength"
-        height="2.5rem"
-        width="100%"
-      />
+      <div v-if="false">{{ spotStore.selectedSpot }}</div>
+      <div class="center">
+        <div>
+          Action Text
+          {{
+            spotStore.currentActionProgress +
+            " " +
+            spotStore.currentActionLength
+          }}
+        </div>
+        <div class="progress-buttons">
+          <AProgressLinear
+            v-model="spotStore.currentActionProgress"
+            :max="spotStore.currentActionLength"
+            height="2.5rem"
+            width="100%"
+          />
+          <AButton
+            v-if="!spotStore.actionOngoing"
+            @click="spotStore.startAction"
+            >START</AButton
+          >
+          <AButton
+            v-else
+            background-color="--error"
+            @click="spotStore.stopAction"
+            >STOP</AButton
+          >
+        </div>
+      </div>
     </div>
-
-    <ASpacer />
-    <AButton v-if="!spotStore.actionOngoing" @click="spotStore.startAction"
-      >START</AButton
-    >
-    <AButton v-else background-color="--error" @click="spotStore.stopAction"
-      >STOP</AButton
-    >
   </div>
 </template>
 
@@ -37,14 +54,26 @@ import { useSpotStore } from "@/stores/spot";
 // Decide how to deal with multiple different type of spots, gather, craft etc
 
 const spotStore = useSpotStore();
+
+defineEmits(["close"]);
 </script>
 
 <style lang="scss" scoped>
-.action-container {
+.gather-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+.gather-header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.gather-content {
   height: 100%;
   width: 100%;
   z-index: 450;
-  padding: 0.5rem;
   margin: auto;
   display: flex;
 }
@@ -66,5 +95,13 @@ img {
   padding: 0rem 1rem;
   gap: 1rem;
   text-align: center;
+}
+.progress-buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
 }
 </style>

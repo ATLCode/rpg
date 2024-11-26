@@ -68,23 +68,24 @@ export const useSaveStore = defineStore("save", () => {
   const selectedSaveId = ref<number | undefined>(undefined);
 
   async function getUserSaves() {
-    const { data, error } = await useFetch("/api/saves/get-for-user");
-    if (error.value || !data.value) {
-      throw new Error(`Unable to load the saves: ${error.value}`);
+    try {
+      const data = await $fetch("/api/saves/get-for-user");
+      saves.value = data
+        .sort((a: any, b: any) => {
+          return (
+            new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+          );
+        })
+        .map((save) => {
+          const { id, saveData } = save;
+          return {
+            id: id as number,
+            data: deconstructSaveData(saveData),
+          };
+        });
+    } catch (error) {
+      throw new Error(`Unable to load the saves: ${error}`);
     }
-    saves.value = data.value
-      .sort((a, b) => {
-        return (
-          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-        );
-      })
-      .map((save) => {
-        const { id, saveData } = save;
-        return {
-          id: id as number,
-          data: deconstructSaveData(saveData),
-        };
-      });
   }
 
   function constructSaveData() {

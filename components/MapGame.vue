@@ -44,8 +44,10 @@ import { CRS } from "leaflet";
 import { maps, pins } from "@/game/locations";
 import { useLocationStore } from "@/stores/location";
 import { PinType, type Pin } from "~/types/location.types";
+import { useSpotStore } from "@/stores/spot";
 
 const locationStore = useLocationStore();
+const spotStore = useSpotStore();
 
 // PINS
 const pinTravelOpen = ref(false);
@@ -56,6 +58,13 @@ function clickPin(clickedPin: Pin) {
   console.log(clickedPin.type);
 
   locationStore.selectPin(clickedPin);
+
+  if (!(maps[locationStore.playerLocation.mapId].mapScale === "World")) {
+    locationStore.goToLocation({
+      mapId: locationStore.playerLocation.mapId,
+      pinId: clickedPin.id,
+    });
+  }
   if (clickedPin.type === PinType.Travel) {
     pinTravelOpen.value = true;
   }
@@ -64,8 +73,11 @@ function clickPin(clickedPin: Pin) {
   }
   if (clickedPin.type === PinType.Spot) {
     pinSpotOpen.value = true;
+    spotStore.selectSpot(clickedPin);
   }
-  console.log(pinSpotOpen);
+  if (!(clickedPin.type === PinType.Spot)) {
+    pinSpotOpen.value = false;
+  }
 }
 
 // MAP SETTINGS

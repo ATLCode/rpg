@@ -4,7 +4,7 @@ import { npcs, type Npc } from "./npcs";
 import { shops, type Shop } from "./shops";
 import { SpotId } from "./spots";
 import { MapId, PinId } from "./locations";
-import type { Camp, Location } from "~/types/location.types";
+import { PinType, type Camp, type Location } from "~/types/location.types";
 import type { Time } from "~/types/world.types";
 import { SkillId, type Ability } from "~/types/ability.types";
 import { type ItemContainer } from "~/types/item.types";
@@ -38,7 +38,33 @@ export const defaults: Defaults = {
 
   startingNpcs: Object.values(npcs),
   startingShops: Object.values(shops),
-  startingCamp: {
+  startingCamp: [
+    {
+      name: "Camp Edge",
+      type: PinType.Access,
+      target: null,
+      icon: "/icons/pin_exit.png",
+      coordinates: { x: 1000, y: 1000 },
+      isVisible: true,
+    },
+    {
+      name: "Sleeping Spot",
+      type: PinType.Spot,
+      target: SpotId.Bedroll,
+      icon: "/icons/spot_sleeping.png",
+      coordinates: { x: 1350, y: 1850 },
+      isVisible: true,
+    },
+    {
+      name: "Cooking Spot",
+      type: PinType.Spot,
+      target: SpotId.Campfire,
+      icon: "/icons/spot_cooking.png",
+      coordinates: { x: 2000, y: 1300 },
+      isVisible: true,
+    },
+  ],
+  startingCamp2: {
     sleepingSpot: {
       name: "Sleeping Spot",
       coordinates: { x: 1350, y: 1850 },

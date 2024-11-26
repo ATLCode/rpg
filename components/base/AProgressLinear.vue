@@ -44,6 +44,7 @@ const value = defineModel<number>();
 </script>
 <style lang="scss" scoped>
 .aprogress {
+  width: 100%;
   display: flex;
 }
 

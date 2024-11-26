@@ -3,9 +3,20 @@
     test
     <SpotRefine v-if="spotStore.selectedSpot.spotType === SpotType.Craft" />
   </AModal>
-  <ACard v-if="spotComponent === 'Card'">
-    asd
-    <SpotGather v-if="spotStore.selectedSpot.spotType === SpotType.Gather" />
+  <ACard
+    v-if="spotComponent === 'Card' && model"
+    position="absolute"
+    z-index="999"
+    :offset="['auto', '0px', '0px', '0px']"
+    :margin="['auto', 'auto', 'auto', 'auto']"
+    padding="1rem"
+    width="1000px"
+    height="150px"
+  >
+    <SpotGather
+      v-if="spotStore.selectedSpot.spotType === SpotType.Gather"
+      @close="closeInfo"
+    />
   </ACard>
 </template>
 
@@ -33,6 +44,10 @@ const spotComponent = computed(() => {
     return "Card";
   }
 });
+
+function closeInfo() {
+  model.value = false;
+}
 </script>
 
 <style lang="scss" scoped>

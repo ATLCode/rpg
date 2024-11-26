@@ -23,26 +23,6 @@ export enum ContainerType {
   Mine = "Mine",
 }
 
-// Area location type exit and exit details?
-
-export type Camp = {
-  sleepingSpot: {
-    name: string;
-    coordinates: { x: number; y: number };
-    spotId: SpotId;
-  };
-  cookingSpot: {
-    name: string;
-    coordinates: { x: number; y: number };
-    spotId: SpotId;
-  };
-  storageSpot: {
-    name: string;
-    coordinates: { x: number; y: number };
-    // storageSpotId: StorageSpotId;
-  };
-};
-
 export type locationContainerDetails = {
   outsideImg: string;
   mapImg: string;
@@ -116,3 +96,14 @@ export type Pin = {
   coordinates: { x: number; y: number };
   isVisible: boolean | (() => boolean); // Should this be optional and we assume true unless there is possibility it's false?
 };
+
+export type CampPin = {
+  name: string;
+  type: PinType;
+  target: null | Location | NpcId | SpotId;
+  icon: string;
+  coordinates: { x: number; y: number };
+  isVisible: boolean | (() => boolean);
+};
+
+export type Camp = CampPin[];

@@ -31,6 +31,12 @@ const props = defineProps({
     type: String as PropType<CSSProperties["position"]>,
     default: "relative",
   },
+  padding: {
+    type: [Array, String],
+    default() {
+      return ["1.25rem", "1.25rem", "1.25rem", "1.25rem"];
+    },
+  },
   height: {
     type: String,
     default: "undefined",
@@ -77,6 +83,7 @@ const style = computed(() => {
     bottom: props.offset[2],
     left: props.offset[3],
     margin: `${props.margin[0]} ${props.margin[1]} ${props.margin[2]} ${props.margin[3]}`,
+    padding: props.padding.toString(),
     color: `var(--${props.color})`,
     "background-color": `var(--${props.backgroundColor})`,
     "z-index": props.zIndex,

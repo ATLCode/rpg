@@ -1,7 +1,11 @@
 import { usePlayerStore } from "@/stores/player";
 import { useSkillStore } from "@/stores/skill";
 import { useItemStore } from "@/stores/item";
-import { type AreaLocation, type SubLocation } from "~/types/location.types";
+import {
+  type AreaLocation,
+  type Pin,
+  type SubLocation,
+} from "~/types/location.types";
 import {
   CampSpot,
   SpotType,
@@ -33,9 +37,9 @@ export const useSpotStore = defineStore("spot", () => {
     undefined
   );
 
-  function selectSpot(location: AreaLocation | SubLocation) {
+  function selectSpot(selectedPin: Pin) {
     loading.value = true;
-    const newSpot = spots[location.spotId!];
+    const newSpot = spots[selectedPin.target];
     selectedSpot.value = newSpot;
     if (newSpot.spotType === SpotType.Gather && newSpot.gatherDetails) {
       // Set available abilities

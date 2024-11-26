@@ -1,7 +1,7 @@
 <template>
   <div class="camp-container">
     <div class="camp-header">
-      <AButton background-color="var(--elevation1)" @click="$emit('close')"
+      <AButton background-color="var(--elevation2)" @click="$emit('close')"
         >Close</AButton
       >
       <ASpacer />
@@ -29,36 +29,17 @@
             :bounds="bounds"
           ></l-image-overlay>
           <l-marker
-            :lat-lng="[
-              camp.cookingSpot.coordinates.y,
-              camp.cookingSpot.coordinates.x,
-            ]"
-            @click="clickCookingSpot"
+            v-for="campPin in locationStore.camp"
+            :key="campPin.name"
+            :lat-lng="[campPin.coordinates.y, campPin.coordinates.x]"
+            @click="clickCampPin"
           >
-            <l-icon icon-url="/icons/circle.png" :icon-size="[30, 30]"></l-icon>
-          </l-marker>
-          <l-marker
-            :lat-lng="[
-              camp.sleepingSpot.coordinates.y,
-              camp.sleepingSpot.coordinates.x,
-            ]"
-          >
-            <l-icon icon-url="/icons/circle.png" :icon-size="[30, 30]"></l-icon>
-          </l-marker>
-          <l-marker
-            :lat-lng="[
-              camp.storageSpot.coordinates.y,
-              camp.storageSpot.coordinates.x,
-            ]"
-          >
-            <l-icon icon-url="/icons/circle.png" :icon-size="[30, 30]"></l-icon>
+            <l-icon :icon-url="campPin.icon" :icon-size="[30, 30]"></l-icon>
           </l-marker>
         </LMap>
       </div>
+      <PinAccess v-model="pinAccessOpen" />
     </div>
-    <AModal v-model="modalCraftingOpen" title="Campfire" closable>
-      <ModalCrafting />
-    </AModal>
   </div>
 </template>
 
@@ -66,12 +47,14 @@
 import { CRS } from "leaflet";
 import { useLocationStore } from "@/stores/location";
 import { useSpotStore } from "@/stores/spot";
-import { CampSpot } from "~/types/spot.types";
+import { PinType, type CampPin } from "~/types/location.types";
 
 const locationStore = useLocationStore();
 const spotStore = useSpotStore();
 
 defineEmits(["close"]);
+
+const pinAccessOpen = ref(false);
 
 // Map Settings
 const width = ref(4000);
@@ -90,14 +73,10 @@ const maxBounds = computed(() => [
   [height.value + 500, width.value + 500],
 ]);
 
-// Camp Locations/Spots
-const camp = locationStore.camp;
-
-const modalCraftingOpen = ref(false);
-
-function clickCookingSpot() {
-  modalCraftingOpen.value = true;
-  spotStore.selectCampSpot(CampSpot.Cooking);
+function clickCampPin(clickedCampPin: CampPin) {
+  if (clickedCampPin.type === PinType.Access) {
+    pinAccessOpen.value = true;
+  }
 }
 </script>
 
