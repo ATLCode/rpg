@@ -200,6 +200,7 @@ export enum MapId {
   Town = "Town",
   Forest = "Forest",
   Mountain = "Mountain",
+  Camp = "Camp",
 }
 
 export enum PinId {
@@ -207,10 +208,12 @@ export enum PinId {
   TownEdge = "TownEdge",
   Forest = "Forest",
   ForestEdge = "ForestEdge",
+  ForestCampFire = "ForestCampfire",
   Mountain = "Mountain",
   MountainBottom = "MountainBottom",
   ForestWoodcutting = "ForestWoodcutting",
   ForestFishing = "ForestFishing",
+  CampEdge = "CampEdge",
 }
 
 export const maps: Record<MapId, Map> = {
@@ -220,6 +223,7 @@ export const maps: Record<MapId, Map> = {
     mapScale: "World",
     img: "/maps/world.jpg",
     pins: [PinId.Forest, PinId.Town, PinId.Mountain],
+    encounters: [],
     parent: null,
   },
   [MapId.Town]: {
@@ -228,6 +232,7 @@ export const maps: Record<MapId, Map> = {
     mapScale: "Area",
     img: "/maps/town.jpeg",
     pins: [PinId.TownEdge],
+    encounters: [],
     parent: MapId.World,
   },
   [MapId.Forest]: {
@@ -235,7 +240,13 @@ export const maps: Record<MapId, Map> = {
     name: "Forest",
     mapScale: "Area",
     img: "/maps/forest.jpg",
-    pins: [PinId.ForestEdge, PinId.ForestWoodcutting, PinId.ForestFishing],
+    pins: [
+      PinId.ForestEdge,
+      PinId.ForestWoodcutting,
+      PinId.ForestFishing,
+      PinId.ForestCampFire,
+    ],
+    encounters: [],
     parent: MapId.World,
   },
   [MapId.Mountain]: {
@@ -244,9 +255,20 @@ export const maps: Record<MapId, Map> = {
     mapScale: "Area",
     img: "/maps/mountain.jpg",
     pins: [PinId.MountainBottom],
+    encounters: [],
+    parent: MapId.World,
+  },
+  [MapId.Camp]: {
+    id: MapId.Camp,
+    name: "Camp",
+    mapScale: "Area",
+    img: "/maps/camp.jpeg",
+    pins: [PinId.CampEdge],
+    encounters: [],
     parent: MapId.World,
   },
 };
+
 export const pins: Record<PinId, Pin> = {
   [PinId.Town]: {
     id: PinId.Town,
@@ -293,6 +315,15 @@ export const pins: Record<PinId, Pin> = {
     coordinates: { x: 1650, y: 200 },
     isVisible: true,
   },
+  [PinId.ForestCampFire]: {
+    id: PinId.ForestCampFire,
+    name: "Forest campfire",
+    type: PinType.Spot,
+    target: SpotId.Campfire,
+    icon: "/icons/spot_cooking.png",
+    coordinates: { x: 900, y: 1030 },
+    isVisible: true,
+  },
   [PinId.MountainBottom]: {
     id: PinId.MountainBottom,
     name: "Bottom of the Mountain",
@@ -318,6 +349,15 @@ export const pins: Record<PinId, Pin> = {
     target: SpotId.SmallFishingSpot,
     icon: "/icons/spot_fishing.png",
     coordinates: { x: 775, y: 1030 },
+    isVisible: true,
+  },
+  [PinId.CampEdge]: {
+    id: PinId.CampEdge,
+    name: "Camp Edge",
+    type: PinType.Access,
+    target: "ExitCamp",
+    icon: "/icons/pin_exit.png",
+    coordinates: { x: 100, y: 100 },
     isVisible: true,
   },
 };

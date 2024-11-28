@@ -18,7 +18,7 @@
       >Quests</AButton
     >
 
-    <AButton background-color="var(--elevation1)" @click="showCamp = true"
+    <AButton background-color="var(--elevation1)" @click="goToCamp"
       >Camp</AButton
     >
     <ASpacer />
@@ -33,6 +33,11 @@
 </template>
 
 <script lang="ts" setup>
+import { useLocationStore } from "@/stores/location";
+import { MapId, PinId } from "~/game/locations";
+
+const locationStore = useLocationStore();
+
 const showMenu = ref(false);
 const showCamp = ref(false);
 const openTab = ref("");
@@ -40,6 +45,14 @@ const openTab = ref("");
 function openMenu(tab: string) {
   openTab.value = tab;
   showMenu.value = true;
+}
+
+function goToCamp() {
+  locationStore.campReturnLocation = locationStore.playerLocation;
+  locationStore.goToLocation({
+    mapId: MapId.Camp,
+    pinId: PinId.CampEdge,
+  });
 }
 </script>
 

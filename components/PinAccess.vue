@@ -8,6 +8,7 @@
 
 <script lang="ts" setup>
 import { useLocationStore } from "@/stores/location";
+import { PinType, type Location } from "~/types/location.types";
 
 const locationStore = useLocationStore();
 
@@ -17,7 +18,26 @@ function closeInfo() {
   model.value = false;
 }
 function access() {
-  locationStore.goToLocation(locationStore.selectedPin?.target); // How to fix
+  if (
+    !locationStore.selectedPin ||
+    locationStore.selectedPin.type !== PinType.Access
+  ) {
+    throw new Error("No selected Pin");
+  }
+
+  const pinTarget = locationStore.selectedPin.target as Location;
+
+  if ((pinTarget as any) === "ExitCamp") {
+    // Camp Exit Case
+    if (!locationStore.campReturnLocation) {
+      throw new Error("Return location is null");
+    }
+    locationStore.goToLocation(locationStore.campReturnLocation);
+  } else {
+    // Normal Case
+    locationStore.goToLocation(pinTarget);
+  }
+  // All Cases
   closeInfo();
 }
 </script>

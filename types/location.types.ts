@@ -83,7 +83,7 @@ export type Map = {
   img: string;
   pins: PinId[];
   parent: MapId | null;
-  encounters?: WeightedEncounter[];
+  encounters: WeightedEncounter[];
   safetyLevel?: number | (() => number); // Dangerous area vs Dangerous building, like thieves den etc.
 };
 
@@ -91,19 +91,10 @@ export type Pin = {
   id: PinId;
   name: string;
   type: PinType;
-  target: Location | NpcId | SpotId; // NpcId? SpotId? TrueLocation for access? Circular dependency issue
+  target: Location | NpcId | SpotId | "ExitCamp"; // NpcId? SpotId? TrueLocation for access? Circular dependency issue
   icon: string;
   coordinates: { x: number; y: number };
   isVisible: boolean | (() => boolean); // Should this be optional and we assume true unless there is possibility it's false?
 };
 
-export type CampPin = {
-  name: string;
-  type: PinType;
-  target: null | Location | NpcId | SpotId;
-  icon: string;
-  coordinates: { x: number; y: number };
-  isVisible: boolean | (() => boolean);
-};
-
-export type Camp = CampPin[];
+export type Camp = any;

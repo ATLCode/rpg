@@ -1,11 +1,7 @@
 import { usePlayerStore } from "@/stores/player";
 import { useSkillStore } from "@/stores/skill";
 import { useItemStore } from "@/stores/item";
-import {
-  type AreaLocation,
-  type Pin,
-  type SubLocation,
-} from "~/types/location.types";
+import { type Pin } from "~/types/location.types";
 import {
   CampSpot,
   SpotType,

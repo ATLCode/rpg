@@ -2,7 +2,7 @@ import { defaults } from "~/game/defaults";
 import { useNotificationStore, NotificationType } from "@/stores/notification";
 import { usePlayerStore } from "@/stores/player";
 import { useGameStore } from "@/stores/game";
-import { MapId, PinId, pins } from "~/game/locations";
+import { PinId, pins } from "~/game/locations";
 import { paths, type Path } from "~/game/paths";
 import type { Camp, Location, Pin } from "~/types/location.types";
 
@@ -13,10 +13,8 @@ export const useLocationStore = defineStore("location", () => {
 
   // LOCATIONS & PINS
 
-  const playerLocation = ref<Location>({
-    mapId: MapId.World,
-    pinId: PinId.Town,
-  }); // Why defaults.startingLocation doesn't work?
+  const playerLocation = ref<Location>(defaults.startingLocation); // Why defaults.startingLocation doesn't work?
+  const campReturnLocation = ref<Location | null>(null);
 
   const selectedPin = ref<Pin | null>(pins[playerLocation.value.pinId]);
   function selectPin(pin: Pin) {
@@ -97,6 +95,7 @@ export const useLocationStore = defineStore("location", () => {
 
   return {
     playerLocation,
+    campReturnLocation,
     currentPaths,
     targetLocationId,
     activePath,

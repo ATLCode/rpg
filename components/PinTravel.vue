@@ -35,6 +35,7 @@
 <script lang="ts" setup>
 import { useLocationStore } from "@/stores/location";
 import { pins } from "~/game/locations";
+import { PinType, type Location } from "~/types/location.types";
 
 const locationStore = useLocationStore();
 
@@ -63,7 +64,14 @@ const cardInfo = computed(() => {
 });
 
 function enterArea() {
-  locationStore.goToLocation(locationStore.selectedPin?.target); // How to fix this?
+  if (
+    !locationStore.selectedPin ||
+    locationStore.selectedPin.type !== PinType.Travel
+  ) {
+    throw new Error("No selected Pin");
+  }
+  const pinTarget = locationStore.selectedPin.target as Location;
+  locationStore.goToLocation(pinTarget);
   closeInfo();
 }
 </script>
