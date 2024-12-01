@@ -1,7 +1,14 @@
 <template>
-  <AModal v-if="spotComponent === 'Modal'" v-model="model" closable>
-    test
-    <SpotRefine v-if="selectedSpot?.spotType === SpotType.Craft" />
+  <AModal
+    v-if="spotComponent === 'Modal'"
+    v-model="model"
+    :title="selectedSpot?.name"
+    closable
+  >
+    <SpotRefine
+      v-if="selectedSpot?.spotType === SpotType.Craft"
+      :spot="selectedSpot"
+    />
   </AModal>
   <ACard
     v-if="spotComponent === 'Card' && model"
@@ -10,8 +17,8 @@
     :offset="['auto', '0px', '0px', '0px']"
     :margin="['auto', 'auto', 'auto', 'auto']"
     padding="1rem"
-    width="1000px"
-    height="150px"
+    width="1200px"
+    height="15vh"
   >
     <SpotGather
       v-if="selectedSpot?.spotType === SpotType.Gather"

@@ -68,18 +68,6 @@ const availableAbilityIds = computed(() => {
 
 const selectedAbility = ref<Ability | null>(null);
 
-const allowed = computed(() => {
-  // Free Inventory slots?
-  // Enough energy?
-  if (
-    !selectedAbility.value ||
-    playerStore.energy < selectedAbility.value.energyCost
-  ) {
-    return false;
-  }
-  return true;
-});
-
 function startProgress() {
   selectedAbility.value = spotStore.selectRandomAbility(
     availableAbilityIds.value
@@ -105,6 +93,18 @@ function progressComplete() {
     availableAbilityIds.value
   );
 }
+
+const allowed = computed(() => {
+  // Free Inventory slots?
+  // Enough energy?
+  if (
+    !selectedAbility.value ||
+    playerStore.energy < selectedAbility.value.energyCost
+  ) {
+    return false;
+  }
+  return true;
+});
 
 const progress = useProgress(
   allowed,

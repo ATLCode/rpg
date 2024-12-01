@@ -28,7 +28,7 @@ export function useProgress(
   );
 
   function start() {
-    if (actionInterval.value !== undefined) {
+    if (actionInterval.value !== undefined || !isAllowedToRun.value) {
       return;
     }
     actionInterval.value = setInterval(() => {

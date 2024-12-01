@@ -1,6 +1,6 @@
 <template>
   <div class="game-container">
-    <MenuSide v-if="!(gameStore.gameState === GameState.Combat)" />
+    <BarSide v-if="!(gameStore.gameState === GameState.Combat)" />
     <BarTop
       v-if="!(gameStore.gameState === GameState.Combat)"
       class="game-bar"
