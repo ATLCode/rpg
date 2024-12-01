@@ -1,7 +1,7 @@
 <template>
   <AModal v-if="spotComponent === 'Modal'" v-model="model" closable>
     test
-    <SpotRefine v-if="spotStore.selectedSpot.spotType === SpotType.Craft" />
+    <SpotRefine v-if="selectedSpot?.spotType === SpotType.Craft" />
   </AModal>
   <ACard
     v-if="spotComponent === 'Card' && model"
@@ -14,33 +14,43 @@
     height="150px"
   >
     <SpotGather
-      v-if="spotStore.selectedSpot.spotType === SpotType.Gather"
+      v-if="selectedSpot?.spotType === SpotType.Gather"
+      :spot="selectedSpot"
       @close="closeInfo"
     />
   </ACard>
 </template>
 
 <script lang="ts" setup>
-import { useSpotStore } from "@/stores/spot";
-
+import { useLocationStore } from "@/stores/location";
 import { SpotType } from "~/types/spot.types";
+import { pins } from "~/game/locations";
+import { PinType } from "~/types/location.types";
+import { SpotId, spots } from "~/game/spots";
 
-const spotStore = useSpotStore();
+const locationStore = useLocationStore();
 
 const model = defineModel({ type: Boolean });
 
+const selectedSpot = computed(() => {
+  if (pins[locationStore.playerLocation.pinId].type === PinType.Spot) {
+    return spots[pins[locationStore.playerLocation.pinId].target as SpotId];
+  }
+  return null;
+});
+
 const spotComponent = computed(() => {
-  if (!spotStore.selectedSpot) {
+  if (!selectedSpot.value) {
     return undefined;
   }
 
   const modalSpots = [SpotType.Craft, SpotType.Sleeping];
   const cardSpots = [SpotType.Gather];
 
-  if (modalSpots.includes(spotStore.selectedSpot.spotType)) {
+  if (modalSpots.includes(selectedSpot.value.spotType)) {
     return "Modal";
   }
-  if (cardSpots.includes(spotStore.selectedSpot.spotType)) {
+  if (cardSpots.includes(selectedSpot.value.spotType)) {
     return "Card";
   }
 });

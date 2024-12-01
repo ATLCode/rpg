@@ -85,7 +85,6 @@ export const useLocationStore = defineStore("location", () => {
     }
   }
   function goToLocation(newLocation: Location) {
-    console.log(newLocation);
     playerLocation.value = newLocation;
   }
 

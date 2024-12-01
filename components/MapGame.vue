@@ -44,10 +44,8 @@ import { CRS } from "leaflet";
 import { maps, pins } from "@/game/locations";
 import { useLocationStore } from "@/stores/location";
 import { PinType, type Pin } from "~/types/location.types";
-import { useSpotStore } from "@/stores/spot";
 
 const locationStore = useLocationStore();
-const spotStore = useSpotStore();
 
 // PINS
 const pinTravelOpen = ref(false);
@@ -73,7 +71,6 @@ function clickPin(clickedPin: Pin) {
   }
   if (clickedPin.type === PinType.Spot) {
     pinSpotOpen.value = true;
-    spotStore.selectSpot(clickedPin);
   }
   if (!(clickedPin.type === PinType.Spot)) {
     pinSpotOpen.value = false;

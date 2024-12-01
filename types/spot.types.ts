@@ -12,6 +12,7 @@ export enum SpotType {
 
 export type SpotGatherDetails = {
   abilities: WeightedAbilityId[];
+  // extraDrops: WeightedSomething[];
   interval: number;
 };
 export type SpotCraftDetails = {

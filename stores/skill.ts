@@ -4,6 +4,7 @@ import { defaults } from "~/game/defaults";
 import { AbilityType, type Ability, type SkillId } from "~/types/ability.types";
 
 export type Skill = {
+  id: SkillId;
   name: string;
   currentExp: number; // How we do leveling and xp limits?
   currentLevel: number;
@@ -14,6 +15,7 @@ export const useSkillStore = defineStore("skill", () => {
   const skills = ref(defaults.startingSkills);
 
   const levelTresholds: Record<number, number> = {
+    1: 0,
     2: 50,
     3: 100,
     4: 150,
@@ -53,6 +55,20 @@ export const useSkillStore = defineStore("skill", () => {
       1000
     );
     checkLevelUp(skillId, skill.currentExp, skill.currentLevel + 1);
+  }
+
+  function levelBracketGap(skillId: SkillId) {
+    const currentLevel = skills.value[skillId].currentLevel;
+    const currentBracketStart = levelTresholds[currentLevel];
+    const currentBracketEnd = levelTresholds[currentLevel + 1];
+    return currentBracketEnd - currentBracketStart;
+  }
+
+  function levelBracketProgress(skillId: SkillId) {
+    const currentLevel = skills.value[skillId].currentLevel;
+    const currentBracketStart = levelTresholds[currentLevel];
+    const currentExp = skills.value[skillId].currentExp;
+    return currentExp - currentBracketStart;
   }
 
   function checkLevelUp(
@@ -100,6 +116,8 @@ export const useSkillStore = defineStore("skill", () => {
     playerAbilities,
     playerAbilityIds,
     combatAbilities,
+    levelBracketGap,
+    levelBracketProgress,
     $reset,
   };
 });

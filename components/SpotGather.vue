@@ -1,9 +1,8 @@
 <template>
-  <div v-if="spotStore.loading"></div>
-  <div v-else class="gather-container">
+  <div class="gather-container">
     <div class="gather-header">
       <ASpacer />
-      <div>{{ spotStore.selectedSpot?.name }}</div>
+      <div>{{ props.spot.name }}</div>
       <ASpacer />
       <AButton variant="plain" padding="0rem" @click="$emit('close')"
         >X</AButton
@@ -12,35 +11,21 @@
     <div class="gather-content">
       <div class="spot-img">
         <ASpacer />
-        <img :src="spotStore.selectedSpot?.img" alt="image" />
+        <img :src="props.spot.img" alt="image" />
         <ASpacer />
       </div>
-      <div v-if="false">{{ spotStore.selectedSpot }}</div>
       <div class="center">
-        <div>
-          Action Text
-          {{
-            spotStore.currentActionProgress +
-            " " +
-            spotStore.currentActionLength
-          }}
-        </div>
         <div class="progress-buttons">
           <AProgressLinear
-            v-model="spotStore.currentActionProgress"
-            :max="spotStore.currentActionLength"
+            v-model="progress.currentProgress.value"
+            :max="progress.progressLength.value"
             height="2.5rem"
             width="100%"
           />
-          <AButton
-            v-if="!spotStore.actionOngoing"
-            @click="spotStore.startAction"
+          <AButton v-if="!progress.active.value" @click="startProgress"
             >START</AButton
           >
-          <AButton
-            v-else
-            background-color="--error"
-            @click="spotStore.stopAction"
+          <AButton v-else background-color="--error" @click="progress.stop"
             >STOP</AButton
           >
         </div>
@@ -51,11 +36,81 @@
 
 <script lang="ts" setup>
 import { useSpotStore } from "@/stores/spot";
-// Decide how to deal with multiple different type of spots, gather, craft etc
+import { useSkillStore } from "@/stores/skill";
+import { usePlayerStore } from "@/stores/player";
+import { useItemStore } from "@/stores/item";
+import { useProgress } from "@/composables/progress";
+import type { Spot } from "~/types/spot.types";
+import type { Ability } from "~/types/ability.types";
 
 const spotStore = useSpotStore();
+const skillStore = useSkillStore();
+const playerStore = usePlayerStore();
+const itemStore = useItemStore();
+
+const props = defineProps({
+  spot: {
+    type: Object as PropType<Spot>,
+    required: true,
+  },
+});
 
 defineEmits(["close"]);
+
+const availableAbilityIds = computed(() => {
+  const sharedAbilityIds = props.spot.gatherDetails!.abilities.filter(
+    (weightedAbility) => {
+      return skillStore.playerAbilityIds.includes(weightedAbility.object);
+    }
+  );
+  return sharedAbilityIds;
+});
+
+const selectedAbility = ref<Ability | null>(null);
+
+const allowed = computed(() => {
+  // Free Inventory slots?
+  // Enough energy?
+  if (
+    !selectedAbility.value ||
+    playerStore.energy < selectedAbility.value.energyCost
+  ) {
+    return false;
+  }
+  return true;
+});
+
+function startProgress() {
+  selectedAbility.value = spotStore.selectRandomAbility(
+    availableAbilityIds.value
+  );
+
+  progress.start();
+}
+
+function progressComplete() {
+  if (!selectedAbility.value) {
+    return;
+  }
+  // Take Energy
+  playerStore.useEnergy(selectedAbility.value.energyCost);
+  // Get Resource
+  itemStore.addItemsToInventory(selectedAbility.value.gatherDetails!.product);
+  // Get Exp
+  if (props.spot.skillId) {
+    skillStore.giveSkillExp(props.spot.skillId, selectedAbility.value.xp * 5);
+  }
+  // Select Random Ability
+  selectedAbility.value = spotStore.selectRandomAbility(
+    availableAbilityIds.value
+  );
+}
+
+const progress = useProgress(
+  allowed,
+  props.spot.gatherDetails!.interval * 100,
+  progressComplete
+);
 </script>
 
 <style lang="scss" scoped>

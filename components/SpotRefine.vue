@@ -64,6 +64,11 @@ function selectAbility(ability: Ability) {
 function craftItem() {
   spotStore.startAction();
 }
+
+function progressComplete() {
+  // Take Energy
+  // CraftItem
+}
 </script>
 
 <style lang="scss" scoped>

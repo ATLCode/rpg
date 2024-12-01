@@ -1,12 +1,10 @@
 <template>
-  <div class="aprogress">
-    <progress
-      :value="value"
-      :max="props.max"
-      :style="style"
-      class="progress"
-    ></progress>
-  </div>
+  <progress
+    :value="model || value"
+    :max="props.max"
+    :style="style"
+    class="progress"
+  ></progress>
 </template>
 <script lang="ts" setup>
 const props = defineProps({
@@ -18,7 +16,10 @@ const props = defineProps({
     type: String,
     default: "100%",
   },
-
+  value: {
+    type: Number,
+    default: undefined,
+  },
   color: {
     type: String,
     default: "var(--success)",
@@ -40,14 +41,9 @@ const style = reactive({
   width: props.width,
 });
 
-const value = defineModel<number>();
+const model = defineModel<number | undefined>(undefined);
 </script>
 <style lang="scss" scoped>
-.aprogress {
-  width: 100%;
-  display: flex;
-}
-
 progress {
   border-radius: 5px;
 }

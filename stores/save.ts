@@ -48,14 +48,19 @@ export const useSaveStore = defineStore("save", () => {
   */
 
   type SaveData = {
+    // World Store
     time: Time;
+    // Player Store
     energy: number;
     playerLocation: Location;
     characterName: string;
+    // Item Store
     gear: Gear;
     playerItemContainers: ItemContainer[];
+    // Skill Store
     skills: Record<SkillId, Skill>;
-    abilities: Ability[];
+    playerAbilities: Ability[];
+    //
     npcs: Npc[];
   };
 
@@ -97,7 +102,7 @@ export const useSaveStore = defineStore("save", () => {
       gear: itemStore.gear,
       playerItemContainers: itemStore.playerItemContainers,
       skills: skillStore.skills,
-      abilities: skillStore.playerAbilities,
+      playerAbilities: skillStore.playerAbilities,
       npcs: npcStore.npcs,
     };
 
@@ -185,7 +190,7 @@ export const useSaveStore = defineStore("save", () => {
     worldStore.time = save.data.time;
     locationStore.playerLocation = save.data.playerLocation;
     skillStore.skills = save.data.skills;
-    skillStore.playerAbilities = save.data.abilities;
+    skillStore.playerAbilities = save.data.playerAbilities;
     npcStore.npcs = save.data.npcs;
   }
 

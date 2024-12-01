@@ -16,8 +16,8 @@
         <div>{{ skill.name }}</div>
         <div>Lv{{ skill.currentLevel }}</div>
         <AProgressLinear
-          v-model="skill.currentExp"
-          :max="skillStore.levelTresholds[skill.currentLevel]"
+          :value="skillStore.levelBracketProgress(skill.id)"
+          :max="skillStore.levelBracketGap(skill.id)"
           height="2rem"
           width="100%"
         />
@@ -27,9 +27,7 @@
         </div>
         <div>
           Exp left:
-          {{
-            skillStore.levelTresholds[skill.currentLevel + 1] - skill.currentExp
-          }}
+          {{ expLeft(skill) }}
         </div>
       </div>
     </div>
@@ -38,8 +36,15 @@
 
 <script lang="ts" setup>
 import { useSkillStore } from "@/stores/skill";
+import { SkillId } from "~/types/ability.types";
 
 const skillStore = useSkillStore();
+
+skillStore.levelBracketGap(SkillId.Fishing);
+
+function expLeft(skill: Skill) {
+  return skillStore.levelTresholds[skill.currentLevel + 1] - skill.currentExp;
+}
 </script>
 
 <style lang="scss" scoped>
