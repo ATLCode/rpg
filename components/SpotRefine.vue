@@ -28,7 +28,7 @@
       <div>XP: {{ selectedAbility.xp }}</div>
       <div>
         Ingredients:
-        {{ selectedAbility.craftingDetails?.ingredients }}
+        {{ ingredientsString }}
       </div>
     </div>
     <div class="actions">
@@ -40,9 +40,7 @@
           >Stop</AButton
         >
         <div v-else class="craft">
-          <AButton :disabled="!allowed" @click="startProgress"
-            >Craft {{ disableReason ? `(${disableReason})` : "" }}</AButton
-          >
+          <AButton :disabled="!allowed" @click="startProgress">Craft</AButton>
         </div>
       </div>
 
@@ -61,7 +59,7 @@ import { useSkillStore } from "@/stores/skill";
 import { usePlayerStore } from "@/stores/player";
 import { useItemStore } from "@/stores/item";
 import { useProgress } from "@/composables/progress";
-import type { Ability } from "~/types/ability.types";
+import type { Ability, Ingredient } from "~/types/ability.types";
 import type { Spot } from "~/types/spot.types";
 
 const skillStore = useSkillStore();
@@ -104,11 +102,16 @@ function progressComplete() {
   }
 }
 
-const disableReason = computed(() => {
-  if (!selectedAbility.value) {
-    return "No ability selected";
+const ingredientsString = computed(() => {
+  if (!selectedAbility.value || !selectedAbility.value.craftingDetails) {
+    return "";
   }
-  return null;
+  return selectedAbility.value.craftingDetails.ingredients
+    .map((ingredient: Ingredient) => {
+      const amount = ingredient.amount !== 1 ? `(${ingredient.amount})` : "";
+      return `${ingredient.item}${amount}`;
+    })
+    .join(", ");
 });
 
 const allowed = computed(() => {
@@ -117,12 +120,23 @@ const allowed = computed(() => {
     return false;
   }
   // Has required ingredients
-  // Free Inventory slots?
-  // Enough energy?
-  if (playerStore.energy < selectedAbility.value.energyCost) {
+  for (const element of selectedAbility.value.craftingDetails!.ingredients) {
+    if (!itemStore.hasEnoughItems(element.item, element.amount)) {
+      return false;
+    }
+  }
+  // Has room in inventory
+  if (
+    !itemStore.hasRoomForItems(
+      selectedAbility.value.craftingDetails!.product.itemId
+    )
+  ) {
     return false;
   }
-
+  if (playerStore.energy < selectedAbility.value.energyCost) {
+    // Enough energy?
+    return false;
+  }
   return true;
 });
 

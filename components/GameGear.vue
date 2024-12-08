@@ -1,36 +1,36 @@
 <template>
   <div class="gear-container">
-    <div class="slot-head">
+    <div class="gear-slot slot-head">
       <GameItem :equip-slot="EquipSlot.Head" />
     </div>
-    <div class="slot-neck">
+    <div class="gear-slot slot-neck">
       <GameItem :equip-slot="EquipSlot.Neck" />
     </div>
-    <div class="slot-torso">
+    <div class="gear-slot slot-torso">
       <GameItem :equip-slot="EquipSlot.Torso" />
     </div>
-    <div class="slot-legs">
+    <div class="gear-slot slot-legs">
       <GameItem :equip-slot="EquipSlot.Legs" />
     </div>
-    <div class="slot-feet">
+    <div class="gear-slot slot-feet">
       <GameItem :equip-slot="EquipSlot.Feet" />
     </div>
-    <div class="slot-mainhand">
+    <div class="gear-slot slot-mainhand">
       <GameItem :equip-slot="EquipSlot.MainHand" />
     </div>
-    <div class="slot-offhand">
+    <div class="gear-slot slot-offhand">
       <GameItem :equip-slot="EquipSlot.OffHand" />
     </div>
-    <div class="slot-back">
+    <div class="gear-slot slot-back">
       <GameItem :equip-slot="EquipSlot.Back" />
     </div>
-    <div class="slot-ammo">
+    <div class="gear-slot slot-ammo">
       <GameItem :equip-slot="EquipSlot.Ammo" />
     </div>
-    <div class="slot-hands">
+    <div class="gear-slot slot-hands">
       <GameItem :equip-slot="EquipSlot.Hands" />
     </div>
-    <div class="slot-fingers">
+    <div class="gear-slot slot-fingers">
       <GameItem :equip-slot="EquipSlot.Fingers" />
     </div>
   </div>
@@ -94,5 +94,9 @@ import { EquipSlot } from "../types/item.types";
 }
 .slot-fingers {
   grid-area: sFingers;
+}
+.gear-slot {
+  background-color: var(--elevation2);
+  border-radius: 10px;
 }
 </style>

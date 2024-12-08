@@ -1,12 +1,9 @@
 import { defaults } from "~/game/defaults";
-import { items } from "~/game/items";
-import { TransactionType, type Npc } from "~/game/npcs";
+import { itemContainers, items } from "~/game/items";
 import {
-  EquipSlot,
   ItemContainerId,
   ItemId,
   type GameItem,
-  type Gear,
   type ItemContainer,
 } from "~/types/item.types";
 
@@ -16,25 +13,17 @@ export const useItemStore = defineStore("item", () => {
   );
   const playerInventory = computed(() => {
     return playerItemContainers.value.find(
-      (container) => container.id === ItemContainerId.playerInventory
+      (container) => container.id === ItemContainerId.PlayerInventory
     );
   });
 
-  const selectedItem = ref<GameItem | null>(null);
-
-  const gear = ref<Gear>({
-    [EquipSlot.Head]: null,
-    [EquipSlot.Torso]: null,
-    [EquipSlot.Legs]: null,
-    [EquipSlot.Hands]: null,
-    [EquipSlot.Feet]: null,
-    [EquipSlot.MainHand]: null,
-    [EquipSlot.OffHand]: null,
-    [EquipSlot.Neck]: null,
-    [EquipSlot.Fingers]: null,
-    [EquipSlot.Back]: null,
-    [EquipSlot.Ammo]: null,
+  const playerGear = computed(() => {
+    return playerItemContainers.value.find(
+      (container) => container.id === ItemContainerId.PlayerGear
+    );
   });
+
+  // TODO Julius, should actions be specified in each item or programmatically decided? I feel programmatically.
 
   function getItemById(itemId: ItemId) {
     const result = items[itemId];
@@ -42,6 +31,36 @@ export const useItemStore = defineStore("item", () => {
       throw new Error(`Can't find item with id: ${itemId}`);
     }
     return result;
+  }
+
+  function hasRoomForItems(itemId: ItemId, amount: number = 1) {
+    if (!playerInventory.value) {
+      throw new Error("Cannot find player inventory");
+    }
+
+    const item = items[itemId];
+    let space = 0;
+
+    for (const slot of playerInventory.value.slots) {
+      if (slot === null) {
+        space += item.maxStackSize;
+      } else if (slot.itemId === itemId) {
+        space += item.maxStackSize - slot.currentStackSize;
+      }
+    }
+    if (space >= amount) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function hasEnoughItems(itemId: ItemId, amount: number = 1) {
+    if (itemCountInInventory(itemId) >= amount) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   function itemCountInInventory(itemId: ItemId) {
@@ -103,13 +122,12 @@ export const useItemStore = defineStore("item", () => {
     } while (itemsToAdd > 0);
   }
   function removeItemFromInventoryByIndex(index: number) {
-    if (playerInventory.value) {
-      const invSlot = playerInventory.value.slots[index];
-      if (invSlot === null || invSlot.currentStackSize === 1) {
-        playerInventory.value!.slots[index] = null;
-      } else {
-        invSlot.currentStackSize -= 1;
-      }
+    const inventory = itemContainers[ItemContainerId.PlayerInventory];
+    const invSlot = inventory.slots[index];
+    if (invSlot === null || invSlot.currentStackSize === 1) {
+      playerInventory.value!.slots[index] = null;
+    } else {
+      invSlot.currentStackSize -= 1;
     }
   }
 
@@ -118,10 +136,11 @@ export const useItemStore = defineStore("item", () => {
       return;
     }
 
+    const inventory = itemContainers[ItemContainerId.PlayerInventory];
     let itemsToRemove = amount;
 
-    for (let i = 0; i < playerInventory.value!.slots.length; i++) {
-      const invItem = playerInventory.value!.slots[i];
+    for (let i = 0; i < inventory!.slots.length; i++) {
+      const invItem = inventory!.slots[i];
 
       if (invItem?.itemId === itemId) {
         if (invItem.currentStackSize > itemsToRemove) {
@@ -129,7 +148,7 @@ export const useItemStore = defineStore("item", () => {
           return;
         } else {
           itemsToRemove = itemsToRemove - invItem.currentStackSize;
-          playerInventory.value!.slots[i] = null;
+          inventory!.slots[i] = null;
         }
       }
     }
@@ -139,6 +158,7 @@ export const useItemStore = defineStore("item", () => {
     if (!playerInventory.value || !playerInventory.value.slots[index]) {
       throw new Error("Can't accesss to the item");
     }
+    /*
     const itemToEquip = playerInventory.value.slots[index];
 
     const equipSlot = itemToEquip.item.equipSlot;
@@ -147,14 +167,15 @@ export const useItemStore = defineStore("item", () => {
       throw new Error("This item can't be equipped");
     }
 
-    const equippedBefore = gear.value[equipSlot];
+     const equippedBefore = gear.value[equipSlot];
 
-    gear.value[equipSlot] = itemToEquip;
+      gear.value[equipSlot] = itemToEquip;
     removeItemFromInventoryByIndex(index);
 
     if (equippedBefore) {
       addItemsToInventory(equippedBefore);
     }
+      */
   }
   function unequipItem(inventoryItem: GameItem) {
     const equipSlot = inventoryItem.item.equipSlot;
@@ -162,17 +183,15 @@ export const useItemStore = defineStore("item", () => {
     if (!equipSlot) {
       throw new Error("This item doesn't have equip slot");
     }
-
+    /*
     addItemsToInventory(inventoryItem);
     gear.value[equipSlot] = null;
+    */
   }
-
+  /*
   function buyItems(quantity: number, npc: Npc) {
-    console.log(selectedItem.value);
-    console.log(quantity);
-    console.log(npc);
+
     if (!selectedItem.value) {
-      console.log("Item doesn't have value");
       return;
     }
 
@@ -213,6 +232,7 @@ export const useItemStore = defineStore("item", () => {
 
     // Add item to inventory
     addItemsToInventory(selectedItem.value, quantity);
+  
   }
 
   function sellItems(quantity: number, npc: Npc) {
@@ -249,6 +269,7 @@ export const useItemStore = defineStore("item", () => {
       totalValue
     );
   }
+
 
   function calclulatePrice(item: GameItem, shop: Shop, type: TransactionType) {
     const value = item.item.value;
@@ -289,12 +310,18 @@ export const useItemStore = defineStore("item", () => {
   function checkStock(quantity: number, stockItem: GameItem) {
     return stockItem.currentStackSize >= quantity;
   }
+  */
 
   function hasInventorySpace(item: GameItem, amount: number): boolean {
+    if (!playerInventory.value) {
+      throw new Error("Can't find player inventory");
+    }
+
     const maxStackSize = item.item.maxStackSize;
-    const invItems = playerInventory.value?.slots.filter(
+    const invItems = playerInventory.value.slots.filter(
       (invItem) => invItem?.itemId === item.itemId
     );
+
     const nonFullStack = invItems.find(
       (item) => (item?.currentStackSize || 0) < maxStackSize
     );
@@ -309,37 +336,20 @@ export const useItemStore = defineStore("item", () => {
     return amount <= emptySpace;
   }
 
-  function $reset() {
-    selectedItem.value = null;
-    gear.value = {
-      [EquipSlot.Head]: null,
-      [EquipSlot.Torso]: null,
-      [EquipSlot.Legs]: null,
-      [EquipSlot.Hands]: null,
-      [EquipSlot.Feet]: null,
-      [EquipSlot.MainHand]: null,
-      [EquipSlot.OffHand]: null,
-      [EquipSlot.Neck]: null,
-      [EquipSlot.Fingers]: null,
-      [EquipSlot.Back]: null,
-      [EquipSlot.Ammo]: null,
-    };
-  }
+  function $reset() {}
   return {
     $reset,
     playerItemContainers,
-    selectedItem,
     playerInventory,
+    playerGear,
+    hasRoomForItems,
+    hasEnoughItems,
     itemCountInInventory,
     addItemsToInventory,
     equipItem,
     unequipItem,
     removeItemsFromInventoryById,
     removeItemFromInventoryByIndex,
-    sellItems,
-    buyItems,
-    calclulatePrice,
-    gear,
     getItemById,
   };
 });

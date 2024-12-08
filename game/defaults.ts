@@ -15,7 +15,6 @@ type Defaults = {
   startingNpcs: Npc[];
   startingShops: Shop[];
   startingCamp: Camp;
-  // startingItemContainers: Record<ItemContainerId, ItemContainer>;
   startingItemContainers: ItemContainer[];
 };
 

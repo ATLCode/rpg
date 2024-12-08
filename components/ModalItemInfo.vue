@@ -25,6 +25,8 @@ const props = defineProps({
   position: absolute;
   background-color: var(--elevation1);
   border: 1px solid var(--elevation2);
+  width: max-content;
   padding: 1rem;
+  z-index: 500;
 }
 </style>

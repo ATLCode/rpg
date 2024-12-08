@@ -20,7 +20,9 @@
         <div class="gear-inventory-container"><GameGear /></div>
         <div class="gear-inventory-container"><GameInventory /></div>
       </div>
-      <div v-if="openTab === 'Skills'">Skills Test</div>
+      <div v-if="openTab === 'Skills'" class="skills">
+        <GameMenuSkills />
+      </div>
       <div v-if="openTab === 'Abilities'">Abilities Test</div>
       <div v-if="openTab === 'Quests'">Quests Test</div>
     </div>
@@ -56,6 +58,11 @@ defineEmits(["close"]);
       justify-content: center;
       align-items: center;
     }
+  }
+  .skills {
+    height: 100%;
+    width: 100%;
+    display: flex;
   }
 }
 </style>

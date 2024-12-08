@@ -33,17 +33,17 @@ export enum ItemAction {
 }
 
 export enum EquipSlot {
-  Head = "Head",
-  Torso = "Torso",
-  Legs = "Legs",
-  Hands = "Hands",
-  Feet = "Feet",
-  MainHand = "MainHand",
-  OffHand = "OffHand",
-  Neck = "Neck",
-  Fingers = "Fingers",
-  Back = "Back",
-  Ammo = "Ammo",
+  Head = 0,
+  Torso = 1,
+  Legs = 2,
+  Hands = 3,
+  Feet = 4,
+  MainHand = 5,
+  OffHand = 6,
+  Neck = 7,
+  Fingers = 8,
+  Back = 9,
+  Ammo = 10,
 }
 
 export enum ContextMode {
@@ -105,7 +105,8 @@ export type PriceModifier = {
 };
 
 export enum ItemContainerId {
-  playerInventory = "PlayerInventory",
+  PlayerInventory = "PlayerInventory",
+  PlayerGear = "PlayerGear",
 }
 export type ItemContainer = {
   id: ItemContainerId;

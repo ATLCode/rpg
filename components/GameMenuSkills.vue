@@ -50,12 +50,31 @@ function expLeft(skill: Skill) {
 <style lang="scss" scoped>
 .skills-container {
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   padding: 1rem;
   overflow-y: scroll;
 }
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--elevation1);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--elevation2);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--elevation3);
+}
+
 .skill-info {
   border: 1px solid grey;
   padding: 0.5rem;

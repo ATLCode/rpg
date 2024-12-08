@@ -14,17 +14,19 @@ export type Skill = {
 export const useSkillStore = defineStore("skill", () => {
   const skills = ref(defaults.startingSkills);
 
+  // We can't have last level end and new level start at same exp. Have to clear it up in our code.
+
   const levelTresholds: Record<number, number> = {
     1: 0,
-    2: 50,
-    3: 100,
-    4: 150,
-    5: 200,
-    6: 250,
-    7: 300,
-    8: 350,
-    9: 400,
-    10: 450,
+    2: 51,
+    3: 101,
+    4: 151,
+    5: 201,
+    6: 251,
+    7: 301,
+    8: 351,
+    9: 401,
+    10: 451,
   };
 
   const playerAbilities = ref<Ability[]>(defaults.startingAbilities);
@@ -76,7 +78,7 @@ export const useSkillStore = defineStore("skill", () => {
     currentExp: number,
     levelToCheck: number
   ) {
-    if (currentExp > levelTresholds[levelToCheck]) {
+    if (currentExp >= levelTresholds[levelToCheck]) {
       const newLevel = levelUp(skillId);
       checkLevelUp(skillId, currentExp, newLevel + 1);
     }

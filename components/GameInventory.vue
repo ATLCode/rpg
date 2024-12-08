@@ -9,8 +9,6 @@
         v-if="inventoryItem && inventoryItem?.itemId !== null"
         :game-item="inventoryItem"
         :game-item-index="index"
-        :selectable="props.shop ? true : false"
-        :selected-item="itemStore.selectedItem!"
       />
       <GameItem v-else :empty-slot="true" />
     </div>
@@ -21,14 +19,6 @@
 import { useItemStore } from "@/stores/item";
 
 const itemStore = useItemStore();
-
-const props = defineProps({
-  shop: {
-    type: Boolean,
-    required: false,
-    default: false,
-  },
-});
 </script>
 
 <style lang="scss" scoped>
@@ -39,5 +29,9 @@ const props = defineProps({
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   gap: 10px;
+}
+.inv-slot {
+  background-color: var(--elevation2);
+  border-radius: 10px;
 }
 </style>

@@ -35,6 +35,10 @@ export type Effect = {
   value: number;
   damageType?: DamageType;
 };
+export type Ingredient = {
+  item: ItemId;
+  amount: number;
+};
 export type CombatDetails = {
   effects: Effect[];
   actionPointCost: number;
@@ -43,7 +47,7 @@ export type GatherDetails = {
   product: GameItem;
 };
 export type CraftingDetails = {
-  ingredients: ItemId[];
+  ingredients: Ingredient[];
   product: GameItem;
 };
 

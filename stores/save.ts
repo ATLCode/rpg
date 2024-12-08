@@ -7,7 +7,7 @@ import { useNotificationStore } from "@/stores/notification";
 import { useItemStore } from "@/stores/item";
 import { useLocationStore } from "@/stores/location";
 import type { Npc } from "~/game/npcs";
-import type { Gear, ItemContainer } from "~/types/item.types";
+import type { ItemContainer } from "~/types/item.types";
 import type { Time } from "~/types/world.types";
 import type { Ability, SkillId } from "~/types/ability.types";
 import type { Location } from "~/types/location.types";
@@ -55,7 +55,6 @@ export const useSaveStore = defineStore("save", () => {
     playerLocation: Location;
     characterName: string;
     // Item Store
-    gear: Gear;
     playerItemContainers: ItemContainer[];
     // Skill Store
     skills: Record<SkillId, Skill>;
@@ -99,7 +98,6 @@ export const useSaveStore = defineStore("save", () => {
       energy: playerStore.energy,
       playerLocation: locationStore.playerLocation,
       characterName: playerStore.characterName,
-      gear: itemStore.gear,
       playerItemContainers: itemStore.playerItemContainers,
       skills: skillStore.skills,
       playerAbilities: skillStore.playerAbilities,
@@ -185,7 +183,6 @@ export const useSaveStore = defineStore("save", () => {
     selectedSaveId.value = save.id;
     playerStore.energy = save.data.energy;
     playerStore.characterName = save.data.characterName;
-    itemStore.gear = save.data.gear;
     itemStore.playerItemContainers = save.data.playerItemContainers;
     worldStore.time = save.data.time;
     locationStore.playerLocation = save.data.playerLocation;

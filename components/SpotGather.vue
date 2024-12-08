@@ -86,7 +86,7 @@ function progressComplete() {
   itemStore.addItemsToInventory(selectedAbility.value.gatherDetails!.product);
   // Get Exp
   if (props.spot.skillId) {
-    skillStore.giveSkillExp(props.spot.skillId, selectedAbility.value.xp * 5);
+    skillStore.giveSkillExp(props.spot.skillId, selectedAbility.value.xp);
   }
   // Select Random Ability
   selectedAbility.value = spotStore.selectRandomAbility(
@@ -95,12 +95,19 @@ function progressComplete() {
 }
 
 const allowed = computed(() => {
-  // Free Inventory slots?
-  // Enough energy?
+  if (!selectedAbility.value || !selectedAbility.value.gatherDetails) {
+    return false;
+  }
+  // Free Inventory slots
   if (
-    !selectedAbility.value ||
-    playerStore.energy < selectedAbility.value.energyCost
+    !itemStore.hasRoomForItems(
+      selectedAbility.value.gatherDetails.product.itemId
+    )
   ) {
+    return false;
+  }
+  if (playerStore.energy < selectedAbility.value.energyCost) {
+    // Enough energy?
     return false;
   }
   return true;

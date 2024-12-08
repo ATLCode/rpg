@@ -115,7 +115,7 @@ export const abilities: Record<AbilityId, Ability> = {
     xp: 10,
     energyCost: 5,
     craftingDetails: {
-      ingredients: [ItemId.RawPanfish],
+      ingredients: [{ item: ItemId.RawPanfish, amount: 2 }],
       product: {
         itemId: ItemId.CookedPanfish,
         item: items[ItemId.CookedPanfish],
@@ -133,7 +133,7 @@ export const abilities: Record<AbilityId, Ability> = {
     xp: 10,
     energyCost: 5,
     craftingDetails: {
-      ingredients: [ItemId.RawBluegill],
+      ingredients: [{ item: ItemId.RawBluegill, amount: 2 }],
       product: {
         itemId: ItemId.CookedBluegill,
         item: items[ItemId.CookedBluegill],
