@@ -25,7 +25,7 @@ export enum SpotId {
 export const spots: Record<SpotId, Spot> = {
   [SpotId.Bedroll]: {
     id: SpotId.Bedroll,
-    spotType: SpotType.Sleeping,
+    spotType: SpotType.Rest,
     name: "Bedroll",
     img: "/sprites/bedroll.png",
     skillId: null,

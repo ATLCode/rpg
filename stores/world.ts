@@ -12,14 +12,19 @@ export const useWorldStore = defineStore("world", () => {
   const viewLocations = ref([]);
   const viewPaths = ref([]);
 
+  function rest() {
+    // Takes 4 hours
+    // less limitation when to do
+    // Less benefits
+    // Save the game?
+  }
+
   function sleep(energyRestore: number) {
     playerStore.energy = energyRestore;
-
-    // restockShops();
+    // Save the game?
     // Heal Player based on food used and stuff
     // Give buffs based on food?
     addDayToTime();
-    // Run event etc. checker function
   }
 
   function addDayToTime() {
@@ -48,6 +53,10 @@ export const useWorldStore = defineStore("world", () => {
   }
 
   function restockShops() {
+    // This shouldn't relate to sleep or rest directly
+    // Rather call this in addTime function or call another function there
+    // that checks if day/week/season/year has changed to activate things like this
+
     console.log("Restocking");
     const lastDigit = time.value.dayCount % 10;
     const shopNpcs = npcStore.npcs.filter((npc) => npc.shop);
@@ -139,5 +148,14 @@ export const useWorldStore = defineStore("world", () => {
   function $reset() {
     time.value = defaults.startingTime;
   }
-  return { time, viewLocations, viewPaths, sleep, showTime, addTime, $reset };
+  return {
+    time,
+    viewLocations,
+    viewPaths,
+    sleep,
+    rest,
+    showTime,
+    addTime,
+    $reset,
+  };
 });

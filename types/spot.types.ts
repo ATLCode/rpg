@@ -7,7 +7,7 @@ export type WeightedAbilityId = WeightedObject<AbilityId>;
 export enum SpotType {
   Craft = "Craft",
   Gather = "Gather",
-  Sleeping = "Sleeping",
+  Rest = "Rest",
 }
 
 export type SpotGatherDetails = {

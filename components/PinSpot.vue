@@ -9,6 +9,10 @@
       v-if="selectedSpot?.spotType === SpotType.Craft"
       :spot="selectedSpot"
     />
+    <SpotRest
+      v-if="selectedSpot?.spotType === SpotType.Rest"
+      :spot="selectedSpot"
+    />
   </AModal>
   <ACard
     v-if="spotComponent === 'Card' && model"
@@ -51,7 +55,7 @@ const spotComponent = computed(() => {
     return undefined;
   }
 
-  const modalSpots = [SpotType.Craft, SpotType.Sleeping];
+  const modalSpots = [SpotType.Craft, SpotType.Rest];
   const cardSpots = [SpotType.Gather];
 
   if (modalSpots.includes(selectedSpot.value.spotType)) {
