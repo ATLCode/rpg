@@ -36,7 +36,7 @@ export type Effect = {
   damageType?: DamageType;
 };
 export type Ingredient = {
-  item: ItemId;
+  itemId: ItemId;
   amount: number;
 };
 export type CombatDetails = {

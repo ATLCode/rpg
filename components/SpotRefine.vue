@@ -94,7 +94,7 @@ function progressComplete() {
   }
   // Take Energy
   playerStore.useEnergy(selectedAbility.value.energyCost);
-  // CraftItem
+  // CraftItem - TODO Should this have its own function or do I do here seperatly remove items from inventory, I feel like own function
   itemStore.addItemsToInventory(selectedAbility.value.craftingDetails!.product);
   // Get Exp
   if (props.spot.skillId) {
@@ -106,10 +106,14 @@ const ingredientsString = computed(() => {
   if (!selectedAbility.value || !selectedAbility.value.craftingDetails) {
     return "";
   }
+
   return selectedAbility.value.craftingDetails.ingredients
     .map((ingredient: Ingredient) => {
-      const amount = ingredient.amount !== 1 ? `(${ingredient.amount})` : "";
-      return `${ingredient.item}${amount}`;
+      const amountInInventory = itemStore.itemCountInInventory(
+        ingredient.itemId
+      );
+      const amount = ` (${ingredient.amount}/${amountInInventory})`;
+      return `${ingredient.itemId}${amount}`;
     })
     .join(", ");
 });
@@ -121,7 +125,7 @@ const allowed = computed(() => {
   }
   // Has required ingredients
   for (const element of selectedAbility.value.craftingDetails!.ingredients) {
-    if (!itemStore.hasEnoughItems(element.item, element.amount)) {
+    if (!itemStore.hasEnoughItems(element.itemId, element.amount)) {
       return false;
     }
   }

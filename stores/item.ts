@@ -23,7 +23,7 @@ export const useItemStore = defineStore("item", () => {
     );
   });
 
-  // TODO Julius, should actions be specified in each item or programmatically decided? I feel programmatically.
+  // TODO Julius, should context menu actions be specified in each item or programmatically decided? I feel programmatically.
 
   function getItemById(itemId: ItemId) {
     const result = items[itemId];
