@@ -49,12 +49,17 @@ const props = defineProps({
     type: String,
     default: "1rem",
   },
+  borderRadius: {
+    type: String,
+    default: "10px",
+  },
 });
 
 const style = reactive({
   color: "",
   "background-color": "",
   padding: props.padding,
+  "border-radius": props.borderRadius,
 });
 
 watch(

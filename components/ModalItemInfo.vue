@@ -1,8 +1,7 @@
 <template>
   <div class="item-info-container">
     <div>Item Info:</div>
-    <div>Item type: {{ props.selectedItem?.type }}</div>
-    <div>Item index: {{ props.selectedItem?.index }}</div>
+    <div>Item Id: {{ props.selectedItem?.itemId }}</div>
     <div>Name: {{ props.selectedItem?.item.name }}</div>
     <div>Actions: {{ props.selectedItem?.item.actions }}</div>
     <div>Properties: {{ props.selectedItem?.item.properties }}</div>
@@ -26,6 +25,8 @@ const props = defineProps({
   position: absolute;
   background-color: var(--elevation1);
   border: 1px solid var(--elevation2);
+  width: max-content;
   padding: 1rem;
+  z-index: 500;
 }
 </style>

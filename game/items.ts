@@ -6,9 +6,24 @@ import {
   ItemRarity,
   ItemProperty,
   ItemType,
+  ItemContainerId,
+  type ItemContainer,
 } from "../types/item.types";
 
 // What if item would have craftable key which would include object with abilityRequirements, xp etc.
+
+export const itemContainers: Record<ItemContainerId, ItemContainer> = {
+  [ItemContainerId.PlayerInventory]: {
+    id: ItemContainerId.PlayerInventory,
+    maxSize: 28,
+    slots: new Array(28).fill(null),
+  },
+  [ItemContainerId.PlayerGear]: {
+    id: ItemContainerId.PlayerGear,
+    maxSize: 11,
+    slots: new Array(11).fill(null),
+  },
+};
 
 export const items: Record<ItemId, Item> = {
   [ItemId.RawPanfish]: {

@@ -1,6 +1,5 @@
 <template>
-  <div class="menu-container" :style="{ top: y + 'px', left: x + 'px' }">
-    <div>{{ modes }}</div>
+  <div class="menu-container">
     <div
       v-for="action in visibleActions"
       :key="action"
@@ -13,70 +12,72 @@
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import { ContextMode, ItemAction, type GameItem } from "../types/item.types";
-const playerStore = usePlayerStore();
+import {
+  ItemAction,
+  ItemContainerId,
+  type GameItem,
+  type ItemContainer,
+} from "../types/item.types";
+import { useItemStore } from "@/stores/item";
+
+const itemStore = useItemStore();
 
 const props = defineProps({
-  x: {
-    type: Number,
-    required: true,
-  },
-  y: {
-    type: Number,
-    required: true,
-  },
-  selectedItem: {
+  clickedItem: {
     type: Object as PropType<GameItem | null>,
     default: null,
   },
-  modes: {
-    type: Array as PropType<ContextMode[]>,
-    required: true,
+  clickedItemIndex: {
+    type: Number,
+    default: null,
+  },
+  clickedItemContainer: {
+    type: Object as PropType<ItemContainer | null>,
+    default: null,
   },
 });
 
 const emit = defineEmits(["close"]);
 
 const visibleActions = computed(() => {
-  // const rawActions = props.selectedItem?.item.actions;
+  // const rawActions = props.clickedItem?.item.actions;
   // Form raw actions
+  // Should we determine actions here based on the item or should it come from item
 
   let rawActions = [ItemAction.Drop];
-  if (props.selectedItem?.item.equipSlot) {
+  if (props.clickedItem?.item.equipSlot) {
     rawActions.push(ItemAction.Equip);
     rawActions.push(ItemAction.Unequip);
   }
 
-  // Filters for contexxt modes
-  if (props.modes.includes(ContextMode.Inventory)) {
+  if (props.clickedItemContainer?.id === ItemContainerId.PlayerGear) {
+    rawActions = rawActions?.filter((action) => action === ItemAction.Unequip);
+  }
+  if (props.clickedItemContainer?.id === ItemContainerId.PlayerInventory) {
     rawActions = rawActions?.filter((action) => action !== ItemAction.Unequip);
   }
-  if (props.modes.includes(ContextMode.Gear)) {
-    return rawActions?.filter((action) => action === ItemAction.Unequip);
-  }
+
   return rawActions;
 });
 
 function handleActionClick(action: ItemAction) {
-  if (!props.selectedItem) {
+  if (!props.clickedItem) {
     throw new Error("Selected item doesn't exist");
   }
   console.log(action);
   if (action === ItemAction.Drop) {
     console.log("Dropping");
-
-    playerStore.removeSpecificItemFromInventory(props.selectedItem);
+    itemStore.removeItemFromInventoryByIndex(props.clickedItemIndex);
   }
   if (action === ItemAction.Eat) {
     console.log("Eating");
   }
   if (action === ItemAction.Equip) {
     console.log("Equipping");
-    playerStore.equipItem(props.selectedItem);
   }
   if (action === ItemAction.Unequip) {
     console.log("Unequipping");
-    playerStore.unequipItem(props.selectedItem);
+    itemStore.unequipItem(props.clickedItem);
   }
   emit("close");
 }
@@ -89,6 +90,8 @@ function handleActionClick(action: ItemAction) {
   background-color: var(--elevation1);
   min-width: 200px;
   z-index: 50;
+  top: 100%;
+  border: 1px solid var(--elevation2);
 }
 .action {
   padding: 10px;

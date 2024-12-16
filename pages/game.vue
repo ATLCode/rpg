@@ -1,34 +1,29 @@
 <template>
   <div class="game-container">
-    <NavBar v-if="!(playerStore.gameState === GameState.Combat)" />
-    <GameBar
-      v-if="!(playerStore.gameState === GameState.Combat)"
+    <BarSide v-if="!(gameStore.gameState === GameState.Combat)" />
+    <BarTop
+      v-if="!(gameStore.gameState === GameState.Combat)"
       class="game-bar"
     />
     <div class="game-content">
-      <div v-if="playerStore.gameState === GameState.Normal" class="area">
-        <AreaWorld
-          v-if="locationStore.currentArea.type === LocationType.World"
-        />
-        <AreaLocation
-          v-if="locationStore.currentArea.type === LocationType.Container"
-        />
+      <div v-if="gameStore.gameState === GameState.Normal" class="area">
+        <MapGame />
       </div>
-      <div v-if="playerStore.gameState === GameState.Travel" class="travel">
+      <div v-if="gameStore.gameState === GameState.Travel" class="travel">
         <GameTravel />
       </div>
-      <div v-if="playerStore.gameState === GameState.Combat" class="combat">
+      <div v-if="gameStore.gameState === GameState.Combat" class="combat">
         <GameCombat />
+      </div>
+      <div v-if="gameStore.gameState === GameState.Encounter" class="encounter">
+        <GameEncounter />
       </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { useLocationStore } from "@/stores/location";
-import { usePlayerStore, GameState } from "@/stores/player";
-import { LocationType } from "~/game/locations";
-const locationStore = useLocationStore();
-const playerStore = usePlayerStore();
+import { useGameStore } from "@/stores/game";
+const gameStore = useGameStore();
 
 definePageMeta({ middleware: ["auth"], layout: "game" });
 </script>

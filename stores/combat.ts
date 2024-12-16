@@ -1,7 +1,8 @@
-import { usePlayerStore, GameState, type Unit } from "@/stores/player";
-import { SkillId } from "~/game/abilities";
+import { usePlayerStore, type Unit } from "@/stores/player";
 import type { Encounter } from "~/game/encounters";
 import type { GameItem } from "~/types/item.types";
+import { useGameStore } from "@/stores/game";
+import { SkillId } from "~/types/ability.types";
 
 export type Drop = {
   id: string;
@@ -31,6 +32,7 @@ export type CombatState = {
 export const useCombatStore = defineStore("combat", () => {
   const playerStore = usePlayerStore();
   const skillStore = useSkillStore();
+  const gameStore = useGameStore();
 
   const combatState = ref<CombatState | null>();
 
@@ -59,7 +61,7 @@ export const useCombatStore = defineStore("combat", () => {
     };
 
     // Change game state
-    playerStore.gameState = GameState.Combat;
+    gameStore.gameState = GameState.Combat;
   }
 
   function returnFromCombat() {
@@ -85,7 +87,7 @@ export const useCombatStore = defineStore("combat", () => {
       playerStore.energy -= energyLoss;
     }
     // Change Game State
-    playerStore.gameState = GameState.Normal;
+    gameStore.gameState = GameState.Normal;
     // Return from combat
     returnInfo.value = null;
   }

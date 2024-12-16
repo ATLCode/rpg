@@ -1,15 +1,16 @@
-import { usePlayerStore, type Gear } from "./player";
 import type { Skill } from "./skill";
 import { useSkillStore } from "./skill";
 import { useNpcStore } from "./npc";
+import { usePlayerStore } from "./player";
 import { useWorldStore } from "@/stores/world";
 import { useNotificationStore } from "@/stores/notification";
-import type { LocationId } from "~/game/locations";
+import { useItemStore } from "@/stores/item";
 import { useLocationStore } from "@/stores/location";
-import type { Ability, SkillId } from "~/game/abilities";
 import type { Npc } from "~/game/npcs";
-import type { GameItem } from "~/types/item.types";
+import type { ItemContainer } from "~/types/item.types";
 import type { Time } from "~/types/world.types";
+import type { Ability, SkillId } from "~/types/ability.types";
+import type { Location } from "~/types/location.types";
 
 export const useSaveStore = defineStore("save", () => {
   const playerStore = usePlayerStore();
@@ -18,6 +19,7 @@ export const useSaveStore = defineStore("save", () => {
   const npcStore = useNpcStore();
   const worldStore = useWorldStore();
   const notificationStore = useNotificationStore();
+  const itemStore = useItemStore();
 
   const client = useSupabaseClient();
 
@@ -46,14 +48,18 @@ export const useSaveStore = defineStore("save", () => {
   */
 
   type SaveData = {
+    // World Store
     time: Time;
+    // Player Store
     energy: number;
-    currentLocationId: LocationId;
+    playerLocation: Location;
     characterName: string;
-    gear: Gear;
-    inventory: (GameItem | null)[];
+    // Item Store
+    playerItemContainers: ItemContainer[];
+    // Skill Store
     skills: Record<SkillId, Skill>;
-    abilities: Ability[];
+    playerAbilities: Ability[];
+    //
     npcs: Npc[];
   };
 
@@ -66,35 +72,35 @@ export const useSaveStore = defineStore("save", () => {
   const selectedSaveId = ref<number | undefined>(undefined);
 
   async function getUserSaves() {
-    const { data, error } = await useFetch("/api/saves/get-for-user");
-    if (error.value || !data.value) {
-      throw new Error(`Unable to load the saves: ${error.value}`);
+    try {
+      const data = await $fetch("/api/saves/get-for-user");
+      saves.value = data
+        .sort((a: any, b: any) => {
+          return (
+            new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+          );
+        })
+        .map((save) => {
+          const { id, saveData } = save;
+          return {
+            id: id as number,
+            data: deconstructSaveData(saveData),
+          };
+        });
+    } catch (error) {
+      throw new Error(`Unable to load the saves: ${error}`);
     }
-    saves.value = data.value
-      .sort((a, b) => {
-        return (
-          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-        );
-      })
-      .map((save) => {
-        const { id, saveData } = save;
-        return {
-          id: id as number,
-          data: deconstructSaveData(saveData),
-        };
-      });
   }
 
   function constructSaveData() {
     const save: SaveData = {
       time: worldStore.time,
       energy: playerStore.energy,
-      currentLocationId: locationStore.currentLocationId,
+      playerLocation: locationStore.playerLocation,
       characterName: playerStore.characterName,
-      gear: playerStore.gear,
-      inventory: playerStore.inventory,
+      playerItemContainers: itemStore.playerItemContainers,
       skills: skillStore.skills,
-      abilities: skillStore.abilities,
+      playerAbilities: skillStore.playerAbilities,
       npcs: npcStore.npcs,
     };
 
@@ -105,7 +111,7 @@ export const useSaveStore = defineStore("save", () => {
   function deconstructSaveData(data: string): SaveData {
     // const saveData = JSON.parse(Buffer.from(data, "base64").toString("ascii"));
     const saveData = JSON.parse(decodeURIComponent(window.atob(data)));
-    if (!saveData.currentLocationId) {
+    if (!saveData.playerLocation) {
       console.log("Houston we have a problem");
     }
     return saveData;
@@ -129,7 +135,7 @@ export const useSaveStore = defineStore("save", () => {
         1000
       );
     } catch (error) {
-      // console.error(error);
+      console.error(error);
     }
   }
 
@@ -177,12 +183,11 @@ export const useSaveStore = defineStore("save", () => {
     selectedSaveId.value = save.id;
     playerStore.energy = save.data.energy;
     playerStore.characterName = save.data.characterName;
-    playerStore.gear = save.data.gear;
-    playerStore.inventory = save.data.inventory;
+    itemStore.playerItemContainers = save.data.playerItemContainers;
     worldStore.time = save.data.time;
-    locationStore.currentLocationId = save.data.currentLocationId;
+    locationStore.playerLocation = save.data.playerLocation;
     skillStore.skills = save.data.skills;
-    skillStore.abilities = save.data.abilities;
+    skillStore.playerAbilities = save.data.playerAbilities;
     npcStore.npcs = save.data.npcs;
   }
 
@@ -196,7 +201,7 @@ export const useSaveStore = defineStore("save", () => {
       });
       getUserSaves();
     } catch (error) {
-      // console.error(error);
+      console.error(error);
     }
   }
 

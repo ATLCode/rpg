@@ -1,34 +1,48 @@
 import { useNotificationStore, NotificationType } from "@/stores/notification";
-import { type Ability } from "~/game/abilities";
+import type { AbilityId } from "~/game/abilities";
 import { defaults } from "~/game/defaults";
-import { SkillId } from "~/game/abilities";
+import { AbilityType, type Ability, type SkillId } from "~/types/ability.types";
 
 export type Skill = {
+  id: SkillId;
   name: string;
   currentExp: number; // How we do leveling and xp limits?
   currentLevel: number;
-  abilities: number[]; // Do we just have abilities completely separately?
+  img: string;
 };
 
 export const useSkillStore = defineStore("skill", () => {
   const skills = ref(defaults.startingSkills);
 
+  // We can't have last level end and new level start at same exp. Have to clear it up in our code.
+
   const levelTresholds: Record<number, number> = {
-    2: 50,
-    3: 100,
-    4: 150,
-    5: 200,
-    6: 250,
-    7: 300,
-    8: 350,
-    9: 400,
-    10: 450,
+    1: 0,
+    2: 51,
+    3: 101,
+    4: 151,
+    5: 201,
+    6: 251,
+    7: 301,
+    8: 351,
+    9: 401,
+    10: 451,
   };
 
-  const abilities = ref<Ability[]>(defaults.startingAbilities);
+  const playerAbilities = ref<Ability[]>(defaults.startingAbilities);
 
-  const activeAbilities = computed(() =>
-    abilities.value.filter((ability) => ability.isActive)
+  const playerAbilityIds = computed(() => {
+    const ids: AbilityId[] = [];
+    for (const item of playerAbilities.value) {
+      ids.push(item.id);
+    }
+    return ids;
+  });
+
+  const combatAbilities = computed(() =>
+    playerAbilities.value.filter(
+      (ability: Ability) => ability.abilityType === AbilityType.Combat
+    )
   );
 
   function giveSkillExp(skillId: SkillId, amount: number) {
@@ -45,12 +59,26 @@ export const useSkillStore = defineStore("skill", () => {
     checkLevelUp(skillId, skill.currentExp, skill.currentLevel + 1);
   }
 
+  function levelBracketGap(skillId: SkillId) {
+    const currentLevel = skills.value[skillId].currentLevel;
+    const currentBracketStart = levelTresholds[currentLevel];
+    const currentBracketEnd = levelTresholds[currentLevel + 1];
+    return currentBracketEnd - currentBracketStart;
+  }
+
+  function levelBracketProgress(skillId: SkillId) {
+    const currentLevel = skills.value[skillId].currentLevel;
+    const currentBracketStart = levelTresholds[currentLevel];
+    const currentExp = skills.value[skillId].currentExp;
+    return currentExp - currentBracketStart;
+  }
+
   function checkLevelUp(
     skillId: SkillId,
     currentExp: number,
     levelToCheck: number
   ) {
-    if (currentExp > levelTresholds[levelToCheck]) {
+    if (currentExp >= levelTresholds[levelToCheck]) {
       const newLevel = levelUp(skillId);
       checkLevelUp(skillId, currentExp, newLevel + 1);
     }
@@ -80,15 +108,18 @@ export const useSkillStore = defineStore("skill", () => {
 
   function $reset() {
     skills.value = defaults.startingSkills;
-    abilities.value = defaults.startingAbilities;
+    playerAbilities.value = defaults.startingAbilities;
   }
 
   return {
     skills,
     giveSkillExp,
     levelTresholds,
-    abilities,
-    activeAbilities,
+    playerAbilities,
+    playerAbilityIds,
+    combatAbilities,
+    levelBracketGap,
+    levelBracketProgress,
     $reset,
   };
 });

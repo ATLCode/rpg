@@ -14,3 +14,41 @@
   --elevation5: #8b8b8b;
   --gold: #ffe524;
 }
+
+.skills {
+  --skill-gold: #f8e71c;
+  --magic: #052244;
+  --archery: #417505;
+  --woodcutting: #335c05;
+  --fishing: #4a90e2;
+  --cooking: #f5a623;
+}
+
+/*
+Icon Settings
+
+Background:
+-Type, Gradient
+-Gradient, plain
+-Shape, circle
+-Frame, width 15
+
+Foreground:
+-Transformations, 2 shrink
+-Position, 0 + 0
+-Skew, 0 + 0
+-Gradient, plain
+-Shadow, false
+-Stroke, false
+
+
+Icon names
+
+Woodcutting: Pine tree (Did with 1 shrink)
+Fishing: Salmon
+Archery: High shot
+Cooking: Camp cooking pot
+
+
+Sleeping: Bed
+*/
