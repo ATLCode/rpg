@@ -1,6 +1,5 @@
-import { ItemId, type stockSlot } from "../types/item.types";
-import { items } from "./items";
-import { shops } from "./shops";
+import { ItemId } from "../types/item.types";
+import { shops, type Shop } from "./shops";
 
 export type NpcResponse = {
   // Requirements
