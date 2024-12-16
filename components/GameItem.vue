@@ -12,7 +12,12 @@
       <div>{{ props.gameItem.currentStackSize }}</div>
 
       <div class="item-img">
-        <img :src="items[props.gameItem.itemId].img" class="item-icon" alt="" />
+        <img
+          :src="items[props.gameItem.itemId].img"
+          class="item-icon"
+          alt=""
+          draggable="false"
+        />
       </div>
     </div>
 
@@ -131,7 +136,7 @@ function closeItemActionsMenu() {
   background-color: transparent;
   width: 70px;
   height: 70px;
-  border-radius: 10px;
+  // border-radius: 10px;
   text-align: center;
   padding: 2px;
 }

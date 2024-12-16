@@ -23,6 +23,8 @@ export const useItemStore = defineStore("item", () => {
     );
   });
 
+  // TODO Also I should probably have select item for OSRS like combining and stuff?
+
   // TODO Julius, should context menu actions be specified in each item or programmatically decided? I feel programmatically.
 
   function getItemById(itemId: ItemId) {
