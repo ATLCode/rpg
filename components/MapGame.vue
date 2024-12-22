@@ -36,6 +36,7 @@
     <PinTravel v-model="pinTravelOpen" />
     <PinAccess v-model="pinAccessOpen" />
     <PinSpot v-model="pinSpotOpen" />
+    <PinNpc v-model="pinNpcOpen" />
   </div>
 </template>
 
@@ -51,6 +52,7 @@ const locationStore = useLocationStore();
 const pinTravelOpen = ref(false);
 const pinAccessOpen = ref(false);
 const pinSpotOpen = ref(false);
+const pinNpcOpen = ref(false);
 
 function clickPin(clickedPin: Pin) {
   console.log(clickedPin.type);
@@ -68,6 +70,9 @@ function clickPin(clickedPin: Pin) {
   }
   if (clickedPin.type === PinType.Access) {
     pinAccessOpen.value = true;
+  }
+  if (clickedPin.type === PinType.Npc) {
+    pinNpcOpen.value = true;
   }
   if (clickedPin.type === PinType.Spot) {
     pinSpotOpen.value = true;

@@ -216,6 +216,7 @@ export enum PinId {
   CampEdge = "CampEdge",
   CampBedroll = "CampBedroll",
   CampCampFire = "CampCampfire",
+  CampTestHarold = "CampTestHarold",
 }
 
 export const maps: Record<MapId, Map> = {
@@ -265,7 +266,12 @@ export const maps: Record<MapId, Map> = {
     name: "Camp",
     mapScale: "Area",
     img: "/maps/camp.jpeg",
-    pins: [PinId.CampEdge, PinId.CampBedroll, PinId.CampCampFire],
+    pins: [
+      PinId.CampEdge,
+      PinId.CampBedroll,
+      PinId.CampCampFire,
+      PinId.CampTestHarold,
+    ],
     encounters: [],
     parent: MapId.World,
   },
@@ -378,6 +384,15 @@ export const pins: Record<PinId, Pin> = {
     target: SpotId.Campfire,
     icon: "/icons/spot_cooking.png",
     coordinates: { x: 300, y: 300 },
+    isVisible: true,
+  },
+  [PinId.CampTestHarold]: {
+    id: PinId.CampTestHarold,
+    name: "Harold",
+    type: PinType.Npc,
+    target: NpcId.Harold,
+    icon: "/icons/spot_npc.png",
+    coordinates: { x: 400, y: 400 },
     isVisible: true,
   },
 };
