@@ -11,6 +11,7 @@ import type { ItemContainer } from "~/types/item.types";
 import type { Time } from "~/types/world.types";
 import type { Ability, SkillId } from "~/types/ability.types";
 import type { Location } from "~/types/location.types";
+import type { Unit } from "~/types/combat.types";
 
 export const useSaveStore = defineStore("save", () => {
   const playerStore = usePlayerStore();
@@ -54,6 +55,7 @@ export const useSaveStore = defineStore("save", () => {
     energy: number;
     playerLocation: Location;
     characterName: string;
+    playerGroup: Unit[];
     // Item Store
     playerItemContainers: ItemContainer[];
     // Skill Store
@@ -98,6 +100,7 @@ export const useSaveStore = defineStore("save", () => {
       energy: playerStore.energy,
       playerLocation: locationStore.playerLocation,
       characterName: playerStore.characterName,
+      playerGroup: playerStore.playerGroup,
       playerItemContainers: itemStore.playerItemContainers,
       skills: skillStore.skills,
       playerAbilities: skillStore.playerAbilities,
@@ -183,6 +186,7 @@ export const useSaveStore = defineStore("save", () => {
     selectedSaveId.value = save.id;
     playerStore.energy = save.data.energy;
     playerStore.characterName = save.data.characterName;
+    playerStore.playerGroup = save.data.playerGroup;
     itemStore.playerItemContainers = save.data.playerItemContainers;
     worldStore.time = save.data.time;
     locationStore.playerLocation = save.data.playerLocation;

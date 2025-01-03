@@ -7,7 +7,10 @@
         {{ worldStore.time.year }} (Day Count: {{ worldStore.time.dayCount }})
       </div>
       <div>{{ worldStore.showTime() }}</div>
-      <div>Energy: {{ playerStore.energy }} {{ locationStore.activePath }}</div>
+      <div>
+        Energy: {{ playerStore.energy }} {{ encounterStore.activeEncounter }}
+        {{ locationStore.activePath }}
+      </div>
     </div>
 
     <div class="bar-header">
@@ -44,12 +47,14 @@ import { usePlayerStore } from "@/stores/player";
 import { useSaveStore } from "@/stores/save";
 import { useWorldStore } from "@/stores/world";
 import { useGameStore } from "@/stores/game";
+import { useEncounterStore } from "@/stores/encounter";
 import { maps } from "~/game/locations";
 const locationStore = useLocationStore();
 const playerStore = usePlayerStore();
 const saveStore = useSaveStore();
 const worldStore = useWorldStore();
 const gameStore = useGameStore();
+const encounterStore = useEncounterStore();
 
 const devToolsOpen = ref(false);
 

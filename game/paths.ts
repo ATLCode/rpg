@@ -23,10 +23,7 @@ export const paths: Record<PathId, Path> = {
   [PathId.ForestPath]: {
     name: "Forest Path",
     locations: [PinId.Town, PinId.Forest],
-    encounters: [
-      { object: EncounterId.Empty, weight: 100 },
-      { object: EncounterId.Thief, weight: 500 },
-    ],
+    encounters: [{ object: EncounterId.ForestBandit, weight: 500 }],
     encounterChecks: 1,
     reqSkills: null,
     reqItem: null,
@@ -38,10 +35,7 @@ export const paths: Record<PathId, Path> = {
   [PathId.MountainPath]: {
     name: "Mountain Path",
     locations: [PinId.Forest, PinId.Mountain],
-    encounters: [
-      { object: EncounterId.Empty, weight: 100 },
-      { object: EncounterId.Thief, weight: 500 },
-    ],
+    encounters: [{ object: EncounterId.ForestBandit, weight: 500 }],
     encounterChecks: 1,
     reqSkills: null,
     reqItem: null,

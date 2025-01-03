@@ -1,3 +1,4 @@
+import { CombatId } from "./combat";
 import {
   ChoiceType,
   DialogueNodeType,
@@ -6,10 +7,12 @@ import {
 
 export enum DialogueId {
   TestConversation = "TestConversation",
+  TestEncounter = "TestEncounter",
 }
 export enum NodeId {
   TestGreeting = "TestGreeting",
   TestGoodbye = "TestGoodbye",
+  TestAmbush = "TestAmbush",
 }
 
 export const dialogues: Record<DialogueId, Dialogue> = {
@@ -36,6 +39,30 @@ export const dialogues: Record<DialogueId, Dialogue> = {
             text: "Goodbye!",
             type: ChoiceType.EndDialog,
             target: null,
+          },
+        ],
+      },
+    ],
+  },
+  [DialogueId.TestEncounter]: {
+    nodes: [
+      {
+        id: NodeId.TestAmbush,
+        type: DialogueNodeType.Center,
+        text: [
+          "As you are traveling you suddenly see a figure step out behind a tree",
+          "You see in front of you a bandit demanding that you give all your valuables",
+        ],
+        playerChoices: [
+          {
+            text: "Give up your items",
+            type: ChoiceType.EndDialog,
+            target: null,
+          },
+          {
+            text: "Fight back",
+            type: ChoiceType.CombatId,
+            target: CombatId.Thief,
           },
         ],
       },

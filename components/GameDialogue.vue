@@ -5,12 +5,13 @@
         <div>{{ currentNode?.text[gameTextIndex] }}</div>
       </div>
       <div class="npc-info">
-        <div>Name</div>
+        <div>{{ props.defaultName }}</div>
 
         <div class="info-img-container">
           <img :src="props.defaultImage" class="info-img" alt="image" />
         </div>
       </div>
+      <div class="guide-text">Click to continue</div>
     </div>
     <div v-if="!isGameTurn" class="dialogue-player">
       <div
@@ -27,12 +28,16 @@
 
 <script lang="ts" setup>
 import type { PropType } from "vue";
+import { useCombatStore } from "@/stores/combat";
 import {
   ChoiceType,
   type Dialogue,
   type DialogueNode,
   type PlayerChoice,
 } from "~/types/dialogue.types";
+import { CombatId, combats } from "~/game/combat";
+
+const combatStore = useCombatStore();
 
 const model = defineModel({ type: Boolean });
 
@@ -45,7 +50,13 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  defaultName: {
+    type: String,
+    default: "",
+  },
 });
+
+const emit = defineEmits(["close"]);
 
 const currentNode = ref<DialogueNode | null>(null);
 const isGameTurn = ref(true);
@@ -84,6 +95,9 @@ function handlePlayerChoice(choice: PlayerChoice) {
       throw new Error("Can't find new node");
     }
   }
+  if (choice.type === ChoiceType.CombatId) {
+    combatStore.startCombat(combats[choice.target as CombatId]);
+  }
 }
 
 function closeDialogue() {
@@ -93,6 +107,7 @@ function closeDialogue() {
   }
   isGameTurn.value = true;
   gameTextIndex.value = 0;
+  emit("close");
 }
 
 onMounted(() => {
@@ -109,21 +124,22 @@ onMounted(() => {
   bottom: 0px;
   width: 100%;
   height: 30%;
-  z-index: 999;
+  z-index: 99999;
   background-color: var(--elevation1);
 }
 .dialogue-npc {
   height: 100%;
   width: 100%;
-  border: 1px solid yellow;
+  // border: 1px solid yellow;
   display: grid;
   grid-template-columns: 3fr 1fr;
   padding: 1rem;
+  cursor: pointer;
 }
 .dialogue-player {
   height: 100%;
   width: 100%;
-  border: 1px solid blue;
+  // border: 1px solid blue;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -147,5 +163,10 @@ onMounted(() => {
   max-height: 100%;
   width: 100%;
   object-fit: contain;
+}
+.guide-text {
+  display: flex;
+  justify-content: center;
+  font-style: italic;
 }
 </style>

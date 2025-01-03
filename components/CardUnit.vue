@@ -25,6 +25,7 @@ const props = defineProps({
 .unit-card {
   align-self: center;
   border: 1px solid var(--elevation2);
+  background-color: var(--elevation1);
   height: 200px;
   width: 160px;
   cursor: pointer;

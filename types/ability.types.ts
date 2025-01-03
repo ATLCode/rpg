@@ -51,6 +51,8 @@ export type CraftingDetails = {
   product: GameItem;
 };
 
+// Should ability type also have tags
+
 export type Ability = {
   id: AbilityId;
   abilityType: AbilityType;

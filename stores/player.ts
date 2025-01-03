@@ -1,25 +1,7 @@
-import { type WeightedLoot } from "../types/item.types";
-import type { AbilityId } from "~/game/abilities";
-
-export type Unit = {
-  isPlayer?: boolean;
-  name: string;
-  img: string;
-  currentActionPoints: number;
-  maxActionPoints: number;
-  currentHealth: number;
-  maxHealth: number;
-  abilities: AbilityId[];
-  drops?: WeightedLoot[];
-  // resistances
-};
+import type { Unit } from "~/types/combat.types";
 
 export const usePlayerStore = defineStore("player", () => {
   const characterName = ref("");
-
-  // Not sure if we need energy?
-  // At least in current use, things should take time rather than energy.
-  // Could be used as resource system though?
   const energy = ref(100);
   /*
   const playerUnit = ref<Unit>({

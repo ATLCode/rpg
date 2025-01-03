@@ -1,192 +1,34 @@
 <template>
   <div v-if="combatStore.combatState" class="combat-container">
-    <div class="combat-visual">
+    <div class="combat-grid">
       <div
-        v-for="(unit, index) in combatStore.combatState.playerGroup"
+        v-for="(tile, index) in combatStore.combatState.grid"
         :key="index"
-        class="unit-card-container"
-        @click="
-          useAbility(
-            selectedAbility,
-            combatStore.combatState.playerGroup[0],
-            unit
-          )
-        "
+        class="combat-tile"
       >
-        <div class="unit-header">
-          <div
-            v-if="
-              combatStore.combatState.playerGroupTurn &&
-              combatStore.combatState.currentTurn.unitIndex === index
-            "
-            class="turn-indicator"
-          >
-            <img src="/assets/icons/chevron-down.svg" alt="" class="turn-img" />
-          </div>
-        </div>
-
-        <CardUnit :unit="unit" />
-      </div>
-      <ASpacer />
-      <div
-        v-for="(unit, index) in combatStore.combatState.enemyGroup"
-        :key="index"
-        class="unit-card-container"
-        @click="
-          useAbility(
-            selectedAbility,
-            combatStore.combatState.playerGroup[0],
-            unit
-          )
-        "
-      >
-        <div class="unit-header">
-          <div
-            v-if="
-              !combatStore.combatState.playerGroupTurn &&
-              combatStore.combatState.currentTurn.unitIndex === index
-            "
-            class="turn-indicator"
-          >
-            <img src="/assets/icons/chevron-down.svg" alt="" class="turn-img" />
-          </div>
-        </div>
-
-        <CardUnit :unit="unit" />
+        <CombatUnit
+          v-if="tile.unit"
+          :unit="tile.unit"
+          @click="selectUnitForInfo(tile.unit)"
+        />
       </div>
     </div>
-    <div class="combat-info">
-      <div class="info-player">
-        <div class="player-tabs">
-          <AButton
-            background-color="--elevation1"
-            :class="{ activeTab: selectedPlayerView === PlayerView.Equipment }"
-            @click="selectedPlayerView = PlayerView.Equipment"
-            >EQ</AButton
-          >
-          <AButton
-            background-color="--elevation1"
-            :class="{ activeTab: selectedPlayerView === PlayerView.Inventory }"
-            @click="selectedPlayerView = PlayerView.Inventory"
-            >IN</AButton
-          >
-          <AButton
-            background-color="--elevation1"
-            :class="{ activeTab: selectedPlayerView === PlayerView.Abilities }"
-            @click="selectedPlayerView = PlayerView.Abilities"
-            >AB</AButton
-          >
-          <AButton
-            background-color="--elevation1"
-            :class="{ activeTab: selectedPlayerView === PlayerView.Stats }"
-            @click="selectedPlayerView = PlayerView.Stats"
-            >ST</AButton
-          >
-        </div>
-        <div class="player-view">
-          <div
-            v-if="selectedPlayerView === PlayerView.Equipment"
-            class="tab-content"
-          >
-            <GameMenuGear />
-          </div>
-          <div
-            v-if="selectedPlayerView === PlayerView.Inventory"
-            class="tab-content"
-          >
-            <GameMenuInventory />
-          </div>
-          <div
-            v-if="selectedPlayerView === PlayerView.Abilities"
-            class="tab-content"
-          >
-            <div
-              v-if="gameStore.gameState === GameState.Combat"
-              class="abilities-container"
-            >
-              <CardAbility
-                v-for="ability in skillStore.combatAbilities"
-                :key="ability.name"
-                :ability="ability"
-                :selected-ability-id="selectedAbility?.id"
-                class="abilities-container"
-                @select-ability="selectedAbility = ability"
-              />
-            </div>
-          </div>
-          <div
-            v-if="selectedPlayerView === PlayerView.Stats"
-            class="tab-content"
-          >
-            <GameMenuSkills />
-          </div>
-        </div>
-      </div>
-      <div class="info-middle">
-        <div class="middle-ap">
-          <h1>
-            {{ combatStore.combatState.playerGroup[0].currentActionPoints }}
-            /
-            {{ combatStore.combatState.playerGroup[0].maxActionPoints }}
-          </h1>
-        </div>
-        <div class="extra-info">
-          <pre>{{ JSON.stringify(combatStore.combatState, null, 4) }}</pre>
-        </div>
-        <AButton @click="endTurn" @keyup.space="endTurn">
-          <div>End Turn</div>
-          <div>(Space)</div>
-        </AButton>
-        <AButton @click="gameStore.gameState = GameState.Normal">Flee</AButton>
-      </div>
-      <div class="info-enemy">Enemy</div>
+    <CombatBattlefieldInfo class="info-battlefield" />
+    <CombatAbilities class="info-abilities" :unit="selectedPlayer" />
+    <div class="player-info">
+      <CombatUnitInfo
+        v-if="showSelectedPlayer"
+        v-model="showSelectedPlayer"
+        :unit="selectedPlayer"
+      />
     </div>
-    <AModal v-model="combatStore.combatState.result.isOver" :persistent="true">
-      <div v-if="combatStore.combatState.result.isWon">
-        <div>You Won!</div>
-        <div>
-          You gained {{ combatStore.combatState.rewards.meleeExp }} melee
-          experience
-        </div>
-        <div>
-          You gained {{ combatStore.combatState.rewards.rangedExp }} ranged
-          experience
-        </div>
-        <div>
-          You gained {{ combatStore.combatState.rewards.magicExp }} magic
-          experience
-        </div>
-        <div>You will get</div>
-        <div class="drops-container">
-          <div
-            v-for="(drop, index) in combatStore.combatState.rewards.drops"
-            :key="index"
-          >
-            <div>
-              {{ drop.gameItem.item.name }} - {{ drop.gameItem.itemId }}
-            </div>
-            <!--
-            Need to fix ACheckbox to make below input to work
-                <ACheckbox v-model="combatStore.combatState.rewards.selectedDrops" :value="drop"></ACheckbox>
-            -->
-            <input
-              v-model="combatStore.combatState.rewards.selectedDrops"
-              type="checkbox"
-              :value="drop"
-            />
-          </div>
-        </div>
-
-        <AButton @click="combatStore.returnFromCombat">Continue</AButton>
-      </div>
-      <div v-else>
-        <div>Ýou Lost!</div>
-
-        <AButton @click="gameStore.gameState = GameState.Normal"
-          >Continue</AButton
-        >
-      </div>
-    </AModal>
+    <div class="enemy-info">
+      <CombatUnitInfo
+        v-if="showSelectedEnemy"
+        v-model="showSelectedEnemy"
+        :unit="selectedEnemy"
+      />
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -199,21 +41,19 @@ import { useGameStore } from "@/stores/game";
 import { useEvent } from "@/composables/keyEvent";
 import { chooseRandomWeightedObject } from "~/utils/weight-calculation";
 import { EffectType, SkillId, type Ability } from "~/types/ability.types";
+import type { Unit } from "~/types/combat.types";
 
 const playerStore = usePlayerStore();
 const skillStore = useSkillStore();
 const combatStore = useCombatStore();
 const gameStore = useGameStore();
 
-enum PlayerView {
-  Equipment = "Equipment",
-  Inventory = "Inventory",
-  Abilities = "Abilities",
-  Stats = "Stats",
-}
+const selectedAbility = ref<Ability | null>();
 
-const selectedPlayerView = ref(PlayerView.Abilities);
-const selectedAbility = ref<Ability>(skillStore.combatAbilities[0]);
+const showSelectedEnemy = ref(false);
+const selectedEnemy = ref<Unit | null>(null);
+const showSelectedPlayer = ref(false);
+const selectedPlayer = ref<Unit | null>(null);
 
 const isPlayerTurn = computed(() => {
   if (
@@ -225,6 +65,16 @@ const isPlayerTurn = computed(() => {
     return false;
   }
 });
+
+function selectUnitForInfo(unit: Unit) {
+  if (unit.isPlayer) {
+    selectedPlayer.value = unit;
+    showSelectedPlayer.value = true;
+  } else {
+    selectedEnemy.value = unit;
+    showSelectedEnemy.value = true;
+  }
+}
 
 function useAbility(ability: Ability, user: Unit, target: Unit) {
   if (!ability?.combatDetails || !combatStore.combatState) {
@@ -387,86 +237,70 @@ useEvent("Space", endTurn);
 onMounted(() => {
   // Add event listeners
   useEvent("Space", endTurn);
+  // Place Units
+  if (combatStore.combatState) {
+    combatStore.combatState.grid["3;0"].unit =
+      combatStore.combatState.playerGroup[0];
+    combatStore.combatState.grid["3;10"].unit =
+      combatStore.combatState.enemyGroup[0];
+  }
 });
 </script>
 <style lang="scss" scoped>
+// GRID VIEW
 .combat-container {
-  max-height: 100vh;
+  height: 100%;
+  width: 100%;
+  background-image: url("/public/maps/Battlemap1.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+}
+
+.combat-grid {
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-rows: 1fr 3fr;
-  overflow: hidden;
+  grid-template-columns: repeat(11, 1fr);
+  grid-template-rows: repeat(7, 1fr);
 }
-
-.combat-visual {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  .unit-header {
-    height: 50px;
-  }
-}
-
-.combat-info {
-  height: 100%;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 2fr 1fr 2fr;
-  .info-player {
-    height: 100%;
-    width: 100%;
-    display: grid;
-    grid-template-rows: auto 1fr;
-    .player-tabs {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      gap: 1rem;
-    }
-    .player-view {
-      height: 100%;
-      .tab-content {
-        height: 100%;
-        width: 100%;
-      }
-    }
-  }
-}
-
-.info-middle {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.extra-info {
-  display: flex;
-  max-height: 500px;
-  overflow-y: scroll;
-}
-
-.activeTab {
-  border: 2px var(--elevation4) solid;
-}
-.abilities-container {
-  padding: 1rem;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.middle-ap {
+.combat-tile {
+  border: 1px solid var(--elevation4);
   display: flex;
   justify-content: center;
+  align-items: center;
 }
-.turn-indicator {
-  height: 100%;
-  width: 100%;
+.player-info {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: fit-content;
+  display: flex;
+  background-color: var(--elevation2);
 }
-.turn-img {
-  height: 100%;
-  width: 100%;
-  object-fit: contain;
+.enemy-info {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: fit-content;
+  display: flex;
+  background-color: var(--elevation2);
+}
+.info-abilities {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  margin-right: auto;
+  margin-left: auto;
+}
+.info-battlefield {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  margin-right: auto;
+  margin-left: auto;
 }
 </style>

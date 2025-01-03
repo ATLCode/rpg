@@ -1,48 +1,31 @@
-import { usePlayerStore, type Unit } from "@/stores/player";
-import type { Encounter } from "~/game/encounters";
-import type { GameItem } from "~/types/item.types";
-import { useGameStore } from "@/stores/game";
+import { usePlayerStore } from "@/stores/player";
+import { GameState, useGameStore } from "@/stores/game";
+import { useSkillStore } from "@/stores/skill";
+import { useItemStore } from "@/stores/item";
+import { useEncounterStore } from "@/stores/encounter";
+// import { useLocationStore } from "@/stores/location";
 import { SkillId } from "~/types/ability.types";
-
-export type Drop = {
-  id: string;
-  gameItem: GameItem;
-};
-
-export type CombatState = {
-  playerGroup: Unit[];
-  enemyGroup: Unit[];
-  playerGroupTurn: boolean;
-  currentTurn: {
-    unitIndex: number;
-  };
-  rewards: {
-    meleeExp: number;
-    rangedExp: number;
-    magicExp: number;
-    drops: Drop[];
-    selectedDrops: Drop[];
-  };
-  result: {
-    isOver: boolean;
-    isWon: boolean;
-  };
-};
+import type { Combat, CombatReturn, CombatState } from "~/types/combat.types";
+import { combatGrids } from "~/game/combat";
 
 export const useCombatStore = defineStore("combat", () => {
   const playerStore = usePlayerStore();
   const skillStore = useSkillStore();
   const gameStore = useGameStore();
+  const itemStore = useItemStore();
+  const encounterStore = useEncounterStore();
+  // const locationStore = useLocationStore();
 
-  const combatState = ref<CombatState | null>();
+  const combatState = ref<CombatState | null>(null);
 
-  const returnInfo = ref(null);
+  const returnInfo = ref<CombatReturn | null>(null);
 
-  function startCombat(encounter: Encounter) {
+  function startCombat(combat: Combat) {
     // set new combat state
     combatState.value = {
+      grid: combatGrids.Basic,
       playerGroup: useDeepCloneArray(playerStore.playerGroup), // can't clone refs?
-      enemyGroup: useDeepCloneArray(encounter.enemyGroup),
+      enemyGroup: useDeepCloneArray(combat.enemyGroup),
       playerGroupTurn: true,
       currentTurn: {
         unitIndex: 0,
@@ -77,7 +60,7 @@ export const useCombatStore = defineStore("combat", () => {
     skillStore.giveSkillExp(SkillId.Magic, combatState.value.rewards.magicExp);
     // Get drops
     for (const selectedDrop of combatState.value.rewards.selectedDrops) {
-      playerStore.addItemsToInventory(selectedDrop.gameItem);
+      itemStore.addItemsToInventory(selectedDrop.gameItem);
     }
     // Lose energy
     const energyLoss = 30;
@@ -87,7 +70,12 @@ export const useCombatStore = defineStore("combat", () => {
       playerStore.energy -= energyLoss;
     }
     // Change Game State
-    gameStore.gameState = GameState.Normal;
+    if (encounterStore.activeEncounter) {
+      encounterStore.finishEncounter();
+    } else {
+      gameStore.gameState = GameState.Normal;
+    }
+
     // Return from combat
     returnInfo.value = null;
   }

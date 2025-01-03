@@ -1,5 +1,6 @@
 // Possible way to do dialog in game
 
+import type { CombatId } from "~/game/combat";
 import type { NodeId } from "~/game/dialogue";
 
 export enum ChoiceType {
@@ -7,6 +8,7 @@ export enum ChoiceType {
   ShopId = "ShopId",
   FightId = "FightId",
   EndDialog = "EndDialog",
+  CombatId = "CombatId",
   // Finish conversation option
 }
 
@@ -18,7 +20,7 @@ export enum DialogueNodeType {
 export type PlayerChoice = {
   text: string;
   type: ChoiceType;
-  target: NodeId | null;
+  target: NodeId | CombatId | null;
   // Some key for conditionally showing it if certain things are true
 };
 
