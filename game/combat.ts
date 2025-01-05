@@ -250,4 +250,3 @@ export const combatGrids: Record<CombatGridId, CombatGrid> = {
     },
   },
 };
-
