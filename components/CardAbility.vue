@@ -5,11 +5,11 @@
     @click="emit('selectAbility')"
   >
     <div>Name: {{ props.ability.name }}</div>
-    <div>Cost: {{ props.ability.cost }}</div>
+    <div>Cost: {{ props.ability.energyCost }}</div>
   </div>
 </template>
 <script lang="ts" setup>
-import type { Ability } from "~/game/abilities";
+import type { Ability } from "~/types/ability.types";
 
 const props = defineProps({
   ability: {

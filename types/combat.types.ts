@@ -1,17 +1,28 @@
 import type { GameItem, WeightedLoot } from "./item.types";
 import type { AbilityId } from "~/game/abilities";
 
+export enum CombatSide {
+  Player = "Player",
+  Enemy = "Enemy",
+}
+export enum CombatStage {
+  Setup = "Setup",
+  Ongoing = "Ongoing",
+  Finished = "Finished",
+}
+
 export type Unit = {
   isPlayer?: boolean;
+  side: CombatSide;
   name: string;
   img: string;
-  currentActionPoints: number;
-  maxActionPoints: number;
   currentHealth: number;
   maxHealth: number;
   abilities: AbilityId[];
   drops?: WeightedLoot[];
+  position: { x: number; y: number } | null;
   // resistances
+  onTurnStart?: () => void;
 };
 
 export type Combat = {
@@ -35,11 +46,15 @@ export type CombatTile = {
 
 export type CombatGrid = Record<string, CombatTile>;
 
+export type Entity = {
+  unit?: Unit;
+  hasTurn: boolean;
+  parent?: Unit;
+};
+
 export type CombatState = {
   grid: CombatGrid;
-  playerGroup: Unit[];
-  enemyGroup: Unit[];
-  playerGroupTurn: boolean;
+  entities: Unit[];
   currentTurn: {
     unitIndex: number;
   };

@@ -1,6 +1,6 @@
 import { AbilityId } from "./abilities";
 import { items } from "./items";
-import type { Unit } from "~/types/combat.types";
+import { CombatSide, type Unit } from "~/types/combat.types";
 import { ItemId } from "~/types/item.types";
 
 export enum UnitId {
@@ -10,12 +10,12 @@ export enum UnitId {
 
 export const units: Record<UnitId, Unit> = {
   [UnitId.Thief]: {
+    side: CombatSide.Enemy,
     name: "Thief",
     img: "/npcs/27.png",
-    currentActionPoints: 3,
-    maxActionPoints: 3,
     currentHealth: 10,
     maxHealth: 10,
+    position: null,
     abilities: [AbilityId.BasicKick],
     drops: [
       {
@@ -37,12 +37,12 @@ export const units: Record<UnitId, Unit> = {
     ],
   },
   [UnitId.Guard]: {
+    side: CombatSide.Enemy,
     name: "Guard",
     img: "/npcs/27.png",
-    currentActionPoints: 3,
-    maxActionPoints: 3,
     currentHealth: 10,
     maxHealth: 10,
+    position: null,
     abilities: [AbilityId.BasicPunch],
     drops: [
       {

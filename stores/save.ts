@@ -6,12 +6,15 @@ import { useWorldStore } from "@/stores/world";
 import { useNotificationStore } from "@/stores/notification";
 import { useItemStore } from "@/stores/item";
 import { useLocationStore } from "@/stores/location";
+import { useActionStore } from "@/stores/action";
 import type { Npc } from "~/game/npcs";
 import type { ItemContainer } from "~/types/item.types";
 import type { Time } from "~/types/world.types";
-import type { Ability, SkillId } from "~/types/ability.types";
+import type { Ability } from "~/types/ability.types";
 import type { Location } from "~/types/location.types";
 import type { Unit } from "~/types/combat.types";
+import type { Action } from "~/types/action.types";
+import type { SkillId } from "~/types/skill.types";
 
 export const useSaveStore = defineStore("save", () => {
   const playerStore = usePlayerStore();
@@ -21,6 +24,7 @@ export const useSaveStore = defineStore("save", () => {
   const worldStore = useWorldStore();
   const notificationStore = useNotificationStore();
   const itemStore = useItemStore();
+  const actionStore = useActionStore();
 
   const client = useSupabaseClient();
 
@@ -60,6 +64,7 @@ export const useSaveStore = defineStore("save", () => {
     playerItemContainers: ItemContainer[];
     // Skill Store
     skills: Record<SkillId, Skill>;
+    playerActions: Action[];
     playerAbilities: Ability[];
     //
     npcs: Npc[];
@@ -103,6 +108,7 @@ export const useSaveStore = defineStore("save", () => {
       playerGroup: playerStore.playerGroup,
       playerItemContainers: itemStore.playerItemContainers,
       skills: skillStore.skills,
+      playerActions: actionStore.playerActions,
       playerAbilities: skillStore.playerAbilities,
       npcs: npcStore.npcs,
     };

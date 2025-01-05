@@ -14,13 +14,21 @@
       <div class="guide-text">Click to continue</div>
     </div>
     <div v-if="!isGameTurn" class="dialogue-player">
-      <div
-        v-for="(playerChoice, index) in currentNode?.playerChoices"
-        :key="index"
-        class="player-choice"
-        @click="handlePlayerChoice(playerChoice)"
-      >
-        {{ playerChoice.text }}
+      <div class="player-info">
+        <div class="info-img-container">
+          <img src="/public/icons/21.png" class="info-img" alt="image" />
+        </div>
+      </div>
+
+      <div class="player-choices">
+        <div
+          v-for="(playerChoice, index) in currentNode?.playerChoices"
+          :key="index"
+          class="player-choice"
+          @click="handlePlayerChoice(playerChoice)"
+        >
+          {{ playerChoice.text }}
+        </div>
       </div>
     </div>
   </div>
@@ -140,9 +148,8 @@ onMounted(() => {
   height: 100%;
   width: 100%;
   // border: 1px solid blue;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
   padding: 1rem;
   .player-choice {
     cursor: pointer;
@@ -151,7 +158,8 @@ onMounted(() => {
     color: red;
   }
 }
-.npc-info {
+.npc-info,
+.player-info {
   height: 100%;
   max-height: 100%;
   overflow: hidden;

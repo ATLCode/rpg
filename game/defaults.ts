@@ -5,11 +5,15 @@ import { shops, type Shop } from "./shops";
 import { MapId, PinId } from "./locations";
 import { type Camp, type Location } from "~/types/location.types";
 import type { Time } from "~/types/world.types";
-import { SkillId, type Ability } from "~/types/ability.types";
+import { type Ability } from "~/types/ability.types";
 import { type ItemContainer } from "~/types/item.types";
+import { SkillId } from "~/types/skill.types";
+import type { Action } from "~/types/action.types";
+import { actions } from "./actions";
 type Defaults = {
   startingTime: Time;
   startingLocation: Location;
+  startingActions: Action[];
   startingAbilities: Ability[];
   startingSkills: Record<SkillId, Skill>;
   startingNpcs: Npc[];
@@ -107,6 +111,9 @@ export const defaults: Defaults = {
       img: "/icons/skill_magic.png",
     },
   },
+  startingActions: Object.values(actions).filter(
+    (action) => action.levelReq === 1 && action.isAutomatic === true
+  ),
   startingAbilities: Object.values(abilities).filter(
     (ability) => ability.levelReq === 1 && ability.isAutomatic === true
   ),

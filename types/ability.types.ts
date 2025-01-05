@@ -1,23 +1,9 @@
 import type { GameItem, ItemId, ItemProperty } from "./item.types";
 import type { AbilityId } from "~/game/abilities";
+import type { SkillId } from "./skill.types";
 
 export enum AbilityType {
-  Gather = "Gather",
-  Craft = "Craft",
-  Disocver = "Discover",
-  Perform = "Perform",
-  Plant = "Plant",
-  Harvest = "Harvest",
   Combat = "Combat",
-}
-export enum SkillId {
-  Fishing = "Fishing",
-  Woodcutting = "Woodcutting",
-  Cooking = "Cooking",
-  Melee = "Melee",
-  Ranged = "Ranged",
-  Magic = "Magic",
-  Mining = "Mining",
 }
 export enum DamageType {
   Blunt = "Blunt",
@@ -30,40 +16,31 @@ export enum EffectType {
   Stun = "Stun",
   Poison = "Poison",
 }
+export enum CombatActionType {
+  MainAction = "MainAction",
+  SideAction = "SideAction",
+}
 export type Effect = {
   effectType: EffectType;
   value: number;
   damageType?: DamageType;
 };
-export type Ingredient = {
-  itemId: ItemId;
-  amount: number;
-};
+
 export type CombatDetails = {
   effects: Effect[];
-  actionPointCost: number;
+  actionType: CombatActionType;
 };
-export type GatherDetails = {
-  product: GameItem;
-};
-export type CraftingDetails = {
-  ingredients: Ingredient[];
-  product: GameItem;
-};
-
-// Should ability type also have tags
 
 export type Ability = {
   id: AbilityId;
   abilityType: AbilityType;
   name: string;
-  skillId: SkillId;
+  img: string;
+  skillId: SkillId | null;
   levelReq: number;
   isAutomatic: boolean; // Do you get this ability automatically with level up
   xp: number;
   energyCost: number;
   itemPropertyReq?: ItemProperty[];
   combatDetails?: CombatDetails;
-  gatherDetails?: GatherDetails;
-  craftingDetails?: CraftingDetails;
 };

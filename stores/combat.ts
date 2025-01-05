@@ -4,9 +4,9 @@ import { useSkillStore } from "@/stores/skill";
 import { useItemStore } from "@/stores/item";
 import { useEncounterStore } from "@/stores/encounter";
 // import { useLocationStore } from "@/stores/location";
-import { SkillId } from "~/types/ability.types";
 import type { Combat, CombatReturn, CombatState } from "~/types/combat.types";
 import { combatGrids } from "~/game/combat";
+import { SkillId } from "~/types/skill.types";
 
 export const useCombatStore = defineStore("combat", () => {
   const playerStore = usePlayerStore();
@@ -24,9 +24,7 @@ export const useCombatStore = defineStore("combat", () => {
     // set new combat state
     combatState.value = {
       grid: combatGrids.Basic,
-      playerGroup: useDeepCloneArray(playerStore.playerGroup), // can't clone refs?
-      enemyGroup: useDeepCloneArray(combat.enemyGroup),
-      playerGroupTurn: true,
+      entities: [],
       currentTurn: {
         unitIndex: 0,
       },
@@ -43,6 +41,14 @@ export const useCombatStore = defineStore("combat", () => {
       },
     };
 
+    // Add entities
+    for (const unit of playerStore.playerGroup) {
+      combatState.value.entities.push(unit);
+      // Create entity for each unit
+    }
+    for (const unit of combat.enemyGroup) {
+      combatState.value.entities.push(unit);
+    }
     // Change game state
     gameStore.gameState = GameState.Combat;
   }

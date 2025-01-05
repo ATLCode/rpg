@@ -13,6 +13,8 @@
 </template>
 
 <script lang="ts" setup>
+import type { Unit } from "~/types/combat.types";
+
 const props = defineProps({
   unit: {
     type: Object as PropType<Unit>,

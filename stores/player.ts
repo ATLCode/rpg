@@ -1,30 +1,19 @@
-import type { Unit } from "~/types/combat.types";
+import { CombatSide, type Unit } from "~/types/combat.types";
 
 export const usePlayerStore = defineStore("player", () => {
   const characterName = ref("");
   const energy = ref(100);
-  /*
-  const playerUnit = ref<Unit>({
-    isPlayer: true,
-    name: characterName.value,
-    img: "/icons/21.png",
-    currentActionPoints: 3,
-    maxActionPoints: 3,
-    currentHealth: 10,
-    maxHealth: 10,
-    abilities: [],
-  });
-  */
+
   const playerGroup = ref<Unit[]>([
     {
       isPlayer: true,
+      side: CombatSide.Player,
       name: characterName.value,
       img: "/icons/21.png",
-      currentActionPoints: 3,
-      maxActionPoints: 3,
       currentHealth: 10,
       maxHealth: 10,
       abilities: [],
+      position: null,
     },
   ]);
 
@@ -36,29 +25,16 @@ export const usePlayerStore = defineStore("player", () => {
   }
 
   function $reset() {
-    /*
-    playerUnit.value = {
-      isPlayer: true,
-      name: characterName.value,
-      img: "/icons/21.png",
-      currentActionPoints: 3,
-      maxActionPoints: 3,
-      currentHealth: 10,
-      maxHealth: 10,
-      abilities: [],
-    };
-    */
-
     playerGroup.value = [
       {
         isPlayer: true,
+        side: CombatSide.Player,
         name: characterName.value,
         img: "/icons/21.png",
-        currentActionPoints: 3,
-        maxActionPoints: 3,
         currentHealth: 10,
         maxHealth: 10,
         abilities: [],
+        position: null,
       },
     ];
     energy.value = 100;

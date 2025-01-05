@@ -1,20 +1,28 @@
 <template>
   <div v-if="combatStore.combatState" class="combat-container">
-    <div class="combat-grid">
+    <div id="combat-grid" class="combat-grid">
+      <CombatUnit
+        v-if="!(combatStage === CombatStage.Setup)"
+        v-for="unit in combatStore.combatState.entities"
+        :unit="unit"
+        :style="unitStyle(unit)"
+        @click="selectUnitForInfo(unit)"
+      />
       <div
         v-for="(tile, index) in combatStore.combatState.grid"
         :key="index"
+        :id="index == '0;0' ? 'combat-tile' : undefined"
         class="combat-tile"
       >
-        <CombatUnit
-          v-if="tile.unit"
-          :unit="tile.unit"
-          @click="selectUnitForInfo(tile.unit)"
-        />
+        {{ tile.test }}
       </div>
     </div>
     <CombatBattlefieldInfo class="info-battlefield" />
-    <CombatAbilities class="info-abilities" :unit="selectedPlayer" />
+    <CombatAbilities
+      class="info-abilities"
+      :unit="selectedPlayer"
+      @select-ability="selectAbility"
+    />
     <div class="player-info">
       <CombatUnitInfo
         v-if="showSelectedPlayer"
@@ -40,8 +48,9 @@ import { useCombatStore } from "@/stores/combat";
 import { useGameStore } from "@/stores/game";
 import { useEvent } from "@/composables/keyEvent";
 import { chooseRandomWeightedObject } from "~/utils/weight-calculation";
-import { EffectType, SkillId, type Ability } from "~/types/ability.types";
-import type { Unit } from "~/types/combat.types";
+import { EffectType, type Ability } from "~/types/ability.types";
+import { CombatSide, CombatStage, type Unit } from "~/types/combat.types";
+import { SkillId } from "~/types/skill.types";
 
 const playerStore = usePlayerStore();
 const skillStore = useSkillStore();
@@ -55,16 +64,43 @@ const selectedEnemy = ref<Unit | null>(null);
 const showSelectedPlayer = ref(false);
 const selectedPlayer = ref<Unit | null>(null);
 
-const isPlayerTurn = computed(() => {
-  if (
-    combatStore.combatState?.playerGroupTurn &&
-    combatStore.combatState.currentTurn.unitIndex === 0
-  ) {
-    return true;
-  } else {
-    return false;
+const combatStage = ref<CombatStage>(CombatStage.Setup);
+const turnOrder = ref([]);
+
+// TODO Handle turns
+// TODO Check if combat is over
+// TODO Handle combat action ecenomy during turn
+
+const gridHeight = ref(0);
+const gridWidth = ref(0);
+const tileHeight = ref(0);
+const tileWidth = ref(0);
+
+function calculateGridSize() {
+  gridHeight.value = document.getElementById("combat-grid")?.clientHeight || 0;
+  gridWidth.value = document.getElementById("combat-grid")?.clientWidth || 0;
+  tileHeight.value = document.getElementById("combat-tile")?.clientHeight || 0;
+  tileWidth.value = document.getElementById("combat-tile")?.clientWidth || 0;
+
+  setTimeout(() => {
+    const x = document.getElementById("combat-tile")?.clientHeight;
+  }, 500);
+}
+
+function unitStyle(unit: Unit) {
+  if (!unit.position) {
+    console.log(unit);
+    throw new Error("Unit is missing position");
   }
-});
+  //TODO Handle 128 (sprite height/width) being different
+  const heightOffset = (tileHeight.value - 128) / 2;
+  const widthOffset = (tileWidth.value - 128) / 2;
+  return {
+    position: "absolute",
+    top: `${tileHeight.value * unit.position.x + heightOffset}px`,
+    left: `${tileWidth.value * unit.position.y + widthOffset}px`,
+  };
+}
 
 function selectUnitForInfo(unit: Unit) {
   if (unit.isPlayer) {
@@ -76,14 +112,14 @@ function selectUnitForInfo(unit: Unit) {
   }
 }
 
+function selectAbility(ability: Ability) {
+  console.log(ability);
+}
+function useAbility() {}
+
+/*
 function useAbility(ability: Ability, user: Unit, target: Unit) {
   if (!ability?.combatDetails || !combatStore.combatState) {
-    return;
-  }
-  if (
-    !ability.combatDetails.actionPointCost ||
-    !(user.currentActionPoints >= ability.combatDetails.actionPointCost)
-  ) {
     return;
   }
 
@@ -116,49 +152,9 @@ function useAbility(ability: Ability, user: Unit, target: Unit) {
   }
 
   handleUnitDeath(target);
-  handleCombatOver();
-
-  user.currentActionPoints -= ability.combatDetails.actionPointCost;
-  if (user.currentActionPoints === 0 && isPlayerTurn.value) {
-    endTurn();
-  }
 }
-
-function handleCombatOver() {
-  // Check if combat is over
-
-  if (!combatStore.combatState) {
-    return;
-  }
-
-  const playerGroupHealth = combatStore.combatState.enemyGroup.reduce(
-    (acc, curr) => curr.currentHealth + acc,
-    0
-  );
-
-  const enemyGroupHealth = combatStore.combatState.playerGroup.reduce(
-    (acc, curr) => curr.currentHealth + acc,
-    0
-  );
-
-  // Handle winner player
-  if (playerGroupHealth <= 0) {
-    combatStore.combatState.result.isOver = true;
-    combatStore.combatState.result.isWon = true;
-    combatStore.combatState.rewards.selectedDrops =
-      combatStore.combatState.rewards.drops;
-  }
-
-  // Handle winner enemy
-  if (enemyGroupHealth <= 0) {
-    combatStore.combatState.result.isOver = true;
-    combatStore.combatState.result.isWon = false;
-  }
-
-  // General stuff
-  playerStore.playerGroup = combatStore.combatState.playerGroup;
-}
-
+  */
+/*
 function handleUnitDeath(unit: Unit) {
   console.log("handling death");
   // If enemy add drops to combat rewards
@@ -180,13 +176,6 @@ function resetCurrentTurn(playerGroupTurn: boolean, nextIndex: number = 0) {
   combatStore.combatState.currentTurn = {
     unitIndex: nextIndex,
   };
-
-  combatStore.combatState.enemyGroup.forEach((unit) => {
-    unit.currentActionPoints = unit.maxActionPoints;
-  });
-  combatStore.combatState.playerGroup.forEach((unit) => {
-    unit.currentActionPoints = unit.maxActionPoints;
-  });
 
   combatStore.combatState.playerGroupTurn = playerGroupTurn;
 }
@@ -231,19 +220,26 @@ async function handleEnemyGroupTurn() {
   }
   resetCurrentTurn(true);
 }
-
-useEvent("Space", endTurn);
+*/
+// useEvent("Space", endTurn);
 
 onMounted(() => {
   // Add event listeners
-  useEvent("Space", endTurn);
+  // useEvent("Space", endTurn);
   // Place Units
   if (combatStore.combatState) {
-    combatStore.combatState.grid["3;0"].unit =
-      combatStore.combatState.playerGroup[0];
-    combatStore.combatState.grid["3;10"].unit =
-      combatStore.combatState.enemyGroup[0];
+    const player = combatStore.combatState.entities.find(
+      (unit) => unit.isPlayer
+    );
+    player!.position = { x: 3, y: 0 };
+    const enemy = combatStore.combatState.entities.find(
+      (unit) => unit.side === CombatSide.Enemy
+    );
+    enemy!.position = { x: 3, y: 10 };
+    combatStage.value = CombatStage.Ongoing;
   }
+  calculateGridSize();
+  // Handle window resize
 });
 </script>
 <style lang="scss" scoped>

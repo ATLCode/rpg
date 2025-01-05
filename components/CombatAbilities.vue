@@ -1,23 +1,31 @@
 <template>
   <div class="abilities-container">
-    <div class="quick-abilities">Quick Abilities</div>
+    <div class="quick-abilities">
+      <div
+        class="ability"
+        @click="$emit('select-ability', abilities[AbilityId.Move])"
+      >
+        <img src="/public/icons/circle.png" alt="" />
+      </div>
+    </div>
     <div class="rest-abilities">
       All Abilities
       <div
-        v-for="(ability, index) in props.unit?.abilities"
+        v-for="(abilityId, index) in props.unit?.abilities"
         :key="index"
         class="ability"
       >
-        {{ abilities[ability].name }}
+        {{ abilities[abilityId].name }}
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { abilities } from "~/game/abilities";
+import { abilities, AbilityId } from "~/game/abilities";
 import type { Unit } from "~/types/combat.types";
 
+defineEmits(["select-ability"]);
 const props = defineProps({
   unit: {
     type: Object as PropType<Unit | null>,
@@ -34,5 +42,9 @@ const props = defineProps({
   background-color: var(--elevation2);
   display: flex;
   flex-direction: column;
+}
+img {
+  max-height: 48px;
+  max-width: 48px;
 }
 </style>

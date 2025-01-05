@@ -1,74 +1,23 @@
-import { ItemId } from "../types/item.types";
+import { SkillId } from "~/types/skill.types";
 import { DamageType, EffectType } from "./effects";
-import { items } from "./items";
-import { AbilityType, SkillId, type Ability } from "~/types/ability.types";
+import {
+  AbilityType,
+  CombatActionType,
+  type Ability,
+} from "~/types/ability.types";
 
 export enum AbilityId {
-  CutOak = "CutOak",
-  FishPanfish = "FishPanfish",
-  FishBluegill = "FishBluegill",
-  CookPanfish = "CookPanfish",
-  CookBluegill = "CookBluegill",
   BasicPunch = "BasicPunch",
   BasicKick = "BasicKick",
+  Move = "Move",
 }
 
 export const abilities: Record<AbilityId, Ability> = {
-  [AbilityId.CutOak]: {
-    id: AbilityId.CutOak,
-    abilityType: AbilityType.Gather,
-    name: "Cut Oak",
-    skillId: SkillId.Woodcutting,
-    levelReq: 1,
-    isAutomatic: true,
-    xp: 3,
-    energyCost: 1,
-    gatherDetails: {
-      product: {
-        itemId: ItemId.OakLog,
-        item: items[ItemId.OakLog],
-        currentStackSize: 1,
-      },
-    },
-  },
-  [AbilityId.FishPanfish]: {
-    id: AbilityId.FishPanfish,
-    abilityType: AbilityType.Gather,
-    name: "Fish Panfish",
-    skillId: SkillId.Fishing,
-    levelReq: 1,
-    isAutomatic: true,
-    xp: 5,
-    energyCost: 1,
-    gatherDetails: {
-      product: {
-        itemId: ItemId.RawPanfish,
-        item: items[ItemId.RawPanfish],
-        currentStackSize: 1,
-      },
-    },
-  },
-  [AbilityId.FishBluegill]: {
-    id: AbilityId.FishBluegill,
-    abilityType: AbilityType.Gather,
-    name: "Fish Bluegill",
-    skillId: SkillId.Fishing,
-    levelReq: 5,
-    isAutomatic: true,
-    xp: 5,
-    energyCost: 1,
-    gatherDetails: {
-      product: {
-        itemId: ItemId.RawBluegill,
-        item: items[ItemId.RawBluegill],
-        currentStackSize: 1,
-      },
-    },
-  },
   [AbilityId.BasicPunch]: {
     id: AbilityId.BasicPunch,
     abilityType: AbilityType.Combat,
     name: "Basic Punch",
+    img: "asd",
     skillId: SkillId.Melee,
     levelReq: 1,
     isAutomatic: true,
@@ -82,13 +31,14 @@ export const abilities: Record<AbilityId, Ability> = {
           damageType: DamageType.Blunt,
         },
       ],
-      actionPointCost: 2,
+      actionType: CombatActionType.MainAction,
     },
   },
   [AbilityId.BasicKick]: {
     id: AbilityId.BasicKick,
     abilityType: AbilityType.Combat,
     name: "Basic Kick",
+    img: "asd",
     skillId: SkillId.Melee,
     levelReq: 1,
     isAutomatic: true,
@@ -102,43 +52,28 @@ export const abilities: Record<AbilityId, Ability> = {
           damageType: DamageType.Blunt,
         },
       ],
-      actionPointCost: 2,
+      actionType: CombatActionType.MainAction,
     },
   },
-  [AbilityId.CookPanfish]: {
-    id: AbilityId.CookPanfish,
-    abilityType: AbilityType.Craft,
-    name: "Cook Panfish",
-    skillId: SkillId.Cooking,
+  [AbilityId.Move]: {
+    id: AbilityId.Move,
+    abilityType: AbilityType.Combat,
+    name: "Move",
+    img: "/public/icons/circle.png",
+    skillId: null,
     levelReq: 1,
     isAutomatic: true,
-    xp: 10,
-    energyCost: 5,
-    craftingDetails: {
-      ingredients: [{ itemId: ItemId.RawPanfish, amount: 2 }],
-      product: {
-        itemId: ItemId.CookedPanfish,
-        item: items[ItemId.CookedPanfish],
-        currentStackSize: 1,
-      },
-    },
-  },
-  [AbilityId.CookBluegill]: {
-    id: AbilityId.CookPanfish,
-    abilityType: AbilityType.Craft,
-    name: "Cook Panfish",
-    skillId: SkillId.Cooking,
-    levelReq: 5,
-    isAutomatic: true,
-    xp: 10,
-    energyCost: 5,
-    craftingDetails: {
-      ingredients: [{ itemId: ItemId.RawBluegill, amount: 2 }],
-      product: {
-        itemId: ItemId.CookedBluegill,
-        item: items[ItemId.CookedBluegill],
-        currentStackSize: 1,
-      },
+    xp: 0,
+    energyCost: 0,
+    combatDetails: {
+      effects: [
+        {
+          effectType: EffectType.Damage,
+          value: 2,
+          damageType: DamageType.Blunt,
+        },
+      ],
+      actionType: CombatActionType.SideAction,
     },
   },
 };
