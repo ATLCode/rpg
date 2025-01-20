@@ -1,3 +1,4 @@
+import type { Coordinates } from "./general.types";
 import type { WeightedEncounter } from "~/game/encounters";
 import type {
   AreaLocationId,
@@ -40,7 +41,7 @@ export type SubLocation = {
   id: SubLocationId;
   name: string;
   type: LocationType;
-  coordinates: { x: number; y: number };
+  coordinates: Coordinates;
   spotId?: SpotId;
   npcId?: NpcId;
 };
@@ -48,7 +49,7 @@ export type AreaLocation = {
   id: AreaLocationId;
   name: string;
   type: LocationType;
-  coordinates: { x: number; y: number };
+  coordinates: Coordinates;
   spotId?: SpotId;
   npcId?: NpcId;
   containerDetails?: locationContainerDetails;
@@ -57,7 +58,7 @@ export type AreaLocation = {
 export type WorldLocation = {
   id: WorldLocationId;
   name: string;
-  coordinates: { x: number; y: number };
+  coordinates: Coordinates;
   mapImg: string;
   child: AreaLocationId;
   locations: AreaLocationId[];
@@ -93,7 +94,7 @@ export type Pin = {
   type: PinType;
   target: Location | NpcId | SpotId | "ExitCamp"; // NpcId? SpotId? TrueLocation for access? Circular dependency issue
   icon: string;
-  coordinates: { x: number; y: number };
+  coordinates: Coordinates;
   isVisible: boolean | (() => boolean); // Should this be optional and we assume true unless there is possibility it's false?
 };
 

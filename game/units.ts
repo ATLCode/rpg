@@ -35,6 +35,8 @@ export const units: Record<UnitId, Unit> = {
         weight: 100,
       },
     ],
+    hasMainAction: true,
+    hasSideAction: true,
   },
   [UnitId.Guard]: {
     side: CombatSide.Enemy,
@@ -62,5 +64,7 @@ export const units: Record<UnitId, Unit> = {
         weight: 100,
       },
     ],
+    hasMainAction: true,
+    hasSideAction: true,
   },
 };

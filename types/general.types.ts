@@ -3,3 +3,8 @@ export enum Size {
   Medium = "Medium",
   Large = "Large",
 }
+
+export type Coordinates = {
+  x: number;
+  y: number;
+};

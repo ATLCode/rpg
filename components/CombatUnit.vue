@@ -1,8 +1,6 @@
 <template>
   <div class="unit-container">
-    <div class="unit-info">
-      {{ props.unit?.name }}
-    </div>
+    <div class="unit-info"></div>
     <CharacterAvatar
       :avatar="props.unit?.img"
       :size="Size.Large"

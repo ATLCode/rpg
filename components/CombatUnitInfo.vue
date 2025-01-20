@@ -1,11 +1,11 @@
 <template>
   <div class="info-container">
     <div class="header">
+      <h3>{{ props.unit?.name }}</h3>
+      <ASpacer />
       <AButton variant="plain" padding="0rem" @click="closeInfo">X</AButton>
     </div>
-    <div class="info">
-      {{ props.unit?.name }}
-    </div>
+    <div class="info">Info here</div>
     <div class="buttons">
       <AButton
         border-radius="0px"
@@ -65,10 +65,12 @@ function closeInfo() {
 .header {
   display: flex;
   justify-content: flex-end;
+  padding: 1rem;
 }
 .info {
   height: 100%;
   width: 100%;
+  padding: 1rem;
 }
 .buttons {
   display: grid;

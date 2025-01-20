@@ -43,7 +43,6 @@ import { useActionStore } from "@/stores/action";
 import { useProgress } from "@/composables/progress";
 import type { Spot } from "~/types/spot.types";
 import type { Action } from "~/types/action.types";
-import { defaults } from "~/game/defaults";
 
 const spotStore = useSpotStore();
 const skillStore = useSkillStore();

@@ -40,12 +40,6 @@ export const useSkillStore = defineStore("skill", () => {
     return ids;
   });
 
-  const combatAbilities = computed(() =>
-    playerAbilities.value.filter(
-      (ability: Ability) => ability.abilityType === AbilityType.Combat
-    )
-  );
-
   function giveSkillExp(skillId: SkillId, amount: number) {
     const skill = skills.value[skillId];
     skill.currentExp += amount;
@@ -118,7 +112,6 @@ export const useSkillStore = defineStore("skill", () => {
     levelTresholds,
     playerAbilities,
     playerAbilityIds,
-    combatAbilities,
     levelBracketGap,
     levelBracketProgress,
     $reset,

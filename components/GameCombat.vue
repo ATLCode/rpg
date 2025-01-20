@@ -1,26 +1,33 @@
 <template>
   <div v-if="combatStore.combatState" class="combat-container">
-    <div id="combat-grid" class="combat-grid">
+    <div v-if="!(combatStage === CombatStage.Setup)" class="unit-container">
       <CombatUnit
-        v-if="!(combatStage === CombatStage.Setup)"
-        v-for="unit in combatStore.combatState.entities"
+        v-for="unit in combatStore.combatState.units"
+        :key="unit.name"
         :unit="unit"
         :style="unitStyle(unit)"
         @click="selectUnitForInfo(unit)"
       />
+    </div>
+    <div id="combat-grid" class="combat-grid">
       <div
         v-for="(tile, index) in combatStore.combatState.grid"
-        :key="index"
         :id="index == '0;0' ? 'combat-tile' : undefined"
+        :key="index"
         class="combat-tile"
+        :class="{
+          'targeted-range': targetedRange.includes(tile),
+          'origin-range': originRange.includes(tile),
+        }"
+        @click="handleTileClick(tile)"
       >
-        {{ tile.test }}
+        {{ tile.coordinates.x }},{{ tile.coordinates.y }}
       </div>
     </div>
     <CombatBattlefieldInfo class="info-battlefield" />
     <CombatAbilities
       class="info-abilities"
-      :unit="selectedPlayer"
+      :unit="combatStore.currentTurnUnit"
       @select-ability="selectAbility"
     />
     <div class="player-info">
@@ -40,24 +47,27 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ulid } from "ulid";
-import { abilities } from "~/game/abilities";
 import { usePlayerStore } from "@/stores/player";
 import { useSkillStore } from "@/stores/skill";
 import { useCombatStore } from "@/stores/combat";
 import { useGameStore } from "@/stores/game";
-import { useEvent } from "@/composables/keyEvent";
-import { chooseRandomWeightedObject } from "~/utils/weight-calculation";
-import { EffectType, type Ability } from "~/types/ability.types";
-import { CombatSide, CombatStage, type Unit } from "~/types/combat.types";
-import { SkillId } from "~/types/skill.types";
+import {
+  CombatSide,
+  CombatStage,
+  type CombatTile,
+  type Unit,
+} from "~/types/combat.types";
+import type { Coordinates } from "~/types/general.types";
+import {
+  AbilityType,
+  type Ability,
+  type AbilityShape,
+} from "~/types/ability.types";
 
 const playerStore = usePlayerStore();
 const skillStore = useSkillStore();
 const combatStore = useCombatStore();
 const gameStore = useGameStore();
-
-const selectedAbility = ref<Ability | null>();
 
 const showSelectedEnemy = ref(false);
 const selectedEnemy = ref<Unit | null>(null);
@@ -65,9 +75,9 @@ const showSelectedPlayer = ref(false);
 const selectedPlayer = ref<Unit | null>(null);
 
 const combatStage = ref<CombatStage>(CombatStage.Setup);
-const turnOrder = ref([]);
 
-// TODO Handle turns
+// GRID INFO
+
 // TODO Check if combat is over
 // TODO Handle combat action ecenomy during turn
 
@@ -81,24 +91,19 @@ function calculateGridSize() {
   gridWidth.value = document.getElementById("combat-grid")?.clientWidth || 0;
   tileHeight.value = document.getElementById("combat-tile")?.clientHeight || 0;
   tileWidth.value = document.getElementById("combat-tile")?.clientWidth || 0;
-
-  setTimeout(() => {
-    const x = document.getElementById("combat-tile")?.clientHeight;
-  }, 500);
 }
 
 function unitStyle(unit: Unit) {
   if (!unit.position) {
-    console.log(unit);
     throw new Error("Unit is missing position");
   }
-  //TODO Handle 128 (sprite height/width) being different
+  // TODO Handle 128 (sprite height/width) being different
   const heightOffset = (tileHeight.value - 128) / 2;
   const widthOffset = (tileWidth.value - 128) / 2;
   return {
     position: "absolute",
-    top: `${tileHeight.value * unit.position.x + heightOffset}px`,
-    left: `${tileWidth.value * unit.position.y + widthOffset}px`,
+    top: `${tileHeight.value * unit.position.y + heightOffset + unit.position.y * 2}px`,
+    left: `${tileWidth.value * unit.position.x + widthOffset + unit.position.x * 2}px`,
   };
 }
 
@@ -112,48 +117,114 @@ function selectUnitForInfo(unit: Unit) {
   }
 }
 
+// USING ABILITY
 function selectAbility(ability: Ability) {
-  console.log(ability);
+  if (selectedAbility.value?.id === ability.id) {
+    selectedAbility.value = null;
+  } else {
+    selectedAbility.value = ability;
+  }
 }
-function useAbility() {}
 
-/*
-function useAbility(ability: Ability, user: Unit, target: Unit) {
-  if (!ability?.combatDetails || !combatStore.combatState) {
+const selectedAbility = ref<Ability | null>(null);
+// Targeted
+const selectedTarget = ref<CombatTile | null>(null);
+// Shaped
+const selectedOrigin = ref<CombatTile | null>(null);
+const selectedShape = ref<AbilityShape | null>(null);
+
+function handleTileClick(tile: CombatTile) {
+  if (!selectedAbility.value) {
     return;
   }
-
-  const effects = ability.combatDetails.effects;
-
-  for (const effect of effects) {
-    if (effect.effectType === EffectType.Damage) {
-      console.log("Dealing Damage");
-      target.currentHealth -= effect.value;
-    }
-    if (effect.effectType === EffectType.Heal) {
-      console.log("Healing");
+  if (selectedAbility.value.abilityType === AbilityType.Targeted) {
+    combatStore.useTargetedAbility(
+      selectedAbility.value,
+      combatStore.currentTurnUnit!,
+      tile.coordinates
+    );
+  }
+  if (selectedAbility.value.abilityType === AbilityType.Shaped) {
+    if (!selectedOrigin.value) {
+      selectedOrigin.value = tile;
+      selectedShape.value = selectedAbility.value.shape!.shapes[0];
+    } else {
+      combatStore.useShapedAbility(
+        selectedAbility.value,
+        combatStore.currentTurnUnit!,
+        selectedOrigin.value.coordinates
+      );
+      selectedOrigin.value = null;
+      selectedShape.value = null;
     }
   }
-
-  if (user.isPlayer && ability.xp) {
-    if (ability.skillId === SkillId.Melee) {
-      combatStore.combatState.rewards.meleeExp += ability.xp;
-    }
-    if (ability.skillId === SkillId.Ranged) {
-      combatStore.combatState.rewards.rangedExp += ability.xp;
-    }
-    if (ability.skillId === SkillId.Magic) {
-      combatStore.combatState.rewards.magicExp += ability.xp;
-    }
-  }
-
-  if (target.currentHealth <= 0) {
-    target.currentHealth = 0;
-  }
-
-  handleUnitDeath(target);
+  selectedAbility.value = null;
 }
-  */
+
+// HELPER FUNCTIONS
+
+const targetedRange = computed(() => {
+  if (
+    !combatStore.combatState ||
+    !selectedAbility.value ||
+    !(selectedAbility.value.abilityType === AbilityType.Targeted)
+  ) {
+    return [];
+  }
+  const tilesInRange = [];
+  const grid = Object.values(combatStore.combatState.grid);
+
+  for (const tile of grid) {
+    if (
+      combatStore.isInRange(
+        tile.coordinates,
+        combatStore.currentTurnUnit!.position!,
+        selectedAbility.value.target!.range
+      )
+    ) {
+      tilesInRange.push(tile);
+    }
+  }
+  return tilesInRange;
+});
+
+const originRange = computed(() => {
+  if (
+    !combatStore.combatState ||
+    !selectedAbility.value ||
+    !(selectedAbility.value.abilityType === AbilityType.Shaped) ||
+    selectedAbility.value.shape!.originRange === 0 ||
+    !selectedOrigin.value
+  ) {
+    return [];
+  }
+  const tilesInRange = [];
+  const grid = Object.values(combatStore.combatState.grid);
+  for (const tile of grid) {
+    if (
+      combatStore.isInRange(
+        tile.coordinates,
+        combatStore.currentTurnUnit!.position!,
+        selectedAbility.value.shape!.originRange
+      )
+    ) {
+      tilesInRange.push(tile);
+    }
+  }
+  return tilesInRange;
+});
+
+function calculateDistance(
+  coordinates1: Coordinates,
+  coordinates2: Coordinates
+) {
+  const X = coordinates2.x - coordinates1.x;
+  const Y = coordinates2.y - coordinates1.y;
+  return Math.sqrt(X * X + Y * Y);
+}
+
+function calculateRange(origin: CombatTile) {}
+
 /*
 function handleUnitDeath(unit: Unit) {
   console.log("handling death");
@@ -228,18 +299,19 @@ onMounted(() => {
   // useEvent("Space", endTurn);
   // Place Units
   if (combatStore.combatState) {
-    const player = combatStore.combatState.entities.find(
-      (unit) => unit.isPlayer
+    const player = combatStore.combatState.units.find(
+      (units) => units.isPlayer
     );
-    player!.position = { x: 3, y: 0 };
-    const enemy = combatStore.combatState.entities.find(
+    player!.position = { x: 0, y: 3 };
+    const enemy = combatStore.combatState.units.find(
       (unit) => unit.side === CombatSide.Enemy
     );
-    enemy!.position = { x: 3, y: 10 };
+    enemy!.position = { x: 10, y: 3 };
     combatStage.value = CombatStage.Ongoing;
   }
   calculateGridSize();
   // Handle window resize
+  combatStore.startBattle();
 });
 </script>
 <style lang="scss" scoped>
@@ -298,5 +370,34 @@ onMounted(() => {
   left: 0px;
   margin-right: auto;
   margin-left: auto;
+}
+.unit-container {
+  position: absolute;
+  height: 0px;
+  width: 0px;
+}
+.targeted-range {
+  background-color: rgba(255, 255, 255, 0.3);
+
+  cursor: pointer;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+  }
+}
+.origin-range {
+  background-color: rgba(0, 0, 255, 0.3);
+
+  cursor: pointer;
+  &:hover {
+    background-color: rgba(0, 0, 255, 0.4);
+  }
+}
+.red {
+  background-color: rgba(255, 0, 0, 0.3);
+
+  cursor: pointer;
+  &:hover {
+    background-color: rgba(255, 0, 0, 0.4);
+  }
 }
 </style>

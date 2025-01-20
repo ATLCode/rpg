@@ -1,18 +1,4 @@
-export enum DamageType {
-  Blunt = "Blunt",
-  Slashing = "Slashing",
-  Piercing = "Piercing",
-}
-export enum EffectType {
-  Damage = "Damage",
-  Heal = "Heal",
-}
-
-export type Effect = {
-  effectType: EffectType;
-  value: number;
-  damageType?: DamageType;
-};
+import type { Effect } from "~/types/ability.types";
 
 export enum EffectId {}
 

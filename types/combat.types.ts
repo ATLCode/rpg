@@ -1,3 +1,4 @@
+import type { Coordinates } from "./general.types";
 import type { GameItem, WeightedLoot } from "./item.types";
 import type { AbilityId } from "~/game/abilities";
 
@@ -20,7 +21,9 @@ export type Unit = {
   maxHealth: number;
   abilities: AbilityId[];
   drops?: WeightedLoot[];
-  position: { x: number; y: number } | null;
+  position: Coordinates | null;
+  hasMainAction: boolean;
+  hasSideAction: boolean;
   // resistances
   onTurnStart?: () => void;
 };
@@ -39,25 +42,24 @@ export type CombatReturn = {
 };
 
 export type CombatTile = {
-  test: string;
-  unit?: Unit;
+  coordinates: Coordinates;
   // Others stuff here
 };
 
 export type CombatGrid = Record<string, CombatTile>;
 
 export type Entity = {
-  unit?: Unit;
-  hasTurn: boolean;
+  name: string;
   parent?: Unit;
 };
 
 export type CombatState = {
   grid: CombatGrid;
-  entities: Unit[];
-  currentTurn: {
-    unitIndex: number;
-  };
+  units: Unit[];
+  entities: Entity[];
+  turnOrder: Unit[];
+  currentTurnIndex: number;
+  currentRound: number;
   rewards: {
     meleeExp: number;
     rangedExp: number;

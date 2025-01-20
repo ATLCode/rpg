@@ -2,6 +2,7 @@ import { abilities } from "./abilities";
 import { itemContainers } from "./items";
 import { npcs, type Npc } from "./npcs";
 import { shops, type Shop } from "./shops";
+import { actions } from "./actions";
 import { MapId, PinId } from "./locations";
 import { type Camp, type Location } from "~/types/location.types";
 import type { Time } from "~/types/world.types";
@@ -9,7 +10,6 @@ import { type Ability } from "~/types/ability.types";
 import { type ItemContainer } from "~/types/item.types";
 import { SkillId } from "~/types/skill.types";
 import type { Action } from "~/types/action.types";
-import { actions } from "./actions";
 type Defaults = {
   startingTime: Time;
   startingLocation: Location;

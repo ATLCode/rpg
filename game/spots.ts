@@ -1,8 +1,7 @@
-import { SkillId } from "~/types/skill.types";
 import { type GameItem } from "../types/item.types";
-import { AbilityId } from "./abilities";
-import { SpotType, type Spot } from "~/types/spot.types";
 import { ActionId } from "./actions";
+import { SpotType, type Spot } from "~/types/spot.types";
+import { SkillId } from "~/types/skill.types";
 
 export type WeightedGameItem = WeightedObject<GameItem>;
 
