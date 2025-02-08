@@ -9,15 +9,22 @@
         @click="selectUnitForInfo(unit)"
       />
     </div>
-    <div id="combat-grid" class="combat-grid">
+    <div
+      id="combat-grid"
+      class="combat-grid"
+      :class="{
+        'cast-ready': combatStore.selectedAbility && combatStore.selectedOrigin,
+      }"
+    >
       <div
         v-for="(tile, index) in combatStore.combatState.grid"
         :id="index == '0;0' ? 'combat-tile' : undefined"
         :key="index"
         class="combat-tile"
         :class="{
-          'targeted-range': targetedRange.includes(tile),
-          'origin-range': originRange.includes(tile),
+          'red-tiles': tileColors.redTiles.includes(tile),
+          'white-tiles': tileColors.whiteTiles.includes(tile),
+          'blue-tiles': tileColors.blueTiles.includes(tile),
         }"
         @click="handleTileClick(tile)"
       >
@@ -28,7 +35,7 @@
     <CombatAbilities
       class="info-abilities"
       :unit="combatStore.currentTurnUnit"
-      @select-ability="selectAbility"
+      @select-ability="combatStore.selectAbility"
     />
     <div class="player-info">
       <CombatUnitInfo
@@ -44,30 +51,25 @@
         :unit="selectedEnemy"
       />
     </div>
+    <div v-if="combatStore.selectedAbility" class="info-text">
+      <div>{{ combatStore.selectedAbility.name }} is selected</div>
+      <div>Selected origin {{ combatStore.selectedOrigin }}</div>
+      <div>Selected shape {{ combatStore.selectedShape }}</div>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { usePlayerStore } from "@/stores/player";
-import { useSkillStore } from "@/stores/skill";
 import { useCombatStore } from "@/stores/combat";
-import { useGameStore } from "@/stores/game";
+
 import {
   CombatSide,
   CombatStage,
   type CombatTile,
   type Unit,
 } from "~/types/combat.types";
-import type { Coordinates } from "~/types/general.types";
-import {
-  AbilityType,
-  type Ability,
-  type AbilityShape,
-} from "~/types/ability.types";
+import { AbilityType, EffectType } from "~/types/ability.types";
 
-const playerStore = usePlayerStore();
-const skillStore = useSkillStore();
 const combatStore = useCombatStore();
-const gameStore = useGameStore();
 
 const showSelectedEnemy = ref(false);
 const selectedEnemy = ref<Unit | null>(null);
@@ -108,122 +110,154 @@ function unitStyle(unit: Unit) {
 }
 
 function selectUnitForInfo(unit: Unit) {
+  if (combatStore.selectedAbility && unit.position) {
+    handleTileClick({ coordinates: unit.position });
+    return;
+  }
   if (unit.isPlayer) {
     selectedPlayer.value = unit;
-    showSelectedPlayer.value = true;
+    showSelectedPlayer.value = !showSelectedPlayer.value;
   } else {
     selectedEnemy.value = unit;
-    showSelectedEnemy.value = true;
+    showSelectedEnemy.value = !showSelectedEnemy.value;
   }
 }
 
 // USING ABILITY
-function selectAbility(ability: Ability) {
-  if (selectedAbility.value?.id === ability.id) {
-    selectedAbility.value = null;
-  } else {
-    selectedAbility.value = ability;
-  }
-}
-
-const selectedAbility = ref<Ability | null>(null);
-// Targeted
-const selectedTarget = ref<CombatTile | null>(null);
-// Shaped
-const selectedOrigin = ref<CombatTile | null>(null);
-const selectedShape = ref<AbilityShape | null>(null);
 
 function handleTileClick(tile: CombatTile) {
-  if (!selectedAbility.value) {
+  if (!combatStore.selectedAbility) {
     return;
   }
-  if (selectedAbility.value.abilityType === AbilityType.Targeted) {
+  if (combatStore.selectedAbility.abilityType === AbilityType.Targeted) {
     combatStore.useTargetedAbility(
-      selectedAbility.value,
+      combatStore.selectedAbility,
       combatStore.currentTurnUnit!,
       tile.coordinates
     );
   }
-  if (selectedAbility.value.abilityType === AbilityType.Shaped) {
-    if (!selectedOrigin.value) {
-      selectedOrigin.value = tile;
-      selectedShape.value = selectedAbility.value.shape!.shapes[0];
+  if (combatStore.selectedAbility.abilityType === AbilityType.Shaped) {
+    if (!combatStore.selectedOrigin) {
+      combatStore.selectedOrigin = tile;
+      combatStore.selectedShape = combatStore.selectedAbility.shape!.shapes[0];
+      return;
     } else {
       combatStore.useShapedAbility(
-        selectedAbility.value,
+        combatStore.selectedAbility,
         combatStore.currentTurnUnit!,
-        selectedOrigin.value.coordinates
+        combatStore.selectedOrigin.coordinates
       );
-      selectedOrigin.value = null;
-      selectedShape.value = null;
+      combatStore.selectedOrigin = null;
+      combatStore.selectedShape = null;
     }
   }
-  selectedAbility.value = null;
+  combatStore.selectedAbility = null;
 }
 
-// HELPER FUNCTIONS
+const tileColors = computed(() => {
+  let blueTiles: CombatTile[] = [];
+  const yellowTiles: CombatTile[] = [];
+  const redTiles: CombatTile[] = [];
+  let whiteTiles: CombatTile[] = [];
+  const greenTiles: CombatTile[] = [];
 
-const targetedRange = computed(() => {
-  if (
-    !combatStore.combatState ||
-    !selectedAbility.value ||
-    !(selectedAbility.value.abilityType === AbilityType.Targeted)
-  ) {
-    return [];
+  // BASIC CHECKS
+  if (!combatStore.combatState || !combatStore.selectedAbility) {
+    return {
+      blueTiles,
+      yellowTiles,
+      redTiles,
+      whiteTiles,
+      greenTiles,
+    };
   }
-  const tilesInRange = [];
-  const grid = Object.values(combatStore.combatState.grid);
 
-  for (const tile of grid) {
-    if (
-      combatStore.isInRange(
-        tile.coordinates,
-        combatStore.currentTurnUnit!.position!,
-        selectedAbility.value.target!.range
-      )
-    ) {
-      tilesInRange.push(tile);
+  // SHOW TARGET RANGE
+  if (combatStore.selectedAbility.abilityType === AbilityType.Targeted) {
+    const tilesInRange = [];
+    const grid = Object.values(combatStore.combatState.grid);
+
+    for (const tile of grid) {
+      if (
+        combatStore.isInRange(
+          tile.coordinates,
+          combatStore.currentTurnUnit!.position!,
+          combatStore.selectedAbility.target!.range
+        )
+      ) {
+        tilesInRange.push(tile);
+      }
+    }
+    whiteTiles = whiteTiles.concat(tilesInRange);
+  }
+
+  // SHOW ORIGIN RANGE
+  if (
+    combatStore.selectedAbility.abilityType === AbilityType.Shaped &&
+    combatStore.selectedAbility.shape &&
+    combatStore.selectedAbility.shape.originRange &&
+    !(combatStore.selectedAbility.shape.originRange === 0) &&
+    !combatStore.selectedOrigin
+  ) {
+    const tilesInRange = [];
+    const grid = Object.values(combatStore.combatState.grid);
+    for (const tile of grid) {
+      if (
+        combatStore.isInRange(
+          tile.coordinates,
+          combatStore.currentTurnUnit!.position!,
+          combatStore.selectedAbility.shape!.originRange
+        )
+      ) {
+        tilesInRange.push(tile);
+      }
+    }
+
+    blueTiles = blueTiles.concat(tilesInRange);
+  }
+
+  // SHOW SHAPED
+
+  if (
+    combatStore.selectedShape &&
+    combatStore.selectedAbility.abilityType === AbilityType.Shaped &&
+    combatStore.selectedOrigin
+  ) {
+    const origin = combatStore.selectedOrigin;
+    const shape = combatStore.selectedShape;
+
+    for (let index = 0; index < shape.shapeEffects.length; index++) {
+      const matchingEffect = combatStore.selectedAbility.effects[index];
+      const matchingShapeEffect = shape.shapeEffects[index];
+
+      if (matchingEffect.effectType === EffectType.Damage) {
+        for (const coordinate of matchingShapeEffect.coordinates) {
+          const newCoordinates = {
+            x: origin.coordinates.x + coordinate.x,
+            y: origin.coordinates.y + coordinate.y,
+          };
+
+          const gridTile = combatStore.getTilebyCoordinates(newCoordinates);
+          if (gridTile) {
+            redTiles.push(gridTile);
+          }
+        }
+      }
+      if (matchingEffect.effectType === EffectType.Move) {
+        console.log("MoveStuff");
+        // It's all really same calculation with one above, so I feel like we should do helper function and run that bunch of times
+      }
     }
   }
-  return tilesInRange;
+
+  return {
+    blueTiles,
+    yellowTiles,
+    redTiles,
+    whiteTiles,
+    greenTiles,
+  };
 });
-
-const originRange = computed(() => {
-  if (
-    !combatStore.combatState ||
-    !selectedAbility.value ||
-    !(selectedAbility.value.abilityType === AbilityType.Shaped) ||
-    selectedAbility.value.shape!.originRange === 0 ||
-    !selectedOrigin.value
-  ) {
-    return [];
-  }
-  const tilesInRange = [];
-  const grid = Object.values(combatStore.combatState.grid);
-  for (const tile of grid) {
-    if (
-      combatStore.isInRange(
-        tile.coordinates,
-        combatStore.currentTurnUnit!.position!,
-        selectedAbility.value.shape!.originRange
-      )
-    ) {
-      tilesInRange.push(tile);
-    }
-  }
-  return tilesInRange;
-});
-
-function calculateDistance(
-  coordinates1: Coordinates,
-  coordinates2: Coordinates
-) {
-  const X = coordinates2.x - coordinates1.x;
-  const Y = coordinates2.y - coordinates1.y;
-  return Math.sqrt(X * X + Y * Y);
-}
-
-function calculateRange(origin: CombatTile) {}
 
 /*
 function handleUnitDeath(unit: Unit) {
@@ -292,11 +326,13 @@ async function handleEnemyGroupTurn() {
   resetCurrentTurn(true);
 }
 */
-// useEvent("Space", endTurn);
+
+// Event Listeners (Have to be in created, on mounted not working)
+useEvent("Space", combatStore.endTurn);
+useEvent("Escape", combatStore.cancelAbility);
+useEvent("KeyR", combatStore.rotateShape);
 
 onMounted(() => {
-  // Add event listeners
-  // useEvent("Space", endTurn);
   // Place Units
   if (combatStore.combatState) {
     const player = combatStore.combatState.units.find(
@@ -376,7 +412,7 @@ onMounted(() => {
   height: 0px;
   width: 0px;
 }
-.targeted-range {
+.white-tiles {
   background-color: rgba(255, 255, 255, 0.3);
 
   cursor: pointer;
@@ -384,7 +420,7 @@ onMounted(() => {
     background-color: rgba(255, 255, 255, 0.4);
   }
 }
-.origin-range {
+.blue-tiles {
   background-color: rgba(0, 0, 255, 0.3);
 
   cursor: pointer;
@@ -392,12 +428,22 @@ onMounted(() => {
     background-color: rgba(0, 0, 255, 0.4);
   }
 }
-.red {
+.red-tiles {
   background-color: rgba(255, 0, 0, 0.3);
 
   cursor: pointer;
   &:hover {
     background-color: rgba(255, 0, 0, 0.4);
   }
+}
+.info-text {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: var(--elevation2);
+  padding: 0.5rem;
+}
+.cast-ready {
+  cursor: pointer;
 }
 </style>

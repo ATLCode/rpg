@@ -16,7 +16,13 @@ export const units: Record<UnitId, Unit> = {
     currentHealth: 10,
     maxHealth: 10,
     position: null,
-    abilities: [AbilityId.BasicKick],
+    abilities: [
+      AbilityId.BasicKick,
+      AbilityId.Move,
+      AbilityId.Bullseye,
+      AbilityId.HealSelf,
+      AbilityId.PykeUlt,
+    ],
     drops: [
       {
         object: {

@@ -23,6 +23,7 @@ const props = defineProps({
 
 <style lang="scss" scoped>
 .unit-container {
+  cursor: pointer;
   height: min-content;
   width: min-content;
   display: flex;

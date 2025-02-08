@@ -5,7 +5,12 @@
       <ASpacer />
       <AButton variant="plain" padding="0rem" @click="closeInfo">X</AButton>
     </div>
-    <div class="info">Info here</div>
+    <div class="info">
+      <div>HP: {{ props.unit?.currentHealth }}/{{ props.unit?.maxHealth }}</div>
+      <div>Position: {{ props.unit?.position }}</div>
+      <div>Main Action: {{ props.unit?.hasMainAction }}</div>
+      <div>Side Action: {{ props.unit?.hasSideAction }}</div>
+    </div>
     <div class="buttons">
       <AButton
         border-radius="0px"

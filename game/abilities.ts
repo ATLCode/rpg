@@ -13,6 +13,8 @@ export enum AbilityId {
   BasicKick = "BasicKick",
   Move = "Move",
   Bullseye = "Bullseye",
+  HealSelf = "HealSelf",
+  PykeUlt = "PykeUlt",
 }
 
 export const abilities: Record<AbilityId, Ability> = {
@@ -75,7 +77,7 @@ export const abilities: Record<AbilityId, Ability> = {
     ],
     abilityType: AbilityType.Shaped,
     shape: {
-      originRange: 1,
+      originRange: 0,
       shapes: [
         {
           direction: ShapeDirection.TopRight,
@@ -113,7 +115,7 @@ export const abilities: Record<AbilityId, Ability> = {
     ],
     abilityType: AbilityType.Targeted,
     target: {
-      range: 2,
+      range: 3,
       effectRange: 0,
     },
   },
@@ -138,6 +140,66 @@ export const abilities: Record<AbilityId, Ability> = {
     target: {
       range: 3,
       effectRange: 0,
+    },
+  },
+  [AbilityId.HealSelf]: {
+    id: AbilityId.HealSelf,
+    name: "Heal Self",
+    img: "/abilities/healself.png",
+    cost: AbilityCost.SideAction,
+    skillId: null,
+    levelReq: 1,
+    isAutomatic: true,
+    xp: 0,
+    energyCost: 0,
+    effects: [
+      {
+        effectType: EffectType.Heal,
+        value: 3,
+      },
+    ],
+    abilityType: AbilityType.Targeted,
+    target: {
+      range: 3,
+      effectRange: 0,
+    },
+  },
+  [AbilityId.PykeUlt]: {
+    id: AbilityId.PykeUlt,
+    name: "Pyke Ult",
+    img: "/abilities/pyke.png",
+    cost: AbilityCost.MainAction,
+    skillId: SkillId.Melee,
+    levelReq: 1,
+    isAutomatic: true,
+    xp: 5,
+    energyCost: 0,
+    effects: [
+      {
+        effectType: EffectType.Damage,
+        value: 3,
+        damageType: DamageType.Slash,
+      },
+    ],
+    abilityType: AbilityType.Shaped,
+    shape: {
+      originRange: 4,
+      shapes: [
+        {
+          direction: ShapeDirection.TopRight,
+          shapeEffects: [
+            {
+              coordinates: [
+                { x: 1, y: -1 },
+                { x: 1, y: 1 },
+                { x: -1, y: -1 },
+                { x: -1, y: 1 },
+                { x: 0, y: 0 },
+              ],
+            },
+          ],
+        },
+      ],
     },
   },
 };

@@ -1,6 +1,6 @@
-import type { ActionId } from "~/game/actions";
 import type { GameItem, ItemId, ItemProperty } from "./item.types";
 import type { SkillId } from "./skill.types";
+import type { ActionId } from "~/game/actions";
 
 export enum ActionType {
   Gather = "Gather",

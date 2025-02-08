@@ -1,5 +1,5 @@
-import type { SpotId } from "~/game/spots";
 import type { SkillId } from "./skill.types";
+import type { SpotId } from "~/game/spots";
 import type { ActionId } from "~/game/actions";
 
 export type WeightedActionId = WeightedObject<ActionId>;

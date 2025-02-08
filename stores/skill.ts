@@ -1,7 +1,7 @@
 import { useNotificationStore, NotificationType } from "@/stores/notification";
 import type { AbilityId } from "~/game/abilities";
 import { defaults } from "~/game/defaults";
-import { AbilityType, type Ability } from "~/types/ability.types";
+import { type Ability } from "~/types/ability.types";
 import type { SkillId } from "~/types/skill.types";
 
 export type Skill = {
