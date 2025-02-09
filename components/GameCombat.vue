@@ -246,6 +246,17 @@ const tileColors = computed(() => {
       if (matchingEffect.effectType === EffectType.Move) {
         console.log("MoveStuff");
         // It's all really same calculation with one above, so I feel like we should do helper function and run that bunch of times
+        for (const coordinate of matchingShapeEffect.coordinates) {
+          const newCoordinates = {
+            x: origin.coordinates.x + coordinate.x,
+            y: origin.coordinates.y + coordinate.y,
+          };
+
+          const gridTile = combatStore.getTilebyCoordinates(newCoordinates);
+          if (gridTile) {
+            whiteTiles.push(gridTile);
+          }
+        }
       }
     }
   }

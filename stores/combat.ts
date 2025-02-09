@@ -256,6 +256,47 @@ export const useCombatStore = defineStore("combat", () => {
   }
   function useShapedAbility(ability: Ability, user: Unit, origin: Coordinates) {
     console.log("Using shaped ability");
+
+    if (
+      !selectedShape.value ||
+      !selectedAbility.value ||
+      !selectedOrigin.value ||
+      !user.position
+    ) {
+      return;
+    }
+
+    for (
+      let index = 0;
+      index < selectedShape.value.shapeEffects.length;
+      index++
+    ) {
+      const matchingEffect = selectedAbility.value.effects[index];
+      const matchingShapeEffect = selectedShape.value.shapeEffects[index];
+
+      if (matchingEffect.effectType === EffectType.Move) {
+        const coordinatesModifier =
+          matchingShapeEffect.coordinates[
+            matchingShapeEffect.coordinates.length - 1
+          ];
+        const moveEndTile = getTilebyCoordinates({
+          x: coordinatesModifier.x + user.position.x,
+          y: coordinatesModifier.y + user.position.y,
+        });
+        if (moveEndTile) {
+          user.position = moveEndTile.coordinates;
+        }
+      }
+      if (matchingEffect.effectType === EffectType.Damage) {
+        for (const coordinates of matchingShapeEffect.coordinates) {
+          const trueCoordinates = {
+            x: coordinates.x + origin.x,
+            y: coordinates.y + origin.y,
+          };
+          useEffect(matchingEffect, user, trueCoordinates);
+        }
+      }
+    }
   }
 
   function useEffect(effect: Effect, user: Unit, target: Coordinates) {

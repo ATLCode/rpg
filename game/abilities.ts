@@ -15,6 +15,7 @@ export enum AbilityId {
   Bullseye = "Bullseye",
   HealSelf = "HealSelf",
   PykeUlt = "PykeUlt",
+  DashAndSlash = "DashAndSlash",
 }
 
 export const abilities: Record<AbilityId, Ability> = {
@@ -195,6 +196,105 @@ export const abilities: Record<AbilityId, Ability> = {
                 { x: -1, y: -1 },
                 { x: -1, y: 1 },
                 { x: 0, y: 0 },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  },
+  [AbilityId.DashAndSlash]: {
+    id: AbilityId.DashAndSlash,
+    name: "Dash and Slash",
+    img: "/abilities/dash-and-slash.png",
+    cost: AbilityCost.MainAction,
+    skillId: SkillId.Melee,
+    levelReq: 1,
+    isAutomatic: true,
+    xp: 5,
+    energyCost: 0,
+    effects: [
+      {
+        effectType: EffectType.Move,
+      },
+      {
+        effectType: EffectType.Damage,
+        value: 3,
+        damageType: DamageType.Slash,
+      },
+    ],
+    abilityType: AbilityType.Shaped,
+    shape: {
+      originRange: 0,
+      shapes: [
+        {
+          direction: ShapeDirection.Top,
+          shapeEffects: [
+            {
+              coordinates: [
+                { x: 0, y: -1 },
+                { x: 0, y: -2 },
+              ],
+            },
+            {
+              coordinates: [
+                { x: 0, y: -3 },
+                { x: -1, y: -3 },
+                { x: 1, y: -3 },
+              ],
+            },
+          ],
+        },
+        {
+          direction: ShapeDirection.Right,
+          shapeEffects: [
+            {
+              coordinates: [
+                { x: 1, y: 0 },
+                { x: 2, y: 0 },
+              ],
+            },
+            {
+              coordinates: [
+                { x: 3, y: 0 },
+                { x: 3, y: 1 },
+                { x: 3, y: -1 },
+              ],
+            },
+          ],
+        },
+        {
+          direction: ShapeDirection.Bottom,
+          shapeEffects: [
+            {
+              coordinates: [
+                { x: 0, y: 1 },
+                { x: 0, y: 2 },
+              ],
+            },
+            {
+              coordinates: [
+                { x: 0, y: 3 },
+                { x: 1, y: 3 },
+                { x: -1, y: 3 },
+              ],
+            },
+          ],
+        },
+        {
+          direction: ShapeDirection.Left,
+          shapeEffects: [
+            {
+              coordinates: [
+                { x: -1, y: 0 },
+                { x: -2, y: 0 },
+              ],
+            },
+            {
+              coordinates: [
+                { x: -3, y: 0 },
+                { x: -3, y: 1 },
+                { x: -3, y: -1 },
               ],
             },
           ],
