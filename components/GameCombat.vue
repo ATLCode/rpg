@@ -28,7 +28,11 @@
         }"
         @click="handleTileClick(tile)"
       >
-        {{ tile.coordinates.x }},{{ tile.coordinates.y }}
+        <div v-if="false">
+          {{ tile.coordinates.x }},{{ tile.coordinates.y }}
+        </div>
+
+        <CombatDrop :tile="tile" :coordinates="tile.coordinates" />
       </div>
     </div>
     <CombatBattlefieldInfo class="info-battlefield" />
@@ -60,7 +64,6 @@
 </template>
 <script lang="ts" setup>
 import { useCombatStore } from "@/stores/combat";
-
 import {
   CombatSide,
   CombatStage,

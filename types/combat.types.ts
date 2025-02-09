@@ -1,3 +1,4 @@
+import type { EffectType } from "./ability.types";
 import type { Coordinates } from "./general.types";
 import type { GameItem, WeightedLoot } from "./item.types";
 import type { AbilityId } from "~/game/abilities";
@@ -71,4 +72,12 @@ export type CombatState = {
     isOver: boolean;
     isWon: boolean;
   };
+};
+
+export type CombatDrop = {
+  id: string;
+  effectType: EffectType;
+  value?: number;
+  timeout: number;
+  coordinates: Coordinates;
 };

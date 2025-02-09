@@ -7,6 +7,7 @@ import { useEncounterStore } from "@/stores/encounter";
 import {
   CombatSide,
   type Combat,
+  type CombatDrop,
   type CombatReturn,
   type CombatState,
   type CombatTile,
@@ -22,6 +23,7 @@ import {
   type Effect,
 } from "~/types/ability.types";
 import type { Coordinates } from "~/types/general.types";
+import { ulid } from "ulid";
 
 export const useCombatStore = defineStore("combat", () => {
   const playerStore = usePlayerStore();
@@ -114,6 +116,9 @@ export const useCombatStore = defineStore("combat", () => {
   const selectedOrigin = ref<CombatTile | null>(null);
   const selectedShape = ref<AbilityShape | null>(null);
 
+  // Drops
+  const combatDrops = ref<CombatDrop[]>([]);
+
   // COMBAT HELPERS
   function startBattle() {
     nextRound();
@@ -203,7 +208,6 @@ export const useCombatStore = defineStore("combat", () => {
   }
 
   function getTilebyCoordinates(coordinates: Coordinates) {
-    console.log(coordinates);
     if (!combatState.value) {
       return null;
     }
@@ -218,7 +222,6 @@ export const useCombatStore = defineStore("combat", () => {
         return null;
       }
     });
-    console.log(tileAtCoordinates);
     if (tileAtCoordinates) {
       return tileAtCoordinates;
     } else {
@@ -381,15 +384,35 @@ export const useCombatStore = defineStore("combat", () => {
       return;
     }
     unit.currentHealth -= effect.value;
+    combatDrop(effect.effectType, effect.value, 2000, unit.position!);
   }
 
   function healUnit(effect: Effect, unit: Unit) {
     console.log("healing");
-    console.log(unit);
     if (!(effect.effectType === EffectType.Heal) || !effect.value) {
       return;
     }
     unit.currentHealth += effect.value;
+    combatDrop(effect.effectType, effect.value, 2000, unit.position!);
+  }
+
+  function combatDrop(
+    effectType: EffectType,
+    value: number,
+    timeout: number,
+    coordinates: Coordinates
+  ) {
+    const newDrop: CombatDrop = {
+      id: ulid(),
+      effectType,
+      value,
+      timeout,
+      coordinates,
+    };
+    combatDrops.value.push(newDrop);
+    setTimeout(() => {
+      combatDrops.value = combatDrops.value.filter((e) => e.id !== newDrop.id);
+    }, newDrop.timeout);
   }
 
   function isInRange(
@@ -427,5 +450,6 @@ export const useCombatStore = defineStore("combat", () => {
     currentTurnUnit,
     isInRange,
     getTilebyCoordinates,
+    combatDrops,
   };
 });
