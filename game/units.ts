@@ -43,6 +43,11 @@ export const units: Record<UnitId, Unit> = {
     ],
     hasMainAction: true,
     hasSideAction: true,
+    resistances: {
+      blunt: 1,
+      slash: 1,
+      pierce: 0,
+    },
   },
   [UnitId.Guard]: {
     side: CombatSide.Enemy,
@@ -72,5 +77,10 @@ export const units: Record<UnitId, Unit> = {
     ],
     hasMainAction: true,
     hasSideAction: true,
+    resistances: {
+      blunt: 1,
+      slash: 1,
+      pierce: 0,
+    },
   },
 };

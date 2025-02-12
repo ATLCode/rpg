@@ -1,3 +1,4 @@
+import { ulid } from "ulid";
 import { usePlayerStore } from "@/stores/player";
 import { GameState, useGameStore } from "@/stores/game";
 import { useSkillStore } from "@/stores/skill";
@@ -6,24 +7,22 @@ import { useEncounterStore } from "@/stores/encounter";
 // import { useLocationStore } from "@/stores/location";
 import {
   CombatSide,
+  AbilityCost,
+  EffectType,
   type Combat,
   type CombatDrop,
   type CombatReturn,
   type CombatState,
   type CombatTile,
   type Unit,
-} from "~/types/combat.types";
-import { combatGrids } from "~/game/combat";
-import { SkillId } from "~/types/skill.types";
-import {
-  AbilityCost,
-  EffectType,
   type Ability,
   type AbilityShape,
   type Effect,
-} from "~/types/ability.types";
+  DamageType,
+} from "~/types/combat.types";
+import { combatGrids } from "~/game/combat";
+import { SkillId } from "~/types/skill.types";
 import type { Coordinates } from "~/types/general.types";
-import { ulid } from "ulid";
 
 export const useCombatStore = defineStore("combat", () => {
   const playerStore = usePlayerStore();
@@ -257,7 +256,7 @@ export const useCombatStore = defineStore("combat", () => {
       endTurn();
     }
   }
-  function useShapedAbility(ability: Ability, user: Unit, origin: Coordinates) {
+  function useShapedAbility(user: Unit, origin: Coordinates) {
     console.log("Using shaped ability");
 
     if (
@@ -383,8 +382,9 @@ export const useCombatStore = defineStore("combat", () => {
     if (!(effect.effectType === EffectType.Damage) || !effect.value) {
       return;
     }
-    unit.currentHealth -= effect.value;
-    combatDrop(effect.effectType, effect.value, 2000, unit.position!);
+    const damage = calculateDamageThroughResistances(effect, unit);
+    unit.currentHealth -= damage;
+    combatDrop(effect.effectType, damage, 2000, unit.position!);
   }
 
   function healUnit(effect: Effect, unit: Unit) {
@@ -394,6 +394,30 @@ export const useCombatStore = defineStore("combat", () => {
     }
     unit.currentHealth += effect.value;
     combatDrop(effect.effectType, effect.value, 2000, unit.position!);
+  }
+
+  function calculateDamageThroughResistances(effect: Effect, unit: Unit) {
+    if (!effect.value || !effect.damageType) {
+      throw new Error("Effect doesn't do damage");
+    }
+
+    const totalResistances = unit.resistances;
+    if (unit.isPlayer) {
+      totalResistances.blunt += itemStore.playerGearResistances.blunt;
+      totalResistances.pierce += itemStore.playerGearResistances.pierce;
+      totalResistances.slash += itemStore.playerGearResistances.slash;
+    }
+    let damage = effect.value;
+    if (effect.damageType === DamageType.Blunt) {
+      damage -= totalResistances.blunt;
+    }
+    if (effect.damageType === DamageType.Pierce) {
+      damage -= totalResistances.pierce;
+    }
+    if (effect.damageType === DamageType.Slash) {
+      damage -= totalResistances.slash;
+    }
+    return damage;
   }
 
   function combatDrop(

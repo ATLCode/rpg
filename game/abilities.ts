@@ -1,12 +1,11 @@
 import { SkillId } from "~/types/skill.types";
 import {
   AbilityCost,
-  AbilityType,
   DamageType,
   EffectType,
   ShapeDirection,
   type Ability,
-} from "~/types/ability.types";
+} from "~/types/combat.types";
 
 export enum AbilityId {
   BasicPunch = "BasicPunch",
@@ -36,7 +35,6 @@ export const abilities: Record<AbilityId, Ability> = {
       },
     ],
     cost: AbilityCost.MainAction,
-    abilityType: AbilityType.Shaped,
     shape: {
       originRange: 0,
       shapes: [
@@ -76,7 +74,6 @@ export const abilities: Record<AbilityId, Ability> = {
         damageType: DamageType.Blunt,
       },
     ],
-    abilityType: AbilityType.Shaped,
     shape: {
       originRange: 0,
       shapes: [
@@ -114,7 +111,6 @@ export const abilities: Record<AbilityId, Ability> = {
         effectType: EffectType.Move,
       },
     ],
-    abilityType: AbilityType.Targeted,
     target: {
       range: 3,
       effectRange: 0,
@@ -137,7 +133,6 @@ export const abilities: Record<AbilityId, Ability> = {
         damageType: DamageType.Pierce,
       },
     ],
-    abilityType: AbilityType.Targeted,
     target: {
       range: 3,
       effectRange: 0,
@@ -159,7 +154,6 @@ export const abilities: Record<AbilityId, Ability> = {
         value: 3,
       },
     ],
-    abilityType: AbilityType.Targeted,
     target: {
       range: 3,
       effectRange: 0,
@@ -182,7 +176,6 @@ export const abilities: Record<AbilityId, Ability> = {
         damageType: DamageType.Slash,
       },
     ],
-    abilityType: AbilityType.Shaped,
     shape: {
       originRange: 4,
       shapes: [
@@ -223,7 +216,6 @@ export const abilities: Record<AbilityId, Ability> = {
         damageType: DamageType.Slash,
       },
     ],
-    abilityType: AbilityType.Shaped,
     shape: {
       originRange: 0,
       shapes: [

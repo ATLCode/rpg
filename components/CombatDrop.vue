@@ -10,9 +10,9 @@
   >
     <div
       v-if="
-        coordinates &&
-        coordinates.x === drop.coordinates.x &&
-        coordinates.y === drop.coordinates.y
+        props.coordinates &&
+        props.coordinates.x === drop.coordinates.x &&
+        props.coordinates.y === drop.coordinates.y
       "
     >
       {{ drop.value }}
@@ -22,8 +22,7 @@
 
 <script lang="ts" setup>
 import { useCombatStore } from "@/stores/combat";
-import { EffectType } from "~/types/ability.types";
-import type { CombatTile } from "~/types/combat.types";
+import { EffectType, type CombatTile } from "~/types/combat.types";
 import type { Coordinates } from "~/types/general.types";
 
 const combatStore = useCombatStore();

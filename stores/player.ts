@@ -1,7 +1,6 @@
 import type { AbilityId } from "~/game/abilities";
 import { defaults } from "~/game/defaults";
-import type { Ability } from "~/types/ability.types";
-import { CombatSide, type Unit } from "~/types/combat.types";
+import { CombatSide, type Ability, type Unit } from "~/types/combat.types";
 
 export const usePlayerStore = defineStore("player", () => {
   const characterName = ref("");
@@ -28,6 +27,11 @@ export const usePlayerStore = defineStore("player", () => {
       position: null,
       hasMainAction: true,
       hasSideAction: true,
+      resistances: {
+        blunt: 0,
+        slash: 0,
+        pierce: 0,
+      },
     },
   ]);
 
@@ -52,6 +56,11 @@ export const usePlayerStore = defineStore("player", () => {
         position: null,
         hasMainAction: true,
         hasSideAction: true,
+        resistances: {
+          blunt: 0,
+          slash: 0,
+          pierce: 0,
+        },
       },
     ];
     energy.value = 100;

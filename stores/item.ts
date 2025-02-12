@@ -1,5 +1,6 @@
 import { defaults } from "~/game/defaults";
 import { itemContainers, items } from "~/game/items";
+import type { Resistances } from "~/types/combat.types";
 import {
   ItemContainerId,
   ItemId,
@@ -23,7 +24,28 @@ export const useItemStore = defineStore("item", () => {
     );
   });
 
-  // TODO Also I should probably have select item for OSRS like combining and stuff?
+  const playerGearResistances = computed(() => {
+    if (!playerGear.value) {
+      throw new Error("Can't find player gear");
+    }
+
+    const gearResistances: Resistances = {
+      blunt: 0,
+      slash: 0,
+      pierce: 0,
+    };
+
+    for (const gear of playerGear.value.slots) {
+      if (gear && gear.item.equip) {
+        gearResistances.blunt += gear.item.equip.resistances.blunt;
+        gearResistances.slash += gear.item.equip.resistances.slash;
+        gearResistances.pierce += gear.item.equip.resistances.pierce;
+      }
+    }
+
+    return gearResistances;
+  });
+
   // TODO Julius, should context menu actions be specified in each item or programmatically decided? I feel programmatically.
 
   function getItemById(itemId: ItemId) {
@@ -179,7 +201,7 @@ export const useItemStore = defineStore("item", () => {
       */
   }
   function unequipItem(inventoryItem: GameItem) {
-    const equipSlot = inventoryItem.item.equipSlot;
+    const equipSlot = inventoryItem.item.equip?.equipSlot;
 
     if (!equipSlot) {
       throw new Error("This item doesn't have equip slot");
@@ -352,5 +374,6 @@ export const useItemStore = defineStore("item", () => {
     removeItemsFromInventoryById,
     removeItemFromInventoryByIndex,
     getItemById,
+    playerGearResistances,
   };
 });

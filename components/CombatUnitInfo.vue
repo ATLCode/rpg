@@ -10,6 +10,10 @@
       <div>Position: {{ props.unit?.position }}</div>
       <div>Main Action: {{ props.unit?.hasMainAction }}</div>
       <div>Side Action: {{ props.unit?.hasSideAction }}</div>
+      <h3>Resistances</h3>
+      <div>Blunt:{{ props.unit?.resistances.blunt }}</div>
+      <div>Slash:{{ props.unit?.resistances.slash }}</div>
+      <div>pierce:{{ props.unit?.resistances.pierce }}</div>
     </div>
     <div class="buttons">
       <AButton

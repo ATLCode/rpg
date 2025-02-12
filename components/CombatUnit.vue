@@ -1,6 +1,11 @@
 <template>
   <div class="unit-container">
-    <div class="unit-info"></div>
+    <div class="unit-info">
+      <AProgressLinear
+        :value="props.unit?.currentHealth"
+        :max="unit?.maxHealth"
+      />
+    </div>
     <CharacterAvatar
       :avatar="props.unit?.img"
       :size="Size.Large"
@@ -29,6 +34,9 @@ const props = defineProps({
   display: flex;
   flex-direction: column;
   .unit-info {
+    position: absolute;
+    width: 128px;
+    top: -1.25rem;
     color: black;
     font-weight: bold;
     display: flex;

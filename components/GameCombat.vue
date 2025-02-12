@@ -67,10 +67,10 @@ import { useCombatStore } from "@/stores/combat";
 import {
   CombatSide,
   CombatStage,
+  EffectType,
   type CombatTile,
   type Unit,
 } from "~/types/combat.types";
-import { AbilityType, EffectType } from "~/types/ability.types";
 
 const combatStore = useCombatStore();
 
@@ -129,24 +129,45 @@ function selectUnitForInfo(unit: Unit) {
 // USING ABILITY
 
 function handleTileClick(tile: CombatTile) {
-  if (!combatStore.selectedAbility) {
+  if (
+    !combatStore.selectedAbility ||
+    !combatStore.currentTurnUnit ||
+    !combatStore.currentTurnUnit.position
+  ) {
     return;
   }
-  if (combatStore.selectedAbility.abilityType === AbilityType.Targeted) {
+  if (combatStore.selectedAbility.target) {
+    if (
+      !combatStore.isInRange(
+        tile.coordinates,
+        combatStore.currentTurnUnit?.position,
+        combatStore.selectedAbility.target?.range
+      )
+    ) {
+      return;
+    }
     combatStore.useTargetedAbility(
       combatStore.selectedAbility,
       combatStore.currentTurnUnit!,
       tile.coordinates
     );
   }
-  if (combatStore.selectedAbility.abilityType === AbilityType.Shaped) {
+  if (combatStore.selectedAbility.shape) {
     if (!combatStore.selectedOrigin) {
+      if (
+        !combatStore.isInRange(
+          tile.coordinates,
+          combatStore.currentTurnUnit.position,
+          combatStore.selectedAbility.shape?.originRange
+        )
+      ) {
+        return;
+      }
       combatStore.selectedOrigin = tile;
       combatStore.selectedShape = combatStore.selectedAbility.shape!.shapes[0];
       return;
     } else {
       combatStore.useShapedAbility(
-        combatStore.selectedAbility,
         combatStore.currentTurnUnit!,
         combatStore.selectedOrigin.coordinates
       );
@@ -176,7 +197,7 @@ const tileColors = computed(() => {
   }
 
   // SHOW TARGET RANGE
-  if (combatStore.selectedAbility.abilityType === AbilityType.Targeted) {
+  if (combatStore.selectedAbility.target) {
     const tilesInRange = [];
     const grid = Object.values(combatStore.combatState.grid);
 
@@ -196,7 +217,6 @@ const tileColors = computed(() => {
 
   // SHOW ORIGIN RANGE
   if (
-    combatStore.selectedAbility.abilityType === AbilityType.Shaped &&
     combatStore.selectedAbility.shape &&
     combatStore.selectedAbility.shape.originRange &&
     !(combatStore.selectedAbility.shape.originRange === 0) &&
@@ -223,7 +243,7 @@ const tileColors = computed(() => {
 
   if (
     combatStore.selectedShape &&
-    combatStore.selectedAbility.abilityType === AbilityType.Shaped &&
+    combatStore.selectedAbility.shape &&
     combatStore.selectedOrigin
   ) {
     const origin = combatStore.selectedOrigin;
