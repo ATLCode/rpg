@@ -4,13 +4,14 @@
       v-for="(inventoryItem, index) in itemStore.playerInventory?.slots"
       :key="index"
       class="inv-slot"
-      @mousedown="dragItem(inventoryItem, index)"
+      @mousedown="dragItem($event, inventoryItem, index)"
       @mouseup="dropItem(inventoryItem, index)"
     >
       <GameItem
         v-if="inventoryItem && inventoryItem?.itemId !== null"
         :game-item="inventoryItem"
         :game-item-index="index"
+        :game-item-container="itemStore.playerInventory"
       />
       <GameItem v-else :empty-slot="true" />
     </div>
@@ -23,7 +24,7 @@
         :src="draggedItem.item.img"
         class="item-icon"
         alt=""
-        draggable="false"
+        :draggable="false"
       />
     </div>
   </div>
@@ -41,8 +42,13 @@ const { x, y } = useMouse();
 const draggedItem = ref<GameItem | null>(null);
 const draggedIndex = ref<number | null>(null);
 
-function dragItem(item: GameItem | null, index: number) {
-  if (item === null) {
+function dragItem(event: MouseEvent, item: GameItem | null, index: number) {
+  const target = event.target as HTMLTextAreaElement;
+  if (
+    item === null ||
+    event.button === 2 ||
+    !(target.className === "item-icon")
+  ) {
     return;
   }
   draggedItem.value = item;
@@ -53,17 +59,12 @@ function dragItem(item: GameItem | null, index: number) {
 // TODO How to hide the item from starting spot while being dragged?
 
 function dropItem(dropContent: GameItem | null, dropIndex: number) {
-  console.log(dropContent + " " + dropIndex);
   if (!itemStore.playerInventory) {
     throw new Error("Can't find player inventory");
   }
   if (draggedIndex.value === null) {
-    console.log("Not Workings");
-    console.log(draggedIndex.value);
     return;
   } else {
-    console.log("working");
-    console.log(draggedIndex.value);
     itemStore.playerInventory.slots[draggedIndex.value] = dropContent;
     itemStore.playerInventory.slots[dropIndex] = draggedItem.value;
   }

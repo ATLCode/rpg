@@ -62,14 +62,15 @@ const emit = defineEmits(["close"]);
 
 const selectedTab = ref("inventory");
 
-useEvent("Escape", closeMenu);
-
 function closeMenu() {
+  console.log("asd");
   emit("close");
 }
 
 // Created
 selectedTab.value = props.initialTab;
+// WHY NOT WORKING?
+useEvent("Escape", closeMenu);
 </script>
 
 <style lang="scss" scoped>

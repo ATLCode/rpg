@@ -3,8 +3,8 @@
     <div class="rest-abilities">
       <div v-if="hoveredAbility" class="ability-info">
         <h3>{{ hoveredAbility?.name }}</h3>
-        <div>Type:{{ hoveredAbility.cost }}</div>
-        <div>Cost:{{ hoveredAbility.energyCost }}</div>
+        <div>Type:{{ hoveredAbility.actionCost }}</div>
+        <div>Energy Cost:{{ hoveredAbility.energyCost }}</div>
         <h4>Effects</h4>
         <div v-for="(effect, index) in hoveredAbility.effects" :key="index">
           <div v-if="effect.effectType === EffectType.Damage">

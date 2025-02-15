@@ -46,10 +46,17 @@
       @click="closeItemActionsMenu"
     ></div>
     <ContextMenuItemActions
-      v-if="showItemActions"
+      v-if="showItemActions && !equipSlot"
       :clicked-item="props.gameItem"
       :clicked-item-index="props.gameItemIndex"
       :clicked-item-container="props.gameItemContainer"
+      @close="showItemActions = false"
+    />
+    <ContextMenuItemActions
+      v-if="showItemActions && equipSlot"
+      :clicked-item="itemStore.playerGear?.slots[equipSlot]"
+      :clicked-item-index="props.equipSlot"
+      :clicked-item-container="itemStore.playerGear"
       @close="showItemActions = false"
     />
     <ModalItemInfo v-show="showItemInfo" :selected-item="props.gameItem" />

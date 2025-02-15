@@ -27,6 +27,9 @@ export const abilities: Record<AbilityId, Ability> = {
     isAutomatic: true,
     xp: 5,
     energyCost: 0,
+    actionCost: AbilityCost.MainAction,
+    cooldown: 1,
+    itemPropertyReq: [],
     effects: [
       {
         effectType: EffectType.Damage,
@@ -34,7 +37,6 @@ export const abilities: Record<AbilityId, Ability> = {
         damageType: DamageType.Blunt,
       },
     ],
-    cost: AbilityCost.MainAction,
     shape: {
       originRange: 0,
       shapes: [
@@ -61,12 +63,14 @@ export const abilities: Record<AbilityId, Ability> = {
     id: AbilityId.BasicKick,
     name: "Basic Kick",
     img: "/abilities/kick.png",
-    cost: AbilityCost.MainAction,
     skillId: SkillId.Melee,
     levelReq: 1,
     isAutomatic: true,
     xp: 5,
     energyCost: 0,
+    actionCost: AbilityCost.MainAction,
+    cooldown: 1,
+    itemPropertyReq: [],
     effects: [
       {
         effectType: EffectType.Damage,
@@ -100,12 +104,14 @@ export const abilities: Record<AbilityId, Ability> = {
     id: AbilityId.Move,
     name: "Move",
     img: "/abilities/move.png",
-    cost: AbilityCost.SideAction,
     skillId: null,
     levelReq: 1,
     isAutomatic: true,
     xp: 0,
     energyCost: 0,
+    actionCost: AbilityCost.SideAction,
+    cooldown: 1,
+    itemPropertyReq: [],
     effects: [
       {
         effectType: EffectType.Move,
@@ -120,12 +126,14 @@ export const abilities: Record<AbilityId, Ability> = {
     id: AbilityId.Bullseye,
     name: "Bullseye",
     img: "/abilities/bullseye.png",
-    cost: AbilityCost.MainAction,
     skillId: null,
     levelReq: 1,
     isAutomatic: true,
     xp: 0,
     energyCost: 0,
+    itemPropertyReq: [],
+    actionCost: AbilityCost.MainAction,
+    cooldown: 1,
     effects: [
       {
         effectType: EffectType.Damage,
@@ -142,12 +150,14 @@ export const abilities: Record<AbilityId, Ability> = {
     id: AbilityId.HealSelf,
     name: "Heal Self",
     img: "/abilities/healself.png",
-    cost: AbilityCost.SideAction,
     skillId: null,
     levelReq: 1,
     isAutomatic: true,
     xp: 0,
     energyCost: 0,
+    actionCost: AbilityCost.SideAction,
+    cooldown: 1,
+    itemPropertyReq: [],
     effects: [
       {
         effectType: EffectType.Heal,
@@ -163,12 +173,14 @@ export const abilities: Record<AbilityId, Ability> = {
     id: AbilityId.PykeUlt,
     name: "Pyke Ult",
     img: "/abilities/pyke.png",
-    cost: AbilityCost.MainAction,
     skillId: SkillId.Melee,
     levelReq: 1,
     isAutomatic: true,
     xp: 5,
     energyCost: 0,
+    actionCost: AbilityCost.MainAction,
+    cooldown: 1,
+    itemPropertyReq: [],
     effects: [
       {
         effectType: EffectType.Damage,
@@ -200,12 +212,14 @@ export const abilities: Record<AbilityId, Ability> = {
     id: AbilityId.DashAndSlash,
     name: "Dash and Slash",
     img: "/abilities/dash-and-slash.png",
-    cost: AbilityCost.MainAction,
     skillId: SkillId.Melee,
     levelReq: 1,
     isAutomatic: true,
     xp: 5,
     energyCost: 0,
+    itemPropertyReq: [],
+    actionCost: AbilityCost.MainAction,
+    cooldown: 3,
     effects: [
       {
         effectType: EffectType.Move,

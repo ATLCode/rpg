@@ -48,6 +48,7 @@ export const units: Record<UnitId, Unit> = {
       slash: 1,
       pierce: 0,
     },
+    cooldowns: [],
   },
   [UnitId.Guard]: {
     side: CombatSide.Enemy,
@@ -82,5 +83,6 @@ export const units: Record<UnitId, Unit> = {
       slash: 1,
       pierce: 0,
     },
+    cooldowns: [],
   },
 };

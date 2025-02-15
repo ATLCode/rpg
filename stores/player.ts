@@ -32,6 +32,7 @@ export const usePlayerStore = defineStore("player", () => {
         slash: 0,
         pierce: 0,
       },
+      cooldowns: [],
     },
   ]);
 
@@ -61,6 +62,7 @@ export const usePlayerStore = defineStore("player", () => {
           slash: 0,
           pierce: 0,
         },
+        cooldowns: [],
       },
     ];
     energy.value = 100;

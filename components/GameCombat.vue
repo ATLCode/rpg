@@ -168,6 +168,7 @@ function handleTileClick(tile: CombatTile) {
       return;
     } else {
       combatStore.useShapedAbility(
+        combatStore.selectedAbility,
         combatStore.currentTurnUnit!,
         combatStore.selectedOrigin.coordinates
       );

@@ -45,10 +45,12 @@ const visibleActions = computed(() => {
   // Should we determine actions here based on the item or should it come from item
 
   let rawActions = [ItemAction.Drop];
-  if (props.clickedItem?.item.equipSlot) {
+  if (props.clickedItem?.item.equip?.equipSlot) {
     rawActions.push(ItemAction.Equip);
     rawActions.push(ItemAction.Unequip);
   }
+
+  console.log(props.clickedItemContainer);
 
   if (props.clickedItemContainer?.id === ItemContainerId.PlayerGear) {
     rawActions = rawActions?.filter((action) => action === ItemAction.Unequip);
@@ -56,6 +58,8 @@ const visibleActions = computed(() => {
   if (props.clickedItemContainer?.id === ItemContainerId.PlayerInventory) {
     rawActions = rawActions?.filter((action) => action !== ItemAction.Unequip);
   }
+
+  console.log(rawActions);
 
   return rawActions;
 });
@@ -74,10 +78,11 @@ function handleActionClick(action: ItemAction) {
   }
   if (action === ItemAction.Equip) {
     console.log("Equipping");
+    itemStore.equipItem(props.clickedItemIndex);
   }
   if (action === ItemAction.Unequip) {
     console.log("Unequipping");
-    itemStore.unequipItem(props.clickedItem);
+    itemStore.unequipItem(props.clickedItemIndex);
   }
   emit("close");
 }
@@ -99,6 +104,6 @@ function handleActionClick(action: ItemAction) {
 }
 
 .action:hover {
-  background-color: var(--elevation2);
+  background-color: var(--elevation3);
 }
 </style>

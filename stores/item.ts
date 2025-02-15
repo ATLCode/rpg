@@ -2,6 +2,7 @@ import { defaults } from "~/game/defaults";
 import { itemContainers, items } from "~/game/items";
 import type { Resistances } from "~/types/combat.types";
 import {
+  EquipSlot,
   ItemContainerId,
   ItemId,
   type GameItem,
@@ -181,35 +182,37 @@ export const useItemStore = defineStore("item", () => {
     if (!playerInventory.value || !playerInventory.value.slots[index]) {
       throw new Error("Can't accesss to the item");
     }
-    /*
+    if (!playerGear.value) {
+      throw new Error("Can't access player gear");
+    }
+
     const itemToEquip = playerInventory.value.slots[index];
 
-    const equipSlot = itemToEquip.item.equipSlot;
+    const equipSlot = itemToEquip.item.equip?.equipSlot;
 
     if (!equipSlot) {
       throw new Error("This item can't be equipped");
     }
 
-     const equippedBefore = gear.value[equipSlot];
+    const equippedBefore = playerGear.value.slots[equipSlot];
 
-      gear.value[equipSlot] = itemToEquip;
+    playerGear.value.slots[equipSlot] = itemToEquip;
     removeItemFromInventoryByIndex(index);
 
     if (equippedBefore) {
       addItemsToInventory(equippedBefore);
     }
-      */
   }
-  function unequipItem(inventoryItem: GameItem) {
-    const equipSlot = inventoryItem.item.equip?.equipSlot;
-
-    if (!equipSlot) {
-      throw new Error("This item doesn't have equip slot");
+  function unequipItem(index: number) {
+    if (!playerGear.value) {
+      throw new Error("Can't find player's gear");
     }
-    /*
-    addItemsToInventory(inventoryItem);
-    gear.value[equipSlot] = null;
-    */
+    const itemToRemove = playerGear.value.slots[index];
+    if (!itemToRemove) {
+      throw new Error("Can't find item to unequip");
+    }
+    addItemsToInventory(itemToRemove, 1);
+    playerGear.value.slots[index] = null;
   }
   /*
   function buyItems(quantity: number, npc: Npc) {

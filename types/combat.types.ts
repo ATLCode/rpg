@@ -18,10 +18,21 @@ export enum CombatStage {
   Finished = "Finished",
 }
 
+export enum DamageType {
+  Blunt = "Blunt",
+  Slash = "Slash",
+  Pierce = "Pierce",
+}
+
 export type Resistances = {
   blunt: number;
   slash: number;
   pierce: number;
+};
+
+export type AbilityCooldown = {
+  abilityId: AbilityId;
+  cooldown: number; // rounds
 };
 
 export type Unit = {
@@ -37,6 +48,7 @@ export type Unit = {
   hasMainAction: boolean;
   hasSideAction: boolean;
   resistances: Resistances;
+  cooldowns: AbilityCooldown[];
   onTurnStart?: () => void;
 };
 
@@ -101,12 +113,6 @@ export type CombatDrop = {
   coordinates: Coordinates;
 };
 
-export enum DamageType {
-  Blunt = "Blunt",
-  Slash = "Slash",
-  Pierce = "Pierce",
-}
-
 export enum ShapeDirection {
   Top = "Top",
   Right = "Right",
@@ -156,13 +162,14 @@ export type Ability = {
   id: AbilityId;
   name: string;
   img: string;
-  cost: AbilityCost;
   skillId: SkillId | null;
   levelReq: number;
   isAutomatic: boolean; // Do you get this ability automatically with level up
   xp: number;
+  actionCost: AbilityCost;
   energyCost: number;
-  itemPropertyReq?: ItemProperty[];
+  cooldown: number; // Rounds
+  itemPropertyReq: ItemProperty[];
   effects: Effect[];
   shape?: AbilityShapeInfo;
   target?: AbilityTargetInfo;

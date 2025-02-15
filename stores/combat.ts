@@ -19,6 +19,7 @@ import {
   type AbilityShape,
   type Effect,
   DamageType,
+  type AbilityCooldown,
 } from "~/types/combat.types";
 import { combatGrids } from "~/game/combat";
 import { SkillId } from "~/types/skill.types";
@@ -183,6 +184,14 @@ export const useCombatStore = defineStore("combat", () => {
     }
     currentTurnUnit.value.hasMainAction = true;
     currentTurnUnit.value.hasSideAction = true;
+    console.log("Starting cds less");
+    for (const cd of currentTurnUnit.value.cooldowns) {
+      cd.cooldown -= 1;
+      if (cd.cooldown <= 0) {
+        const index = currentTurnUnit.value.cooldowns.indexOf(cd);
+        currentTurnUnit.value.cooldowns.splice(index, 1);
+      }
+    }
   }
 
   function endTurn() {
@@ -237,6 +246,7 @@ export const useCombatStore = defineStore("combat", () => {
   });
 
   // In use ability maybe we get user from that computed, assuming useAbility can only happen on that players turn who currently has it.
+  // Refactor later so we have one useAbility function and just handle necessary parts of targeted vs shaped in different functions
 
   function useTargetedAbility(
     ability: Ability,
@@ -248,6 +258,7 @@ export const useCombatStore = defineStore("combat", () => {
     for (const effect of effects) {
       useEffect(effect, user, target);
     }
+    setAbilityToCooldown(ability, user);
     payAbilityCost(user, ability);
     if (user.isPlayer) {
       saveXpToCombatRewards(ability);
@@ -256,15 +267,11 @@ export const useCombatStore = defineStore("combat", () => {
       endTurn();
     }
   }
-  function useShapedAbility(user: Unit, origin: Coordinates) {
+
+  function useShapedAbility(ability: Ability, user: Unit, origin: Coordinates) {
     console.log("Using shaped ability");
 
-    if (
-      !selectedShape.value ||
-      !selectedAbility.value ||
-      !selectedOrigin.value ||
-      !user.position
-    ) {
+    if (!selectedShape.value || !selectedOrigin.value || !user.position) {
       return;
     }
 
@@ -273,7 +280,7 @@ export const useCombatStore = defineStore("combat", () => {
       index < selectedShape.value.shapeEffects.length;
       index++
     ) {
-      const matchingEffect = selectedAbility.value.effects[index];
+      const matchingEffect = ability.effects[index];
       const matchingShapeEffect = selectedShape.value.shapeEffects[index];
 
       if (matchingEffect.effectType === EffectType.Move) {
@@ -299,6 +306,20 @@ export const useCombatStore = defineStore("combat", () => {
         }
       }
     }
+    setAbilityToCooldown(ability, user);
+    payAbilityCost(user, ability);
+    if (user.isPlayer) {
+      saveXpToCombatRewards(ability);
+    }
+  }
+
+  function setAbilityToCooldown(ability: Ability, unit: Unit) {
+    const newCooldown: AbilityCooldown = {
+      abilityId: ability.id,
+      cooldown: ability.cooldown,
+    };
+
+    unit.cooldowns.push(newCooldown);
   }
 
   function useEffect(effect: Effect, user: Unit, target: Coordinates) {
@@ -340,14 +361,16 @@ export const useCombatStore = defineStore("combat", () => {
   }
 
   function hasAbilityCost(ability: Ability) {
-    if (ability.cost === AbilityCost.MainAction) {
+    // TODO Fix this and where it's used so that if no side action left you can still do side action by paying main action as cost
+
+    if (ability.actionCost === AbilityCost.MainAction) {
       if (currentTurnUnit.value!.hasMainAction) {
         return true;
       } else {
         return false;
       }
     }
-    if (ability.cost === AbilityCost.SideAction) {
+    if (ability.actionCost === AbilityCost.SideAction) {
       if (currentTurnUnit.value!.hasSideAction) {
         return true;
       } else {
@@ -358,10 +381,10 @@ export const useCombatStore = defineStore("combat", () => {
   }
 
   function payAbilityCost(user: Unit, ability: Ability) {
-    if (ability.cost === AbilityCost.MainAction) {
+    if (ability.actionCost === AbilityCost.MainAction) {
       user.hasMainAction = false;
     }
-    if (ability.cost === AbilityCost.SideAction) {
+    if (ability.actionCost === AbilityCost.SideAction) {
       user.hasSideAction = false;
     }
   }
