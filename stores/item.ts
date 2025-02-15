@@ -2,11 +2,11 @@ import { defaults } from "~/game/defaults";
 import { itemContainers, items } from "~/game/items";
 import type { Resistances } from "~/types/combat.types";
 import {
-  EquipSlot,
   ItemContainerId,
   ItemId,
   type GameItem,
   type ItemContainer,
+  type ItemPropertyRequirement,
 } from "~/types/item.types";
 
 export const useItemStore = defineStore("item", () => {
@@ -214,6 +214,33 @@ export const useItemStore = defineStore("item", () => {
     addItemsToInventory(itemToRemove, 1);
     playerGear.value.slots[index] = null;
   }
+
+  function checkItemPropertyRequirement(requirement: ItemPropertyRequirement) {
+    if (!playerGear.value) {
+      throw new Error("No player gear");
+    }
+
+    if (requirement.container === "Gear") {
+      if (requirement.slot === "Any") {
+        // Todo
+        return true;
+      } else {
+        const itemInSlot = playerGear.value?.slots[requirement.slot];
+        if (
+          itemInSlot &&
+          itemInSlot.item.properties?.includes(requirement.property)
+        ) {
+          return true;
+        }
+      }
+    }
+    if (requirement.container === "Inventory") {
+      // Todo
+      return true;
+    }
+    return false;
+  }
+
   /*
   function buyItems(quantity: number, npc: Npc) {
 
@@ -378,5 +405,6 @@ export const useItemStore = defineStore("item", () => {
     removeItemFromInventoryByIndex,
     getItemById,
     playerGearResistances,
+    checkItemPropertyRequirement,
   };
 });

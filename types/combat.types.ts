@@ -1,5 +1,9 @@
 import type { Coordinates } from "./general.types";
-import type { GameItem, WeightedLoot, ItemProperty } from "./item.types";
+import type {
+  GameItem,
+  WeightedLoot,
+  ItemPropertyRequirement,
+} from "./item.types";
 import type { SkillId } from "./skill.types";
 import type { AbilityId } from "~/game/abilities";
 
@@ -169,7 +173,7 @@ export type Ability = {
   actionCost: AbilityCost;
   energyCost: number;
   cooldown: number; // Rounds
-  itemPropertyReq: ItemProperty[];
+  itemPropertyReq: ItemPropertyRequirement[];
   effects: Effect[];
   shape?: AbilityShapeInfo;
   target?: AbilityTargetInfo;

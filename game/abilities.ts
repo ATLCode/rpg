@@ -6,6 +6,7 @@ import {
   ShapeDirection,
   type Ability,
 } from "~/types/combat.types";
+import { EquipSlot, ItemProperty } from "~/types/item.types";
 
 export enum AbilityId {
   BasicPunch = "BasicPunch",
@@ -217,7 +218,13 @@ export const abilities: Record<AbilityId, Ability> = {
     isAutomatic: true,
     xp: 5,
     energyCost: 0,
-    itemPropertyReq: [],
+    itemPropertyReq: [
+      {
+        property: ItemProperty.Blade,
+        container: "Gear",
+        slot: EquipSlot.MainHand,
+      },
+    ],
     actionCost: AbilityCost.MainAction,
     cooldown: 3,
     effects: [

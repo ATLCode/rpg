@@ -29,7 +29,7 @@ export const items: Record<ItemId, Item> = {
   [ItemId.RawPanfish]: {
     name: "Raw Panfish",
     type: ItemType.Resource,
-    properties: null,
+    properties: [],
     weight: 1,
     maxStackSize: 10,
     value: 1,
@@ -41,7 +41,7 @@ export const items: Record<ItemId, Item> = {
   [ItemId.RawBluegill]: {
     name: "Raw Bluegill",
     type: ItemType.Resource,
-    properties: null,
+    properties: [],
     weight: 1,
     maxStackSize: 10,
     value: 1,
@@ -72,7 +72,11 @@ export const items: Record<ItemId, Item> = {
   [ItemId.IronSword]: {
     name: "Iron Sword",
     type: ItemType.Equipment,
-    properties: null,
+    properties: [
+      ItemProperty.OneHanded,
+      ItemProperty.Weapon,
+      ItemProperty.Blade,
+    ],
     weight: 1,
     maxStackSize: 1,
     value: 10,
@@ -91,7 +95,7 @@ export const items: Record<ItemId, Item> = {
   [ItemId.LeatherBoots]: {
     name: "Leather Boots",
     type: ItemType.Equipment,
-    properties: null,
+    properties: [],
     weight: 1,
     maxStackSize: 1,
     value: 10,
@@ -110,7 +114,7 @@ export const items: Record<ItemId, Item> = {
   [ItemId.OakLog]: {
     name: "Oak Log",
     type: ItemType.Resource,
-    properties: null,
+    properties: [],
     weight: 1,
     maxStackSize: 10,
     value: 1,
@@ -122,7 +126,7 @@ export const items: Record<ItemId, Item> = {
   [ItemId.CookedBluegill]: {
     name: "Cooked Bluegill",
     type: ItemType.Food,
-    properties: null,
+    properties: [],
     weight: 1,
     maxStackSize: 10,
     value: 1,
@@ -134,7 +138,7 @@ export const items: Record<ItemId, Item> = {
   [ItemId.CookedPanfish]: {
     name: "Cooked Panfish",
     type: ItemType.Food,
-    properties: null,
+    properties: [],
     weight: 1,
     maxStackSize: 10,
     value: 1,
@@ -146,7 +150,7 @@ export const items: Record<ItemId, Item> = {
   [ItemId.Gold]: {
     name: "Gold",
     type: ItemType.Currency,
-    properties: null,
+    properties: [],
     weight: 1,
     maxStackSize: 1000000000,
     value: 1,
