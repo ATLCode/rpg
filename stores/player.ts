@@ -1,48 +1,38 @@
-import { type WeightedLoot } from "../types/item.types";
 import type { AbilityId } from "~/game/abilities";
-
-export type Unit = {
-  isPlayer?: boolean;
-  name: string;
-  img: string;
-  currentActionPoints: number;
-  maxActionPoints: number;
-  currentHealth: number;
-  maxHealth: number;
-  abilities: AbilityId[];
-  drops?: WeightedLoot[];
-  // resistances
-};
+import { defaults } from "~/game/defaults";
+import { CombatSide, type Ability, type Unit } from "~/types/combat.types";
 
 export const usePlayerStore = defineStore("player", () => {
   const characterName = ref("");
-
-  // Not sure if we need energy?
-  // At least in current use, things should take time rather than energy.
-  // Could be used as resource system though?
   const energy = ref(100);
-  /*
-  const playerUnit = ref<Unit>({
-    isPlayer: true,
-    name: characterName.value,
-    img: "/icons/21.png",
-    currentActionPoints: 3,
-    maxActionPoints: 3,
-    currentHealth: 10,
-    maxHealth: 10,
-    abilities: [],
+
+  const playerAbilities = ref<Ability[]>(defaults.startingAbilities);
+  const playerAbilityIds = computed(() => {
+    const ids: AbilityId[] = [];
+    for (const item of playerAbilities.value) {
+      ids.push(item.id);
+    }
+    return ids;
   });
-  */
+
   const playerGroup = ref<Unit[]>([
     {
       isPlayer: true,
+      side: CombatSide.Player,
       name: characterName.value,
       img: "/icons/21.png",
-      currentActionPoints: 3,
-      maxActionPoints: 3,
       currentHealth: 10,
       maxHealth: 10,
-      abilities: [],
+      abilities: playerAbilityIds.value,
+      position: null,
+      hasMainAction: true,
+      hasSideAction: true,
+      resistances: {
+        blunt: 0,
+        slash: 0,
+        pierce: 0,
+      },
+      cooldowns: [],
     },
   ]);
 
@@ -54,29 +44,25 @@ export const usePlayerStore = defineStore("player", () => {
   }
 
   function $reset() {
-    /*
-    playerUnit.value = {
-      isPlayer: true,
-      name: characterName.value,
-      img: "/icons/21.png",
-      currentActionPoints: 3,
-      maxActionPoints: 3,
-      currentHealth: 10,
-      maxHealth: 10,
-      abilities: [],
-    };
-    */
-
+    playerAbilities.value = defaults.startingAbilities;
     playerGroup.value = [
       {
         isPlayer: true,
+        side: CombatSide.Player,
         name: characterName.value,
         img: "/icons/21.png",
-        currentActionPoints: 3,
-        maxActionPoints: 3,
         currentHealth: 10,
         maxHealth: 10,
-        abilities: [],
+        abilities: playerAbilityIds.value,
+        position: null,
+        hasMainAction: true,
+        hasSideAction: true,
+        resistances: {
+          blunt: 0,
+          slash: 0,
+          pierce: 0,
+        },
+        cooldowns: [],
       },
     ];
     energy.value = 100;
@@ -87,6 +73,8 @@ export const usePlayerStore = defineStore("player", () => {
     energy,
     playerGroup,
     useEnergy,
+    playerAbilities,
+    playerAbilityIds,
     $reset,
   };
 });

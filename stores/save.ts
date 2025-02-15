@@ -6,11 +6,15 @@ import { useWorldStore } from "@/stores/world";
 import { useNotificationStore } from "@/stores/notification";
 import { useItemStore } from "@/stores/item";
 import { useLocationStore } from "@/stores/location";
+import { useActionStore } from "@/stores/action";
 import type { Npc } from "~/game/npcs";
 import type { ItemContainer } from "~/types/item.types";
 import type { Time } from "~/types/world.types";
-import type { Ability, SkillId } from "~/types/ability.types";
+import type { Ability } from "~/types/ability.types";
 import type { Location } from "~/types/location.types";
+import type { Unit } from "~/types/combat.types";
+import type { Action } from "~/types/action.types";
+import type { SkillId } from "~/types/skill.types";
 
 export const useSaveStore = defineStore("save", () => {
   const playerStore = usePlayerStore();
@@ -20,6 +24,7 @@ export const useSaveStore = defineStore("save", () => {
   const worldStore = useWorldStore();
   const notificationStore = useNotificationStore();
   const itemStore = useItemStore();
+  const actionStore = useActionStore();
 
   const client = useSupabaseClient();
 
@@ -54,10 +59,12 @@ export const useSaveStore = defineStore("save", () => {
     energy: number;
     playerLocation: Location;
     characterName: string;
+    playerGroup: Unit[];
     // Item Store
     playerItemContainers: ItemContainer[];
     // Skill Store
     skills: Record<SkillId, Skill>;
+    playerActions: Action[];
     playerAbilities: Ability[];
     //
     npcs: Npc[];
@@ -98,9 +105,11 @@ export const useSaveStore = defineStore("save", () => {
       energy: playerStore.energy,
       playerLocation: locationStore.playerLocation,
       characterName: playerStore.characterName,
+      playerGroup: playerStore.playerGroup,
       playerItemContainers: itemStore.playerItemContainers,
       skills: skillStore.skills,
-      playerAbilities: skillStore.playerAbilities,
+      playerActions: actionStore.playerActions,
+      playerAbilities: playerStore.playerAbilities,
       npcs: npcStore.npcs,
     };
 
@@ -183,11 +192,12 @@ export const useSaveStore = defineStore("save", () => {
     selectedSaveId.value = save.id;
     playerStore.energy = save.data.energy;
     playerStore.characterName = save.data.characterName;
+    playerStore.playerAbilities = save.data.playerAbilities;
+    playerStore.playerGroup = save.data.playerGroup;
     itemStore.playerItemContainers = save.data.playerItemContainers;
     worldStore.time = save.data.time;
     locationStore.playerLocation = save.data.playerLocation;
     skillStore.skills = save.data.skills;
-    skillStore.playerAbilities = save.data.playerAbilities;
     npcStore.npcs = save.data.npcs;
   }
 

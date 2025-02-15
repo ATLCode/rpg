@@ -9,17 +9,35 @@
         >Complete Encounter</AButton
       >
     </div>
-    <div v-else>Actual Encounter</div>
+    <div v-else class="encounter">
+      <GameDialogue
+        v-model="testasd"
+        :dialogue="dialogue"
+        :default-image="encounterStore.activeEncounter?.img"
+        @close="encounterStore.finishEncounter"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { useLocationStore } from "@/stores/location";
 import { useEncounterStore } from "@/stores/encounter";
+import { dialogues } from "~/game/dialogue";
 const locationStore = useLocationStore();
 const encounterStore = useEncounterStore();
 
-const dev = true;
+const dev = false;
+
+const testasd = ref(true);
+
+const dialogue = computed(() => {
+  if (encounterStore.activeEncounter) {
+    return dialogues[encounterStore.activeEncounter?.dialogueId];
+  } else {
+    return null;
+  }
+});
 
 onMounted(() => {});
 </script>
@@ -32,5 +50,9 @@ onMounted(() => {});
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+.encounter {
+  height: 100%;
+  width: 100%;
 }
 </style>

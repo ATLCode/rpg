@@ -39,14 +39,16 @@ import { useSpotStore } from "@/stores/spot";
 import { useSkillStore } from "@/stores/skill";
 import { usePlayerStore } from "@/stores/player";
 import { useItemStore } from "@/stores/item";
+import { useActionStore } from "@/stores/action";
 import { useProgress } from "@/composables/progress";
 import type { Spot } from "~/types/spot.types";
-import type { Ability } from "~/types/ability.types";
+import type { Action } from "~/types/action.types";
 
 const spotStore = useSpotStore();
 const skillStore = useSkillStore();
 const playerStore = usePlayerStore();
 const itemStore = useItemStore();
+const actionStore = useActionStore();
 
 const props = defineProps({
   spot: {
@@ -57,56 +59,57 @@ const props = defineProps({
 
 defineEmits(["close"]);
 
-const availableAbilityIds = computed(() => {
-  const sharedAbilityIds = props.spot.gatherDetails!.abilities.filter(
-    (weightedAbility) => {
-      return skillStore.playerAbilityIds.includes(weightedAbility.object);
+const availableActionIds = computed(() => {
+  const sharedActionIds = props.spot.gatherDetails!.actions.filter(
+    (weightedAction) => {
+      return actionStore.playerActionIds.includes(weightedAction.object);
     }
   );
-  return sharedAbilityIds;
+  console.log(sharedActionIds);
+  return sharedActionIds;
 });
 
-const selectedAbility = ref<Ability | null>(null);
+const selectedAction = ref<Action | null>(null);
 
 function startProgress() {
-  selectedAbility.value = spotStore.selectRandomAbility(
-    availableAbilityIds.value
+  selectedAction.value = spotStore.selectRandomAbility(
+    availableActionIds.value
   );
-
+  console.log(selectedAction.value);
   progress.start();
 }
 
 function progressComplete() {
-  if (!selectedAbility.value) {
+  if (!selectedAction.value) {
     return;
   }
   // Take Energy
-  playerStore.useEnergy(selectedAbility.value.energyCost);
+  playerStore.useEnergy(selectedAction.value.energyCost);
   // Get Resource
-  itemStore.addItemsToInventory(selectedAbility.value.gatherDetails!.product);
+  itemStore.addItemsToInventory(selectedAction.value.gatherDetails!.product);
   // Get Exp
   if (props.spot.skillId) {
-    skillStore.giveSkillExp(props.spot.skillId, selectedAbility.value.xp);
+    skillStore.giveSkillExp(props.spot.skillId, selectedAction.value.xp);
   }
   // Select Random Ability
-  selectedAbility.value = spotStore.selectRandomAbility(
-    availableAbilityIds.value
+  selectedAction.value = spotStore.selectRandomAbility(
+    availableActionIds.value
   );
 }
 
 const allowed = computed(() => {
-  if (!selectedAbility.value || !selectedAbility.value.gatherDetails) {
+  if (!selectedAction.value || !selectedAction.value.gatherDetails) {
     return false;
   }
   // Free Inventory slots
   if (
     !itemStore.hasRoomForItems(
-      selectedAbility.value.gatherDetails.product.itemId
+      selectedAction.value.gatherDetails.product.itemId
     )
   ) {
     return false;
   }
-  if (playerStore.energy < selectedAbility.value.energyCost) {
+  if (playerStore.energy < selectedAction.value.energyCost) {
     // Enough energy?
     return false;
   }

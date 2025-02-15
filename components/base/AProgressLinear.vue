@@ -45,14 +45,15 @@ const model = defineModel<number | undefined>(undefined);
 </script>
 <style lang="scss" scoped>
 progress {
-  border-radius: 5px;
+  border-radius: 0px;
 }
 progress::-webkit-progress-bar {
-  border-radius: 5px;
+  border-radius: 0px;
   background-color: var(--elevation2);
+  border: 1px solid black;
 }
 progress::-webkit-progress-value {
   background-color: v-bind(color);
-  border-radius: 5px;
+  border-radius: 0px;
 }
 </style>

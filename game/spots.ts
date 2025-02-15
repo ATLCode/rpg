@@ -1,8 +1,7 @@
 import { type GameItem } from "../types/item.types";
-import { AbilityId } from "./abilities";
+import { ActionId } from "./actions";
 import { SpotType, type Spot } from "~/types/spot.types";
-
-import { SkillId } from "~/types/ability.types";
+import { SkillId } from "~/types/skill.types";
 
 export type WeightedGameItem = WeightedObject<GameItem>;
 
@@ -37,7 +36,7 @@ export const spots: Record<SpotId, Spot> = {
     img: "/sprites/campfire.png",
     skillId: SkillId.Cooking,
     crafDetails: {
-      abilities: [],
+      actions: [],
       interval: 5,
     },
   },
@@ -48,7 +47,7 @@ export const spots: Record<SpotId, Spot> = {
     img: "",
     skillId: SkillId.Mining,
     gatherDetails: {
-      abilities: [],
+      actions: [],
       interval: 5,
     },
   },
@@ -59,9 +58,9 @@ export const spots: Record<SpotId, Spot> = {
     img: "/sprites/small_fishing.png",
     skillId: SkillId.Fishing,
     gatherDetails: {
-      abilities: [
-        { object: AbilityId.FishPanfish, weight: 500 },
-        { object: AbilityId.FishBluegill, weight: 100 },
+      actions: [
+        { object: ActionId.FishPanfish, weight: 500 },
+        { object: ActionId.FishBluegill, weight: 100 },
       ],
       interval: 5,
     },
@@ -73,7 +72,7 @@ export const spots: Record<SpotId, Spot> = {
     img: "/sprites/spot_oak.png",
     skillId: SkillId.Woodcutting,
     gatherDetails: {
-      abilities: [{ object: AbilityId.CutOak, weight: 100 }],
+      actions: [{ object: ActionId.CutOak, weight: 100 }],
       interval: 5,
     },
   },

@@ -1,8 +1,8 @@
-import type { SkillId } from "./ability.types";
+import type { SkillId } from "./skill.types";
 import type { SpotId } from "~/game/spots";
-import type { AbilityId } from "~/game/abilities";
+import type { ActionId } from "~/game/actions";
 
-export type WeightedAbilityId = WeightedObject<AbilityId>;
+export type WeightedActionId = WeightedObject<ActionId>;
 
 export enum SpotType {
   Craft = "Craft",
@@ -11,12 +11,12 @@ export enum SpotType {
 }
 
 export type SpotGatherDetails = {
-  abilities: WeightedAbilityId[];
+  actions: WeightedActionId[];
   // extraDrops: WeightedSomething[];
   interval: number;
 };
 export type SpotCraftDetails = {
-  abilities: AbilityId[];
+  actions: ActionId[];
   interval: number;
 };
 

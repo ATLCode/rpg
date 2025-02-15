@@ -13,6 +13,8 @@
 </template>
 
 <script lang="ts" setup>
+import type { Unit } from "~/types/combat.types";
+
 const props = defineProps({
   unit: {
     type: Object as PropType<Unit>,
@@ -25,6 +27,7 @@ const props = defineProps({
 .unit-card {
   align-self: center;
   border: 1px solid var(--elevation2);
+  background-color: var(--elevation1);
   height: 200px;
   width: 160px;
   cursor: pointer;

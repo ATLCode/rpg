@@ -1,31 +1,31 @@
 <template>
   <div class="crafting-container">
-    <div class="abilities">
+    <div class="actions">
       <div class="list">
-        <div class="list-title"><h2>Abilities</h2></div>
+        <div class="list-title"><h2>Actions</h2></div>
         <div
-          v-for="(ability, index) in spotAbilities"
+          v-for="(action, index) in spotActions"
           :key="index"
           class="list-item"
-          :class="{ selected: selectedAbility?.id === ability.id }"
-          @click="selectedAbility = ability"
+          :class="{ selected: selectedAction?.id === action.id }"
+          @click="selectedAction = action"
         >
-          <div>{{ ability.name }}</div>
+          <div>{{ action.name }}</div>
         </div>
       </div>
     </div>
     <div class="img">
-      <div v-if="selectedAbility">
-        {{ selectedAbility.name }}
+      <div v-if="selectedAction">
+        {{ selectedAction.name }}
       </div>
-      <div v-else>No ability selected</div>
+      <div v-else>No action selected</div>
     </div>
-    <div v-if="selectedAbility" class="description">
+    <div v-if="selectedAction" class="description">
       <div>
-        Description:{{ selectedAbility.craftingDetails?.product.item.name }}
+        Description:{{ selectedAction.craftingDetails?.product.item.name }}
       </div>
-      <div>Energy Cost:{{ selectedAbility.energyCost }}</div>
-      <div>XP: {{ selectedAbility.xp }}</div>
+      <div>Energy Cost:{{ selectedAction.energyCost }}</div>
+      <div>XP: {{ selectedAction.xp }}</div>
       <div>
         Ingredients:
         {{ ingredientsString }}
@@ -58,13 +58,15 @@
 import { useSkillStore } from "@/stores/skill";
 import { usePlayerStore } from "@/stores/player";
 import { useItemStore } from "@/stores/item";
+import { useActionStore } from "@/stores/action";
 import { useProgress } from "@/composables/progress";
-import type { Ability, Ingredient } from "~/types/ability.types";
 import type { Spot } from "~/types/spot.types";
+import type { Action, Ingredient } from "~/types/action.types";
 
 const skillStore = useSkillStore();
 const playerStore = usePlayerStore();
 const itemStore = useItemStore();
+const actionStore = useActionStore();
 
 const props = defineProps({
   spot: {
@@ -73,14 +75,14 @@ const props = defineProps({
   },
 });
 
-const selectedAbility = ref<Ability | null>(null);
+const selectedAction = ref<Action | null>(null);
 
-const spotAbilities = computed(() => {
+const spotActions = computed(() => {
   if (!props.spot) {
     return null;
   }
-  return skillStore.playerAbilities.filter(
-    (ability) => ability.skillId === props.spot.skillId
+  return actionStore.playerActions.filter(
+    (action) => action.skillId === props.spot.skillId
   );
 });
 
@@ -89,25 +91,25 @@ function startProgress() {
 }
 
 function progressComplete() {
-  if (!selectedAbility.value) {
+  if (!selectedAction.value) {
     return;
   }
   // Take Energy
-  playerStore.useEnergy(selectedAbility.value.energyCost);
+  playerStore.useEnergy(selectedAction.value.energyCost);
   // CraftItem - TODO Should this have its own function or do I do here seperatly remove items from inventory, I feel like own function
-  itemStore.addItemsToInventory(selectedAbility.value.craftingDetails!.product);
+  itemStore.addItemsToInventory(selectedAction.value.craftingDetails!.product);
   // Get Exp
   if (props.spot.skillId) {
-    skillStore.giveSkillExp(props.spot.skillId, selectedAbility.value.xp * 3);
+    skillStore.giveSkillExp(props.spot.skillId, selectedAction.value.xp * 3);
   }
 }
 
 const ingredientsString = computed(() => {
-  if (!selectedAbility.value || !selectedAbility.value.craftingDetails) {
+  if (!selectedAction.value || !selectedAction.value.craftingDetails) {
     return "";
   }
 
-  return selectedAbility.value.craftingDetails.ingredients
+  return selectedAction.value.craftingDetails.ingredients
     .map((ingredient: Ingredient) => {
       const amountInInventory = itemStore.itemCountInInventory(
         ingredient.itemId
@@ -119,12 +121,12 @@ const ingredientsString = computed(() => {
 });
 
 const allowed = computed(() => {
-  // Ability selected
-  if (!selectedAbility.value) {
+  // Action selected
+  if (!selectedAction.value) {
     return false;
   }
   // Has required ingredients
-  for (const element of selectedAbility.value.craftingDetails!.ingredients) {
+  for (const element of selectedAction.value.craftingDetails!.ingredients) {
     if (!itemStore.hasEnoughItems(element.itemId, element.amount)) {
       return false;
     }
@@ -132,12 +134,12 @@ const allowed = computed(() => {
   // Has room in inventory
   if (
     !itemStore.hasRoomForItems(
-      selectedAbility.value.craftingDetails!.product.itemId
+      selectedAction.value.craftingDetails!.product.itemId
     )
   ) {
     return false;
   }
-  if (playerStore.energy < selectedAbility.value.energyCost) {
+  if (playerStore.energy < selectedAction.value.energyCost) {
     // Enough energy?
     return false;
   }
@@ -159,14 +161,14 @@ const progress = useProgress(
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 3fr 2fr auto;
   grid-template-areas:
-    "abilities img"
-    "abilities description"
-    "abilities actions";
+    "actions img"
+    "actions description"
+    "actions actions";
 
   padding: 1rem;
 }
-.abilities {
-  grid-area: abilities;
+.actions {
+  grid-area: actions;
 }
 .img {
   grid-area: img;

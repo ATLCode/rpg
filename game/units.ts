@@ -1,5 +1,6 @@
 import { AbilityId } from "./abilities";
 import { items } from "./items";
+import { CombatSide, type Unit } from "~/types/combat.types";
 import { ItemId } from "~/types/item.types";
 
 export enum UnitId {
@@ -9,13 +10,19 @@ export enum UnitId {
 
 export const units: Record<UnitId, Unit> = {
   [UnitId.Thief]: {
-    name: "Guard 1",
+    side: CombatSide.Enemy,
+    name: "Thief",
     img: "/npcs/27.png",
-    currentActionPoints: 3,
-    maxActionPoints: 3,
     currentHealth: 10,
     maxHealth: 10,
-    abilities: [AbilityId.BasicKick],
+    position: null,
+    abilities: [
+      AbilityId.BasicKick,
+      AbilityId.Move,
+      AbilityId.Bullseye,
+      AbilityId.HealSelf,
+      AbilityId.PykeUlt,
+    ],
     drops: [
       {
         object: {
@@ -34,14 +41,22 @@ export const units: Record<UnitId, Unit> = {
         weight: 100,
       },
     ],
+    hasMainAction: true,
+    hasSideAction: true,
+    resistances: {
+      blunt: 1,
+      slash: 1,
+      pierce: 0,
+    },
+    cooldowns: [],
   },
   [UnitId.Guard]: {
-    name: "Thief",
+    side: CombatSide.Enemy,
+    name: "Guard",
     img: "/npcs/27.png",
-    currentActionPoints: 3,
-    maxActionPoints: 3,
     currentHealth: 10,
     maxHealth: 10,
+    position: null,
     abilities: [AbilityId.BasicPunch],
     drops: [
       {
@@ -61,5 +76,13 @@ export const units: Record<UnitId, Unit> = {
         weight: 100,
       },
     ],
+    hasMainAction: true,
+    hasSideAction: true,
+    resistances: {
+      blunt: 1,
+      slash: 1,
+      pierce: 0,
+    },
+    cooldowns: [],
   },
 };

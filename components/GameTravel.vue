@@ -64,7 +64,7 @@ function checkEncounter() {
     locationStore.activePath!.encounters
   );
 
-  if (selectedEncounterId.value === EncounterId.Empty) {
+  if (Math.random() >= 0.8) {
     console.log("No encounter");
     locationStore.encountersChecked = locationStore.encountersChecked + 1;
   } else {

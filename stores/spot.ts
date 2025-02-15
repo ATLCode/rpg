@@ -1,11 +1,11 @@
-import { type WeightedAbilityId } from "~/types/spot.types";
+import { type WeightedActionId } from "~/types/spot.types";
 
-import { abilities } from "~/game/abilities";
+import { actions } from "~/game/actions";
 
 export const useSpotStore = defineStore("spot", () => {
-  function selectRandomAbility(availableAbilityIds: WeightedAbilityId[]) {
+  function selectRandomAbility(availableActionIds: WeightedActionId[]) {
     // TODO Handling if available abilities is empty
-    return abilities[chooseRandomWeightedObject(availableAbilityIds)];
+    return actions[chooseRandomWeightedObject(availableActionIds)];
   }
 
   function $reset() {}

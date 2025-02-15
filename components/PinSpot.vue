@@ -81,14 +81,4 @@ img {
   max-height: 100px;
   max-width: 100px;
 }
-.center {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 0rem 1rem;
-  gap: 1rem;
-  text-align: center;
-}
 </style>

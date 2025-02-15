@@ -1,3 +1,5 @@
+import type { Resistances } from "./combat.types";
+
 export enum ItemType {
   Equipment = "Equipment",
   Key = "Key",
@@ -51,11 +53,15 @@ export enum ContextMode {
   Gear = "Gear",
 }
 
+export type EquipInfo = {
+  equipSlot: EquipSlot;
+  resistances: Resistances;
+};
+
 export type Item = {
   name: string;
   type: ItemType;
   properties: ItemProperty[] | null;
-  equipSlot: EquipSlot | null; // Enum, gear slot name or id
   weight: number;
   maxStackSize: number;
   value: number;
@@ -63,6 +69,7 @@ export type Item = {
   img: string;
   xp?: number;
   actions?: ItemAction[];
+  equip?: EquipInfo;
 };
 
 export enum ItemId {

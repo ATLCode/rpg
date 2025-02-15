@@ -1,314 +1,300 @@
 <template>
   <div v-if="combatStore.combatState" class="combat-container">
-    <div class="combat-visual">
+    <div v-if="!(combatStage === CombatStage.Setup)" class="unit-container">
+      <CombatUnit
+        v-for="unit in combatStore.combatState.units"
+        :key="unit.name"
+        :unit="unit"
+        :style="unitStyle(unit)"
+        @click="selectUnitForInfo(unit)"
+      />
+    </div>
+    <div
+      id="combat-grid"
+      class="combat-grid"
+      :class="{
+        'cast-ready': combatStore.selectedAbility && combatStore.selectedOrigin,
+      }"
+    >
       <div
-        v-for="(unit, index) in combatStore.combatState.playerGroup"
+        v-for="(tile, index) in combatStore.combatState.grid"
+        :id="index == '0;0' ? 'combat-tile' : undefined"
         :key="index"
-        class="unit-card-container"
-        @click="
-          useAbility(
-            selectedAbility,
-            combatStore.combatState.playerGroup[0],
-            unit
-          )
-        "
+        class="combat-tile"
+        :class="{
+          'red-tiles': tileColors.redTiles.includes(tile),
+          'white-tiles': tileColors.whiteTiles.includes(tile),
+          'blue-tiles': tileColors.blueTiles.includes(tile),
+        }"
+        @click="handleTileClick(tile)"
       >
-        <div class="unit-header">
-          <div
-            v-if="
-              combatStore.combatState.playerGroupTurn &&
-              combatStore.combatState.currentTurn.unitIndex === index
-            "
-            class="turn-indicator"
-          >
-            <img src="/assets/icons/chevron-down.svg" alt="" class="turn-img" />
-          </div>
+        <div v-if="false">
+          {{ tile.coordinates.x }},{{ tile.coordinates.y }}
         </div>
 
-        <CardUnit :unit="unit" />
-      </div>
-      <ASpacer />
-      <div
-        v-for="(unit, index) in combatStore.combatState.enemyGroup"
-        :key="index"
-        class="unit-card-container"
-        @click="
-          useAbility(
-            selectedAbility,
-            combatStore.combatState.playerGroup[0],
-            unit
-          )
-        "
-      >
-        <div class="unit-header">
-          <div
-            v-if="
-              !combatStore.combatState.playerGroupTurn &&
-              combatStore.combatState.currentTurn.unitIndex === index
-            "
-            class="turn-indicator"
-          >
-            <img src="/assets/icons/chevron-down.svg" alt="" class="turn-img" />
-          </div>
-        </div>
-
-        <CardUnit :unit="unit" />
+        <CombatDrop :tile="tile" :coordinates="tile.coordinates" />
       </div>
     </div>
-    <div class="combat-info">
-      <div class="info-player">
-        <div class="player-tabs">
-          <AButton
-            background-color="--elevation1"
-            :class="{ activeTab: selectedPlayerView === PlayerView.Equipment }"
-            @click="selectedPlayerView = PlayerView.Equipment"
-            >EQ</AButton
-          >
-          <AButton
-            background-color="--elevation1"
-            :class="{ activeTab: selectedPlayerView === PlayerView.Inventory }"
-            @click="selectedPlayerView = PlayerView.Inventory"
-            >IN</AButton
-          >
-          <AButton
-            background-color="--elevation1"
-            :class="{ activeTab: selectedPlayerView === PlayerView.Abilities }"
-            @click="selectedPlayerView = PlayerView.Abilities"
-            >AB</AButton
-          >
-          <AButton
-            background-color="--elevation1"
-            :class="{ activeTab: selectedPlayerView === PlayerView.Stats }"
-            @click="selectedPlayerView = PlayerView.Stats"
-            >ST</AButton
-          >
-        </div>
-        <div class="player-view">
-          <div
-            v-if="selectedPlayerView === PlayerView.Equipment"
-            class="tab-content"
-          >
-            <GameMenuGear />
-          </div>
-          <div
-            v-if="selectedPlayerView === PlayerView.Inventory"
-            class="tab-content"
-          >
-            <GameMenuInventory />
-          </div>
-          <div
-            v-if="selectedPlayerView === PlayerView.Abilities"
-            class="tab-content"
-          >
-            <div
-              v-if="gameStore.gameState === GameState.Combat"
-              class="abilities-container"
-            >
-              <CardAbility
-                v-for="ability in skillStore.combatAbilities"
-                :key="ability.name"
-                :ability="ability"
-                :selected-ability-id="selectedAbility?.id"
-                class="abilities-container"
-                @select-ability="selectedAbility = ability"
-              />
-            </div>
-          </div>
-          <div
-            v-if="selectedPlayerView === PlayerView.Stats"
-            class="tab-content"
-          >
-            <GameMenuSkills />
-          </div>
-        </div>
-      </div>
-      <div class="info-middle">
-        <div class="middle-ap">
-          <h1>
-            {{ combatStore.combatState.playerGroup[0].currentActionPoints }}
-            /
-            {{ combatStore.combatState.playerGroup[0].maxActionPoints }}
-          </h1>
-        </div>
-        <div class="extra-info">
-          <pre>{{ JSON.stringify(combatStore.combatState, null, 4) }}</pre>
-        </div>
-        <AButton @click="endTurn" @keyup.space="endTurn">
-          <div>End Turn</div>
-          <div>(Space)</div>
-        </AButton>
-        <AButton @click="gameStore.gameState = GameState.Normal">Flee</AButton>
-      </div>
-      <div class="info-enemy">Enemy</div>
+    <CombatBattlefieldInfo class="info-battlefield" />
+    <CombatAbilities
+      class="info-abilities"
+      :unit="combatStore.currentTurnUnit"
+      @select-ability="combatStore.selectAbility"
+    />
+    <div class="player-info">
+      <CombatUnitInfo
+        v-if="showSelectedPlayer"
+        v-model="showSelectedPlayer"
+        :unit="selectedPlayer"
+      />
     </div>
-    <AModal v-model="combatStore.combatState.result.isOver" :persistent="true">
-      <div v-if="combatStore.combatState.result.isWon">
-        <div>You Won!</div>
-        <div>
-          You gained {{ combatStore.combatState.rewards.meleeExp }} melee
-          experience
-        </div>
-        <div>
-          You gained {{ combatStore.combatState.rewards.rangedExp }} ranged
-          experience
-        </div>
-        <div>
-          You gained {{ combatStore.combatState.rewards.magicExp }} magic
-          experience
-        </div>
-        <div>You will get</div>
-        <div class="drops-container">
-          <div
-            v-for="(drop, index) in combatStore.combatState.rewards.drops"
-            :key="index"
-          >
-            <div>
-              {{ drop.gameItem.item.name }} - {{ drop.gameItem.itemId }}
-            </div>
-            <!--
-            Need to fix ACheckbox to make below input to work
-                <ACheckbox v-model="combatStore.combatState.rewards.selectedDrops" :value="drop"></ACheckbox>
-            -->
-            <input
-              v-model="combatStore.combatState.rewards.selectedDrops"
-              type="checkbox"
-              :value="drop"
-            />
-          </div>
-        </div>
-
-        <AButton @click="combatStore.returnFromCombat">Continue</AButton>
-      </div>
-      <div v-else>
-        <div>Ýou Lost!</div>
-
-        <AButton @click="gameStore.gameState = GameState.Normal"
-          >Continue</AButton
-        >
-      </div>
-    </AModal>
+    <div class="enemy-info">
+      <CombatUnitInfo
+        v-if="showSelectedEnemy"
+        v-model="showSelectedEnemy"
+        :unit="selectedEnemy"
+      />
+    </div>
+    <div v-if="combatStore.selectedAbility" class="info-text">
+      <div>{{ combatStore.selectedAbility.name }} is selected</div>
+      <div>Selected origin {{ combatStore.selectedOrigin }}</div>
+      <div>Selected shape {{ combatStore.selectedShape }}</div>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { ulid } from "ulid";
-import { abilities } from "~/game/abilities";
-import { usePlayerStore } from "@/stores/player";
-import { useSkillStore } from "@/stores/skill";
 import { useCombatStore } from "@/stores/combat";
-import { useGameStore } from "@/stores/game";
-import { useEvent } from "@/composables/keyEvent";
-import { chooseRandomWeightedObject } from "~/utils/weight-calculation";
-import { EffectType, SkillId, type Ability } from "~/types/ability.types";
+import {
+  CombatSide,
+  CombatStage,
+  EffectType,
+  type CombatTile,
+  type Unit,
+} from "~/types/combat.types";
 
-const playerStore = usePlayerStore();
-const skillStore = useSkillStore();
 const combatStore = useCombatStore();
-const gameStore = useGameStore();
 
-enum PlayerView {
-  Equipment = "Equipment",
-  Inventory = "Inventory",
-  Abilities = "Abilities",
-  Stats = "Stats",
+const showSelectedEnemy = ref(false);
+const selectedEnemy = ref<Unit | null>(null);
+const showSelectedPlayer = ref(false);
+const selectedPlayer = ref<Unit | null>(null);
+
+const combatStage = ref<CombatStage>(CombatStage.Setup);
+
+// GRID INFO
+
+// TODO Check if combat is over
+// TODO Handle combat action ecenomy during turn
+
+const gridHeight = ref(0);
+const gridWidth = ref(0);
+const tileHeight = ref(0);
+const tileWidth = ref(0);
+
+function calculateGridSize() {
+  gridHeight.value = document.getElementById("combat-grid")?.clientHeight || 0;
+  gridWidth.value = document.getElementById("combat-grid")?.clientWidth || 0;
+  tileHeight.value = document.getElementById("combat-tile")?.clientHeight || 0;
+  tileWidth.value = document.getElementById("combat-tile")?.clientWidth || 0;
 }
 
-const selectedPlayerView = ref(PlayerView.Abilities);
-const selectedAbility = ref<Ability>(skillStore.combatAbilities[0]);
-
-const isPlayerTurn = computed(() => {
-  if (
-    combatStore.combatState?.playerGroupTurn &&
-    combatStore.combatState.currentTurn.unitIndex === 0
-  ) {
-    return true;
-  } else {
-    return false;
+function unitStyle(unit: Unit) {
+  if (!unit.position) {
+    throw new Error("Unit is missing position");
   }
+  // TODO Handle 128 (sprite height/width) being different
+  const heightOffset = (tileHeight.value - 128) / 2;
+  const widthOffset = (tileWidth.value - 128) / 2;
+  return {
+    position: "absolute",
+    top: `${tileHeight.value * unit.position.y + heightOffset + unit.position.y * 2}px`,
+    left: `${tileWidth.value * unit.position.x + widthOffset + unit.position.x * 2}px`,
+  };
+}
+
+function selectUnitForInfo(unit: Unit) {
+  if (combatStore.selectedAbility && unit.position) {
+    handleTileClick({ coordinates: unit.position });
+    return;
+  }
+  if (unit.isPlayer) {
+    selectedPlayer.value = unit;
+    showSelectedPlayer.value = !showSelectedPlayer.value;
+  } else {
+    selectedEnemy.value = unit;
+    showSelectedEnemy.value = !showSelectedEnemy.value;
+  }
+}
+
+// USING ABILITY
+
+function handleTileClick(tile: CombatTile) {
+  if (
+    !combatStore.selectedAbility ||
+    !combatStore.currentTurnUnit ||
+    !combatStore.currentTurnUnit.position
+  ) {
+    return;
+  }
+  if (combatStore.selectedAbility.target) {
+    if (
+      !combatStore.isInRange(
+        tile.coordinates,
+        combatStore.currentTurnUnit?.position,
+        combatStore.selectedAbility.target?.range
+      )
+    ) {
+      return;
+    }
+    combatStore.useTargetedAbility(
+      combatStore.selectedAbility,
+      combatStore.currentTurnUnit!,
+      tile.coordinates
+    );
+  }
+  if (combatStore.selectedAbility.shape) {
+    if (!combatStore.selectedOrigin) {
+      if (
+        !combatStore.isInRange(
+          tile.coordinates,
+          combatStore.currentTurnUnit.position,
+          combatStore.selectedAbility.shape?.originRange
+        )
+      ) {
+        return;
+      }
+      combatStore.selectedOrigin = tile;
+      combatStore.selectedShape = combatStore.selectedAbility.shape!.shapes[0];
+      return;
+    } else {
+      combatStore.useShapedAbility(
+        combatStore.selectedAbility,
+        combatStore.currentTurnUnit!,
+        combatStore.selectedOrigin.coordinates
+      );
+      combatStore.selectedOrigin = null;
+      combatStore.selectedShape = null;
+    }
+  }
+  combatStore.selectedAbility = null;
+}
+
+const tileColors = computed(() => {
+  let blueTiles: CombatTile[] = [];
+  const yellowTiles: CombatTile[] = [];
+  const redTiles: CombatTile[] = [];
+  let whiteTiles: CombatTile[] = [];
+  const greenTiles: CombatTile[] = [];
+
+  // BASIC CHECKS
+  if (!combatStore.combatState || !combatStore.selectedAbility) {
+    return {
+      blueTiles,
+      yellowTiles,
+      redTiles,
+      whiteTiles,
+      greenTiles,
+    };
+  }
+
+  // SHOW TARGET RANGE
+  if (combatStore.selectedAbility.target) {
+    const tilesInRange = [];
+    const grid = Object.values(combatStore.combatState.grid);
+
+    for (const tile of grid) {
+      if (
+        combatStore.isInRange(
+          tile.coordinates,
+          combatStore.currentTurnUnit!.position!,
+          combatStore.selectedAbility.target!.range
+        )
+      ) {
+        tilesInRange.push(tile);
+      }
+    }
+    whiteTiles = whiteTiles.concat(tilesInRange);
+  }
+
+  // SHOW ORIGIN RANGE
+  if (
+    combatStore.selectedAbility.shape &&
+    combatStore.selectedAbility.shape.originRange &&
+    !(combatStore.selectedAbility.shape.originRange === 0) &&
+    !combatStore.selectedOrigin
+  ) {
+    const tilesInRange = [];
+    const grid = Object.values(combatStore.combatState.grid);
+    for (const tile of grid) {
+      if (
+        combatStore.isInRange(
+          tile.coordinates,
+          combatStore.currentTurnUnit!.position!,
+          combatStore.selectedAbility.shape!.originRange
+        )
+      ) {
+        tilesInRange.push(tile);
+      }
+    }
+
+    blueTiles = blueTiles.concat(tilesInRange);
+  }
+
+  // SHOW SHAPED
+
+  if (
+    combatStore.selectedShape &&
+    combatStore.selectedAbility.shape &&
+    combatStore.selectedOrigin
+  ) {
+    const origin = combatStore.selectedOrigin;
+    const shape = combatStore.selectedShape;
+
+    for (let index = 0; index < shape.shapeEffects.length; index++) {
+      const matchingEffect = combatStore.selectedAbility.effects[index];
+      const matchingShapeEffect = shape.shapeEffects[index];
+
+      if (matchingEffect.effectType === EffectType.Damage) {
+        for (const coordinate of matchingShapeEffect.coordinates) {
+          const newCoordinates = {
+            x: origin.coordinates.x + coordinate.x,
+            y: origin.coordinates.y + coordinate.y,
+          };
+
+          const gridTile = combatStore.getTilebyCoordinates(newCoordinates);
+          if (gridTile) {
+            redTiles.push(gridTile);
+          }
+        }
+      }
+      if (matchingEffect.effectType === EffectType.Move) {
+        console.log("MoveStuff");
+        // It's all really same calculation with one above, so I feel like we should do helper function and run that bunch of times
+        for (const coordinate of matchingShapeEffect.coordinates) {
+          const newCoordinates = {
+            x: origin.coordinates.x + coordinate.x,
+            y: origin.coordinates.y + coordinate.y,
+          };
+
+          const gridTile = combatStore.getTilebyCoordinates(newCoordinates);
+          if (gridTile) {
+            whiteTiles.push(gridTile);
+          }
+        }
+      }
+    }
+  }
+
+  return {
+    blueTiles,
+    yellowTiles,
+    redTiles,
+    whiteTiles,
+    greenTiles,
+  };
 });
 
-function useAbility(ability: Ability, user: Unit, target: Unit) {
-  if (!ability?.combatDetails || !combatStore.combatState) {
-    return;
-  }
-  if (
-    !ability.combatDetails.actionPointCost ||
-    !(user.currentActionPoints >= ability.combatDetails.actionPointCost)
-  ) {
-    return;
-  }
-
-  const effects = ability.combatDetails.effects;
-
-  for (const effect of effects) {
-    if (effect.effectType === EffectType.Damage) {
-      console.log("Dealing Damage");
-      target.currentHealth -= effect.value;
-    }
-    if (effect.effectType === EffectType.Heal) {
-      console.log("Healing");
-    }
-  }
-
-  if (user.isPlayer && ability.xp) {
-    if (ability.skillId === SkillId.Melee) {
-      combatStore.combatState.rewards.meleeExp += ability.xp;
-    }
-    if (ability.skillId === SkillId.Ranged) {
-      combatStore.combatState.rewards.rangedExp += ability.xp;
-    }
-    if (ability.skillId === SkillId.Magic) {
-      combatStore.combatState.rewards.magicExp += ability.xp;
-    }
-  }
-
-  if (target.currentHealth <= 0) {
-    target.currentHealth = 0;
-  }
-
-  handleUnitDeath(target);
-  handleCombatOver();
-
-  user.currentActionPoints -= ability.combatDetails.actionPointCost;
-  if (user.currentActionPoints === 0 && isPlayerTurn.value) {
-    endTurn();
-  }
-}
-
-function handleCombatOver() {
-  // Check if combat is over
-
-  if (!combatStore.combatState) {
-    return;
-  }
-
-  const playerGroupHealth = combatStore.combatState.enemyGroup.reduce(
-    (acc, curr) => curr.currentHealth + acc,
-    0
-  );
-
-  const enemyGroupHealth = combatStore.combatState.playerGroup.reduce(
-    (acc, curr) => curr.currentHealth + acc,
-    0
-  );
-
-  // Handle winner player
-  if (playerGroupHealth <= 0) {
-    combatStore.combatState.result.isOver = true;
-    combatStore.combatState.result.isWon = true;
-    combatStore.combatState.rewards.selectedDrops =
-      combatStore.combatState.rewards.drops;
-  }
-
-  // Handle winner enemy
-  if (enemyGroupHealth <= 0) {
-    combatStore.combatState.result.isOver = true;
-    combatStore.combatState.result.isWon = false;
-  }
-
-  // General stuff
-  playerStore.playerGroup = combatStore.combatState.playerGroup;
-}
-
+/*
 function handleUnitDeath(unit: Unit) {
   console.log("handling death");
   // If enemy add drops to combat rewards
@@ -330,13 +316,6 @@ function resetCurrentTurn(playerGroupTurn: boolean, nextIndex: number = 0) {
   combatStore.combatState.currentTurn = {
     unitIndex: nextIndex,
   };
-
-  combatStore.combatState.enemyGroup.forEach((unit) => {
-    unit.currentActionPoints = unit.maxActionPoints;
-  });
-  combatStore.combatState.playerGroup.forEach((unit) => {
-    unit.currentActionPoints = unit.maxActionPoints;
-  });
 
   combatStore.combatState.playerGroupTurn = playerGroupTurn;
 }
@@ -381,92 +360,125 @@ async function handleEnemyGroupTurn() {
   }
   resetCurrentTurn(true);
 }
+*/
 
-useEvent("Space", endTurn);
+// Event Listeners (Have to be in created, on mounted not working)
+useEvent("Space", combatStore.endTurn);
+useEvent("Escape", combatStore.cancelAbility);
+useEvent("KeyR", combatStore.rotateShape);
 
 onMounted(() => {
-  // Add event listeners
-  useEvent("Space", endTurn);
+  // Place Units
+  if (combatStore.combatState) {
+    const player = combatStore.combatState.units.find(
+      (units) => units.isPlayer
+    );
+    player!.position = { x: 0, y: 3 };
+    const enemy = combatStore.combatState.units.find(
+      (unit) => unit.side === CombatSide.Enemy
+    );
+    enemy!.position = { x: 10, y: 3 };
+    combatStage.value = CombatStage.Ongoing;
+  }
+  calculateGridSize();
+  // Handle window resize
+  combatStore.startBattle();
 });
 </script>
 <style lang="scss" scoped>
+// GRID VIEW
 .combat-container {
-  max-height: 100vh;
+  height: 100%;
+  width: 100%;
+  background-image: url("/public/maps/Battlemap1.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+}
+
+.combat-grid {
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-rows: 1fr 3fr;
-  overflow: hidden;
+  grid-template-columns: repeat(11, 1fr);
+  grid-template-rows: repeat(7, 1fr);
 }
-
-.combat-visual {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  .unit-header {
-    height: 50px;
-  }
-}
-
-.combat-info {
-  height: 100%;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 2fr 1fr 2fr;
-  .info-player {
-    height: 100%;
-    width: 100%;
-    display: grid;
-    grid-template-rows: auto 1fr;
-    .player-tabs {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      gap: 1rem;
-    }
-    .player-view {
-      height: 100%;
-      .tab-content {
-        height: 100%;
-        width: 100%;
-      }
-    }
-  }
-}
-
-.info-middle {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.extra-info {
-  display: flex;
-  max-height: 500px;
-  overflow-y: scroll;
-}
-
-.activeTab {
-  border: 2px var(--elevation4) solid;
-}
-.abilities-container {
-  padding: 1rem;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.middle-ap {
+.combat-tile {
+  border: 1px solid var(--elevation4);
   display: flex;
   justify-content: center;
+  align-items: center;
 }
-.turn-indicator {
-  height: 100%;
-  width: 100%;
+.player-info {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: fit-content;
+  display: flex;
+  background-color: var(--elevation2);
 }
-.turn-img {
-  height: 100%;
-  width: 100%;
-  object-fit: contain;
+.enemy-info {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: fit-content;
+  display: flex;
+  background-color: var(--elevation2);
+}
+.info-abilities {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  margin-right: auto;
+  margin-left: auto;
+}
+.info-battlefield {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  margin-right: auto;
+  margin-left: auto;
+}
+.unit-container {
+  position: absolute;
+  height: 0px;
+  width: 0px;
+}
+.white-tiles {
+  background-color: rgba(255, 255, 255, 0.3);
+
+  cursor: pointer;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+  }
+}
+.blue-tiles {
+  background-color: rgba(0, 0, 255, 0.3);
+
+  cursor: pointer;
+  &:hover {
+    background-color: rgba(0, 0, 255, 0.4);
+  }
+}
+.red-tiles {
+  background-color: rgba(255, 0, 0, 0.3);
+
+  cursor: pointer;
+  &:hover {
+    background-color: rgba(255, 0, 0, 0.4);
+  }
+}
+.info-text {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: var(--elevation2);
+  padding: 0.5rem;
+}
+.cast-ready {
+  cursor: pointer;
 }
 </style>

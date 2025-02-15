@@ -1,7 +1,8 @@
 import { useNotificationStore, NotificationType } from "@/stores/notification";
 import type { AbilityId } from "~/game/abilities";
 import { defaults } from "~/game/defaults";
-import { AbilityType, type Ability, type SkillId } from "~/types/ability.types";
+import { type Ability } from "~/types/ability.types";
+import type { SkillId } from "~/types/skill.types";
 
 export type Skill = {
   id: SkillId;
@@ -38,12 +39,6 @@ export const useSkillStore = defineStore("skill", () => {
     }
     return ids;
   });
-
-  const combatAbilities = computed(() =>
-    playerAbilities.value.filter(
-      (ability: Ability) => ability.abilityType === AbilityType.Combat
-    )
-  );
 
   function giveSkillExp(skillId: SkillId, amount: number) {
     const skill = skills.value[skillId];
@@ -117,7 +112,6 @@ export const useSkillStore = defineStore("skill", () => {
     levelTresholds,
     playerAbilities,
     playerAbilityIds,
-    combatAbilities,
     levelBracketGap,
     levelBracketProgress,
     $reset,

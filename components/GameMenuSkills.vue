@@ -36,7 +36,7 @@
 
 <script lang="ts" setup>
 import { useSkillStore } from "@/stores/skill";
-import { SkillId } from "~/types/ability.types";
+import { SkillId } from "~/types/skill.types";
 
 const skillStore = useSkillStore();
 
