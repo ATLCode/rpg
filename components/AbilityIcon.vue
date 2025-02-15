@@ -7,6 +7,7 @@
         )?.cooldown
       }}
     </div>
+    <div v-if="!hasRequirements" class="req-indicator">R</div>
     <img
       v-if="props.abilityId"
       :src="abilities[props.abilityId].img"
@@ -20,9 +21,11 @@
 
 <script lang="ts" setup>
 import { useCombatStore } from "@/stores/combat";
+import { useItemStore } from "@/stores/item";
 import { abilities, type AbilityId } from "~/game/abilities";
 
 const combatStore = useCombatStore();
+const itemStore = useItemStore();
 
 const props = defineProps({
   abilityId: {
@@ -43,11 +46,27 @@ const isDisabled = computed(() => {
   const ability = abilities[props.abilityId];
   const canCast = combatStore.hasAbilityCost(ability);
 
-  if (!canCast || onCooldown.value) {
+  if (!canCast || onCooldown.value || !hasRequirements.value) {
     return true;
   } else {
     return false;
   }
+});
+
+const hasRequirements = computed(() => {
+  if (!props.abilityId) {
+    return false;
+  }
+  const ability = abilities[props.abilityId];
+  let result = true;
+
+  for (const requirement of ability.itemPropertyReq) {
+    const oneResult = itemStore.checkItemPropertyRequirement(requirement);
+    if (oneResult === false) {
+      result = false;
+    }
+  }
+  return result;
 });
 
 const onCooldown = computed(() => {
@@ -90,6 +109,12 @@ img {
   max-width: 48px;
 }
 .cooldown {
+  position: absolute;
+  padding-left: 5px;
+  padding-top: 3px;
+  z-index: 999;
+}
+.req-indicator {
   position: absolute;
   padding-left: 5px;
   padding-top: 3px;
