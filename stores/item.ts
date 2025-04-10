@@ -34,6 +34,8 @@ export const useItemStore = defineStore("item", () => {
       blunt: 0,
       slash: 0,
       pierce: 0,
+      burn: 0,
+      cold: 0,
     };
 
     for (const gear of playerGear.value.slots) {

@@ -7,8 +7,9 @@
         {{ worldStore.time.year }} (Day Count: {{ worldStore.time.dayCount }})
       </div>
       <div>{{ worldStore.showTime() }}</div>
-      <div>
-        Energy: {{ playerStore.energy }} {{ encounterStore.activeEncounter }}
+      <div v-if="playerStore.playerUnit">
+        Energy: {{ playerStore.playerUnit.currentEnergy }}
+        {{ encounterStore.activeEncounter }}
         {{ locationStore.activePath }}
       </div>
     </div>

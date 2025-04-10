@@ -26,12 +26,16 @@ export enum DamageType {
   Blunt = "Blunt",
   Slash = "Slash",
   Pierce = "Pierce",
+  Burn = "Burn",
+  Cold = "Cold",
 }
 
 export type Resistances = {
   blunt: number;
   slash: number;
   pierce: number;
+  burn: number;
+  cold: number;
 };
 
 export type AbilityCooldown = {
@@ -46,6 +50,8 @@ export type Unit = {
   img: string;
   currentHealth: number;
   maxHealth: number;
+  currentEnergy: number;
+  maxEnergy: number;
   abilities: AbilityId[];
   drops?: WeightedLoot[];
   position: Coordinates | null;

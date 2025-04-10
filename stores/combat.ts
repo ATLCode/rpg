@@ -92,10 +92,10 @@ export const useCombatStore = defineStore("combat", () => {
     }
     // Lose energy
     const energyLoss = 30;
-    if (playerStore.energy < 30) {
-      playerStore.energy = 0;
+    if (playerStore.playerUnit.currentEnergy < 30) {
+      playerStore.playerUnit.currentEnergy = 0;
     } else {
-      playerStore.energy -= energyLoss;
+      playerStore.playerUnit.currentEnergy -= energyLoss;
     }
     // Change Game State
     if (encounterStore.activeEncounter) {
@@ -324,6 +324,9 @@ export const useCombatStore = defineStore("combat", () => {
 
   function useEffect(effect: Effect, user: Unit, target: Coordinates) {
     const targetUnit = findTargetInTile(target);
+    if (!targetUnit || !unitIsAlive(targetUnit)) {
+      return;
+    }
     if (effect.effectType === EffectType.Move) {
       if (!targetUnit) {
         user.position = target;
@@ -338,6 +341,14 @@ export const useCombatStore = defineStore("combat", () => {
       if (targetUnit) {
         healUnit(effect, targetUnit);
       }
+    }
+  }
+
+  function unitIsAlive(unit: Unit) {
+    if (unit.currentHealth >= 1) {
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -475,6 +486,8 @@ export const useCombatStore = defineStore("combat", () => {
       return false;
     }
   }
+
+  // TODO DetectPlayerDeath and DetectCombatOver
 
   return {
     combatState,

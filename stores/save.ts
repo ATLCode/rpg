@@ -10,9 +10,8 @@ import { useActionStore } from "@/stores/action";
 import type { Npc } from "~/game/npcs";
 import type { ItemContainer } from "~/types/item.types";
 import type { Time } from "~/types/world.types";
-import type { Ability } from "~/types/ability.types";
 import type { Location } from "~/types/location.types";
-import type { Unit } from "~/types/combat.types";
+import type { Ability, Unit } from "~/types/combat.types";
 import type { Action } from "~/types/action.types";
 import type { SkillId } from "~/types/skill.types";
 
@@ -56,7 +55,7 @@ export const useSaveStore = defineStore("save", () => {
     // World Store
     time: Time;
     // Player Store
-    energy: number;
+    playerUnit: Unit;
     playerLocation: Location;
     characterName: string;
     playerGroup: Unit[];
@@ -91,7 +90,7 @@ export const useSaveStore = defineStore("save", () => {
           const { id, saveData } = save;
           return {
             id: id as number,
-            data: deconstructSaveData(saveData),
+            data: decodeSaveData(saveData),
           };
         });
     } catch (error) {
@@ -99,10 +98,9 @@ export const useSaveStore = defineStore("save", () => {
     }
   }
 
-  function constructSaveData() {
+  function encodeSaveData() {
     const save: SaveData = {
       time: worldStore.time,
-      energy: playerStore.energy,
       playerLocation: locationStore.playerLocation,
       characterName: playerStore.characterName,
       playerGroup: playerStore.playerGroup,
@@ -111,29 +109,29 @@ export const useSaveStore = defineStore("save", () => {
       playerActions: actionStore.playerActions,
       playerAbilities: playerStore.playerAbilities,
       npcs: npcStore.npcs,
+      playerUnit: playerStore.playerUnit,
     };
 
     // return Buffer.from(JSON.stringify(save)).toString("base64");
     return window.btoa(encodeURIComponent(JSON.stringify(save)));
   }
 
-  function deconstructSaveData(data: string): SaveData {
+  function decodeSaveData(data: string): SaveData {
     // const saveData = JSON.parse(Buffer.from(data, "base64").toString("ascii"));
     const saveData = JSON.parse(decodeURIComponent(window.atob(data)));
     if (!saveData.playerLocation) {
-      console.log("Houston we have a problem");
+      throw new Error("Houston we have a problem");
     }
     return saveData;
   }
 
   async function updateSave() {
-    console.log(skillStore.skills);
     try {
       await $fetch("/api/saves/update", {
         method: "POST",
         body: {
           saveId: selectedSaveId.value,
-          saveData: constructSaveData(),
+          saveData: encodeSaveData(),
         },
       });
       getUserSaves();
@@ -149,18 +147,13 @@ export const useSaveStore = defineStore("save", () => {
   }
 
   async function createSave() {
-    // How can we initially find out save slot of the save after creating it
-
     try {
-      console.log("Creating Save");
       clearSaveData();
-      const saveData = constructSaveData();
-      console.log(saveData);
 
       await $fetch("/api/saves/add", {
         method: "POST",
         body: {
-          saveData: constructSaveData(),
+          saveData: encodeSaveData(),
         },
       });
       await getUserSaves();
@@ -169,36 +162,37 @@ export const useSaveStore = defineStore("save", () => {
       selectedSaveId.value = saves.value.reduce((prev, current) =>
         prev && prev.id! > current.id! ? prev : current
       ).id;
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      // TODO show notification to the player
+      throw new Error(error);
     }
   }
 
-  function loadSave(saveSlot: Save) {
-    console.log(saveSlot);
-    console.log(saveSlot.data);
-    prepareSaveData(saveSlot);
+  function loadSave(save: Save) {
+    const playerUnit = save.data.playerGroup.find((e) => e.isPlayer);
+    if (!playerUnit) {
+      throw new Error("Can't find player unit from player group");
+    }
+
+    selectedSaveId.value = save.id;
+    playerStore.characterName = save.data.characterName;
+    playerStore.playerAbilities = save.data.playerAbilities;
+    playerStore.playerGroup = save.data.playerGroup;
+    playerStore.playerUnit = playerUnit;
+    itemStore.playerItemContainers = save.data.playerItemContainers;
+    worldStore.time = save.data.time;
+    locationStore.playerLocation = save.data.playerLocation;
+    skillStore.skills = save.data.skills;
+    npcStore.npcs = save.data.npcs;
+
     navigateTo("/game");
   }
 
   function loadLatestSave() {
     if (saves.value.length) {
       const save = saves.value[0];
-      prepareSaveData(save);
+      loadSave(save);
     }
-  }
-
-  function prepareSaveData(save: Save) {
-    selectedSaveId.value = save.id;
-    playerStore.energy = save.data.energy;
-    playerStore.characterName = save.data.characterName;
-    playerStore.playerAbilities = save.data.playerAbilities;
-    playerStore.playerGroup = save.data.playerGroup;
-    itemStore.playerItemContainers = save.data.playerItemContainers;
-    worldStore.time = save.data.time;
-    locationStore.playerLocation = save.data.playerLocation;
-    skillStore.skills = save.data.skills;
-    npcStore.npcs = save.data.npcs;
   }
 
   async function deleteSave(saveId: number) {

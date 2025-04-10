@@ -5,6 +5,12 @@
         :value="props.unit?.currentHealth"
         :max="unit?.maxHealth"
       />
+      <AProgressLinear
+        class="energybar"
+        :value="props.unit?.currentEnergy"
+        :max="unit?.maxEnergy"
+        color="yellow"
+      />
     </div>
     <CharacterAvatar
       :avatar="props.unit?.img"
@@ -40,6 +46,7 @@ const props = defineProps({
     color: black;
     font-weight: bold;
     display: flex;
+    flex-direction: column;
     justify-content: center;
   }
 }
