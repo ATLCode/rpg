@@ -6,6 +6,7 @@ import {
   ShapeDirection,
   type Ability,
 } from "~/types/combat.types";
+import { EquipSlot, ItemProperty } from "~/types/item.types";
 
 export enum AbilityId {
   BasicPunch = "BasicPunch",
@@ -26,7 +27,7 @@ export const abilities: Record<AbilityId, Ability> = {
     levelReq: 1,
     isAutomatic: true,
     xp: 5,
-    energyCost: 0,
+    energyCost: 1,
     actionCost: AbilityCost.MainAction,
     cooldown: 1,
     itemPropertyReq: [],
@@ -67,7 +68,7 @@ export const abilities: Record<AbilityId, Ability> = {
     levelReq: 1,
     isAutomatic: true,
     xp: 5,
-    energyCost: 0,
+    energyCost: 1,
     actionCost: AbilityCost.MainAction,
     cooldown: 1,
     itemPropertyReq: [],
@@ -108,7 +109,7 @@ export const abilities: Record<AbilityId, Ability> = {
     levelReq: 1,
     isAutomatic: true,
     xp: 0,
-    energyCost: 0,
+    energyCost: 1,
     actionCost: AbilityCost.SideAction,
     cooldown: 1,
     itemPropertyReq: [],
@@ -130,7 +131,7 @@ export const abilities: Record<AbilityId, Ability> = {
     levelReq: 1,
     isAutomatic: true,
     xp: 0,
-    energyCost: 0,
+    energyCost: 2,
     itemPropertyReq: [],
     actionCost: AbilityCost.MainAction,
     cooldown: 1,
@@ -154,7 +155,7 @@ export const abilities: Record<AbilityId, Ability> = {
     levelReq: 1,
     isAutomatic: true,
     xp: 0,
-    energyCost: 0,
+    energyCost: 2,
     actionCost: AbilityCost.SideAction,
     cooldown: 1,
     itemPropertyReq: [],
@@ -177,7 +178,7 @@ export const abilities: Record<AbilityId, Ability> = {
     levelReq: 1,
     isAutomatic: true,
     xp: 5,
-    energyCost: 0,
+    energyCost: 3,
     actionCost: AbilityCost.MainAction,
     cooldown: 1,
     itemPropertyReq: [],
@@ -216,8 +217,14 @@ export const abilities: Record<AbilityId, Ability> = {
     levelReq: 1,
     isAutomatic: true,
     xp: 5,
-    energyCost: 0,
-    itemPropertyReq: [],
+    energyCost: 4,
+    itemPropertyReq: [
+      {
+        property: ItemProperty.Blade,
+        container: "Gear",
+        slot: EquipSlot.MainHand,
+      },
+    ],
     actionCost: AbilityCost.MainAction,
     cooldown: 3,
     effects: [

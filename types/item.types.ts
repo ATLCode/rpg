@@ -18,6 +18,7 @@ export enum ItemProperty {
   OneHanded = "One Handed",
   TwoHanded = "Two Handed",
   Tool = "Tool",
+  Blade = "Blade",
 }
 
 export enum ItemRarity {
@@ -53,6 +54,12 @@ export enum ContextMode {
   Gear = "Gear",
 }
 
+export type ItemPropertyRequirement = {
+  property: ItemProperty;
+  container: "Inventory" | "Gear";
+  slot: number | "Any";
+};
+
 export type EquipInfo = {
   equipSlot: EquipSlot;
   resistances: Resistances;
@@ -61,7 +68,7 @@ export type EquipInfo = {
 export type Item = {
   name: string;
   type: ItemType;
-  properties: ItemProperty[] | null;
+  properties: ItemProperty[];
   weight: number;
   maxStackSize: number;
   value: number;

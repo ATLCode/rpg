@@ -109,7 +109,7 @@ const allowed = computed(() => {
   ) {
     return false;
   }
-  if (playerStore.energy < selectedAction.value.energyCost) {
+  if (playerStore.playerUnit.currentEnergy < selectedAction.value.energyCost) {
     // Enough energy?
     return false;
   }

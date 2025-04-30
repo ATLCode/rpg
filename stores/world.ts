@@ -20,7 +20,7 @@ export const useWorldStore = defineStore("world", () => {
   }
 
   function sleep(energyRestore: number) {
-    playerStore.energy = energyRestore;
+    playerStore.playerUnit.currentEnergy = energyRestore;
     // Save the game?
     // Heal Player based on food used and stuff
     // Give buffs based on food?

@@ -9,6 +9,16 @@
         @click="selectUnitForInfo(unit)"
       />
     </div>
+    <div class="test">
+      <div>{{ selectedShape2 }}</div>
+      <!--
+            <div>sector{{ combatStore.selectedShape2.value.currentSector }}</div>
+      <div>angletm{{ combatStore.selectedShape2.value.angleToMouse }}</div>
+      <div>mpos{{ combatStore.selectedShape2.value.mousePosition }}</div>
+      <div>a{{ combatStore.selectedShape2.value.a }}</div>
+      <div>b{{ combatStore.selectedShape2.value.b }}</div>
+      -->
+    </div>
     <div
       id="combat-grid"
       class="combat-grid"
@@ -71,6 +81,7 @@ import {
   type CombatTile,
   type Unit,
 } from "~/types/combat.types";
+import { getPizzaSlice } from "~/utils/pizzaSlice";
 
 const combatStore = useCombatStore();
 
@@ -90,6 +101,28 @@ const gridHeight = ref(0);
 const gridWidth = ref(0);
 const tileHeight = ref(0);
 const tileWidth = ref(0);
+
+const mousePosition = useMouse();
+
+const selectedShape2 = computed(() => {
+  const tileHeight = document.getElementById("combat-tile")?.clientHeight || 0;
+  const tileWidth = document.getElementById("combat-tile")?.clientWidth || 0;
+
+  const posX = combatStore.currentTurnUnit?.position?.x || 0;
+  const posY = combatStore.currentTurnUnit?.position?.y || 0;
+
+  const unitPixelPosition = {
+    x: posX * tileWidth + 64,
+    y: posY * tileHeight + 64,
+  };
+
+  const direction = getPizzaSlice(unitPixelPosition, 3, 0, {
+    x: mousePosition.x.value,
+    y: mousePosition.y.value,
+  });
+
+  return direction;
+});
 
 function calculateGridSize() {
   gridHeight.value = document.getElementById("combat-grid")?.clientHeight || 0;
@@ -480,5 +513,10 @@ onMounted(() => {
 }
 .cast-ready {
   cursor: pointer;
+}
+.test {
+  padding: 1rem;
+  position: absolute;
+  background-color: var(--elevation2);
 }
 </style>
